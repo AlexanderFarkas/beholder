@@ -1,47 +1,74 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# Getting Started
+1. Define Store
+    ```dart
+   // import warden 
+   import "package:warden/warden.dart"; 
+   
+    class CounterStore extends Store {
+      // define observable using `observable` member function.
+      late final counter = observable(0);
+      increment() => counter.value++;
+    }
+    ```
+2. Watch value with `Warden`:
+    ```dart
+   final vm = CounterStore();
+   
+   // ...
+   
+   Widget build(BuildContext context) {
+      return Warden(
+        builder: (context, watch) =>  OutlinedButton(
+          onPressed: vm.increment,
+          child: Text("${watch(vm.counter)}")
+        ),
+      );
+   }
+    ```
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages).
-
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-library-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages).
--->
-
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
-
-## Features
-
-TODO: List what your package can do. Maybe include images, gifs, or videos.
-
-## Getting started
-
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
-
-## Usage
-
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
+# Computed
+Use `computed` to derive from `observable`s:
 
 ```dart
-const like = 'sample';
+class CounterStore extends Store {
+  late final counter = observable(0);
+  late final counterSquared = computed((watch) => watch(counter) * watch(counter));
+}
 ```
 
-## Additional information
-
+# Dispose
+Every class extending `Store` has `dispose` method. Call it once you don't need the store anymore:
 ```dart
-class CounterVm extends Warden {
-  final counter = obs(0);
-  
-  late final increment = callable(() {
-    counter.value++; 
-  }).debounce(const Duration(milliseconds: 500));
-  
-  late final doubled = counter.map((x) => x * 2).computed;
+myCounterStore.dispose();
+```
+
+# Stream
+Every `observable`/`computed` could be converted to a stream.
+
+Consider a complex Github Api example using `rxdart`:
+```dart
+class RepositoryListStore extends Store {
+   RepositoryListStore(this.githubApi) {
+    final subscription = search
+        .asStream()
+        .doOnData((value) {
+          items.value = value.isEmpty ? const Success(SearchResult(items: [])) : const Loading();
+        })
+        .debounceTime(const Duration(milliseconds: 500))
+        .where((value) => value.isNotEmpty)
+        .switchMap<AsyncValue<SearchResult>>((value) async* {
+          if (value != search.value) return;
+          yield await Result.guard(() => githubApi.searchRepositories(value));
+        })
+        .listen((value) => items.value = value);
+
+    onDispose.add(subscription.cancel);
+  }
+
+  final GithubApi githubApi;
+
+  late final items = observable<AsyncValue<SearchResult>>(const Success(SearchResult(items: [])));
+  late final search = observable('');
 }
+
 ```
