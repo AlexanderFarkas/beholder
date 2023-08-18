@@ -30,7 +30,7 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 16),
             Expanded(
               child: Warden(
-                builder: (context, watch) => switch (watch(store.items)) {
+                builder: (context, observe) => switch (observe(store.items)) {
                   Loading() => const Center(child: CircularProgressIndicator()),
                   Success(value: SearchResult(:var items)) => ListView.builder(
                       itemCount: items.length,

@@ -1,12 +1,11 @@
 part of '../core.dart';
 
-class ObservableComputed<T> extends Observable<T> with Observer {
-  final T Function(Observe observe) compute;
+class ObservableComputed<T> extends Observable<T> {
+  final T Function(Observe watch) compute;
   late final Observatory observatory;
   ObservableComputed(this.compute, {Equals<T>? equals})
       : equals = equals ?? Observable.defaultEquals {
-    observatory = Observatory(this);
-    _value = observatory.proxy(compute);
+    _value = compute(observatory.observe);
   }
 
   final Equals<T> equals;
@@ -18,7 +17,7 @@ class ObservableComputed<T> extends Observable<T> with Observer {
   @override
   void performUpdate() {
     final oldValue = _value;
-    _value = observatory.proxy(compute);
+    _value = compute(observatory.observe);
 
     if (!equals(oldValue, _value)) {
       for (final observer in _observers) {

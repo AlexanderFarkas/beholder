@@ -2,23 +2,23 @@ part of 'core.dart';
 
 class Warden extends StatefulWidget {
   const Warden({Key? key, required this.builder}) : super(key: key);
-  final Widget Function(BuildContext context, Observe watch) builder;
+  final Widget Function(BuildContext context, Observe observe) builder;
 
   @override
   State<Warden> createState() => _WardenState();
 }
 
 class _WardenState extends State<Warden> with Observer {
-  late final watcher = Observatory(this);
+  late final observatory = Observatory(this);
 
   @override
   Widget build(BuildContext context) {
-    return watcher.proxy((watch) => widget.builder(context, watch));
+    return widget.builder(context, observatory.observe);
   }
 
   @override
   void dispose() {
-    watcher.dispose();
+    observatory.dispose();
     super.dispose();
   }
 

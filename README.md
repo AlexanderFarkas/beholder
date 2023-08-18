@@ -1,3 +1,5 @@
+Simple state management for Flutter.
+
 # Getting Started
 1. Define Store
     ```dart
@@ -10,7 +12,7 @@
       increment() => counter.value++;
     }
     ```
-2. Watch value with `Warden`:
+2. Watch value with `Warden` - it will rebuild the widget when the value changes:
     ```dart
    final vm = CounterStore();
    
@@ -18,7 +20,7 @@
    
    Widget build(BuildContext context) {
       return Warden(
-        builder: (context, watch) =>  OutlinedButton(
+        builder: (context, watch) => OutlinedButton(
           onPressed: vm.increment,
           child: Text("${watch(vm.counter)}")
         ),
@@ -70,5 +72,4 @@ class RepositoryListStore extends Store {
   late final items = observable<AsyncValue<SearchResult>>(const Success(SearchResult(items: [])));
   late final search = observable('');
 }
-
 ```

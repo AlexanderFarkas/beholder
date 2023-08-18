@@ -81,8 +81,8 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Warden(
-              builder: (context, watch) {
-                final value = watch(widget.anotherVm.counter);
+              builder: (context, observe) {
+                final value = observe(widget.anotherVm.counter);
                 return OutlinedButton(
                   onPressed: widget.anotherVm.increment,
                   child: Text("another: $value"),
@@ -90,14 +90,14 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
             Warden(
-              builder: (context, watch) {
-                final value = watch(vm.counter);
+              builder: (context, observe) {
+                final value = observe(vm.counter);
                 return OutlinedButton(onPressed: vm.increment, child: Text("vm: $value"));
               },
             ),
             Warden(
-              builder: (context, watch) {
-                final value = watch(vm.sum);
+              builder: (context, observe) {
+                final value = observe(vm.sum);
                 return Text("Sum: $value");
               },
             ),
