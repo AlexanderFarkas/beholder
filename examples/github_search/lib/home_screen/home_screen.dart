@@ -1,15 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:github_search/github_api.dart';
 import 'package:github_search/home_screen/home_screen_vm.dart';
-import 'package:vessel_flutter/vessel_flutter.dart';
 import 'package:warden/warden.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final vm = HomeScreenVm();
+
+  @override
+  void dispose() {
+    vm.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final vm = homeScreenVmProvider.of(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Github Search'),

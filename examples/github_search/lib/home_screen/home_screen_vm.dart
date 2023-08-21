@@ -1,17 +1,8 @@
 import 'package:github_search/github_api.dart';
-import 'package:vessel_flutter/vessel_flutter.dart';
 import 'package:warden/warden.dart';
 
-final homeScreenVmProvider = Provider(
-  (read) => HomeScreenVm(
-    read(githubApiProvider),
-  ),
-);
-
 class HomeScreenVm extends ViewModel {
-  HomeScreenVm(this.githubApi);
-
-  final GithubApi githubApi;
+  final githubApi = GithubApi();
 
   late final items = future(
     (watch) async {

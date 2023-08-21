@@ -1,10 +1,7 @@
 import 'dart:convert';
 
 import 'package:github_search/models/github_repository.dart';
-import 'package:vessel_flutter/vessel_flutter.dart';
 import 'package:http/http.dart' as http;
-
-final githubApiProvider = Provider((_) => GithubApi());
 
 class GithubApi {
   GithubApi({
