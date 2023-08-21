@@ -2,8 +2,10 @@ part of '../core.dart';
 
 abstract class Observable<T> with Diagnosticable {
   static bool debugEnabled = false;
-  static bool defaultEquals(Object? previous, Object? next) {
-    return previous == next;
+  static bool Function(Object? previous, Object? next) defaultEquals =
+      (previous, next) => previous == next;
+  static bool _defaultEquals(Object? previous, Object? next) {
+    return Observable.defaultEquals(previous, next);
   }
 
   final _observers = <Observer>{};
@@ -17,6 +19,7 @@ abstract class Observable<T> with Diagnosticable {
   );
 
   T get value;
+
   Stream<T> asStream() => _controller.get().stream;
   bool _debugDisposed = false;
 
@@ -48,7 +51,7 @@ abstract class Observable<T> with Diagnosticable {
   }
 
   @mustCallSuper
-  dispose() {
+  void dispose() {
     assert(() {
       _debugDisposed = true;
       log("Observable[$this] disposed");

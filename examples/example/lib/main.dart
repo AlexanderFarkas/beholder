@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:warden/warden.dart';
 
-class AnotherVm extends Store {
+class AnotherVm extends ViewModel {
   late final counter = observable<num>(0);
   void increment() {
     counter.update((previous) => previous + 5);
   }
 }
 
-class WardenVm extends Store {
+class WardenVm extends ViewModel {
   final AnotherVm anotherVm;
 
   late final counter = observable(0);

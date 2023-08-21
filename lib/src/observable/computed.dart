@@ -1,34 +1,30 @@
 part of '../core.dart';
 
-class ObservableComputed<T> extends Observable<T> {
+class ObservableComputed<T> extends Observable<T> with Observer {
   final T Function(Observe watch) compute;
-  late final Observatory observatory;
   ObservableComputed(this.compute, {Equals<T>? equals})
-      : equals = equals ?? Observable.defaultEquals {
-    _value = compute(observatory.observe);
+      : equals = equals ?? Observable._defaultEquals {
+    _value = compute(observe);
   }
 
   final Equals<T> equals;
   late T _value;
 
   @override
-  T get value => _value;
+  T get value {
+    return _value;
+  }
 
   @override
-  void performUpdate() {
+  bool performUpdate() {
     final oldValue = _value;
-    _value = compute(observatory.observe);
-
-    if (!equals(oldValue, _value)) {
-      for (final observer in _observers) {
-        observer.markNeedsUpdate();
-      }
-    }
+    _value = compute(observe);
+    return !equals(oldValue, _value);
   }
+}
 
-  @override
-  dispose() {
-    observatory.dispose();
-    super.dispose();
-  }
+class Wrapper<T> {
+  final T value;
+
+  Wrapper(this.value);
 }

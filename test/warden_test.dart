@@ -112,4 +112,79 @@ void main() {
     counter.value = 3;
     expect(timesObserverIsCalled, 4);
   });
+
+  test("deeply nested observables", () {
+    Observable.debugEnabled = true;
+    final counter = ObservableValue(0);
+    final counter2 = ObservableValue(100);
+    final (rebuildCounter: rebuildCounter2, computed: doubledCounter) =
+        createComputed((watch) => watch(counter) * 2);
+    final (rebuildCounter: rebuildCounter3, computed: tripledCounter) =
+        createComputed((watch) => watch(counter) * 3);
+    final (rebuildCounter: rebuildCounter6, computed: counterMultipliedBy6) =
+        createComputed((watch) {
+      final doubled = watch(doubledCounter);
+      final tripled = watch(tripledCounter);
+
+      watch(counter2);
+
+      final counterValue = watch(counter);
+      return counterValue == 0 ? 0 : (doubled * tripled / counterValue);
+    });
+
+    expect([rebuildCounter2.value, rebuildCounter3.value, rebuildCounter6.value], [1, 1, 1]);
+    expect([doubledCounter.value, tripledCounter.value, counterMultipliedBy6.value], [0, 0, 0]);
+
+    counter.value++;
+    expect([rebuildCounter2.value, rebuildCounter3.value, rebuildCounter6.value], [2, 2, 2]);
+    expect([doubledCounter.value, tripledCounter.value, counterMultipliedBy6.value], [2, 3, 6]);
+
+    counter.value = 10;
+    expect([rebuildCounter2.value, rebuildCounter3.value, rebuildCounter6.value], [3, 3, 3]);
+    expect([doubledCounter.value, tripledCounter.value, counterMultipliedBy6.value], [20, 30, 60]);
+
+    counter2.value = 200;
+    expect([rebuildCounter2.value, rebuildCounter3.value, rebuildCounter6.value], [3, 3, 4]);
+    expect([doubledCounter.value, tripledCounter.value, counterMultipliedBy6.value], [20, 30, 60]);
+  });
+
+  test("Scoped update", () {
+    final counter = ObservableValue(10);
+    final counter2 = ObservableValue(100);
+
+    final (:rebuildCounter, :computed) =
+        createComputed((watch) => watch(counter) * watch(counter2));
+
+    counter2.value = 200;
+    counter.value = 20;
+    expect(rebuildCounter.value, 3);
+
+    final (rebuildCounter: rebuildCounter2, computed: computed2) =
+        createComputed((watch) => watch(counter) * watch(counter2));
+
+    scopedUpdate(() {
+      counter2.value = 300;
+      counter.value = 30;
+    });
+    expect(rebuildCounter2.value, 2);
+  });
+}
+
+({RebuildCounter rebuildCounter, ObservableComputed<T> computed}) createComputed<T>(
+    T Function(Observe watch) compute) {
+  final rebuildCounter = RebuildCounter();
+  return (
+    rebuildCounter: rebuildCounter,
+    computed: ObservableComputed<T>((watch) {
+      rebuildCounter.increase();
+      return compute(watch);
+    })
+  );
+}
+
+class RebuildCounter {
+  int value = 0;
+  void increase() {
+    value++;
+  }
 }

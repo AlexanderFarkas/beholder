@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:github_search/store_provider_adapter.dart';
+import 'package:github_search/view_model_provider_adapter.dart';
 import 'package:vessel_flutter/vessel_flutter.dart';
 import 'package:warden/warden.dart';
 
 import 'home_screen/home_screen.dart';
 
 void main() {
-  Observable.debugEnabled = true;
+  // Observable.debugEnabled = true;
   runApp(
     const ProviderScope(
-      adapters: [StoreProviderAdapter()],
+      adapters: [ViewModelProviderAdapter()],
       child: App(),
     ),
   );

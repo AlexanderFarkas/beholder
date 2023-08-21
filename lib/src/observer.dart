@@ -1,28 +1,50 @@
 part of 'core.dart';
 
-mixin Observer {
-  @protected
-  void performUpdate();
+// abstract class Observer {
+//   void markNeedsUpdate();
+//   bool update();
+// }
 
-  void update() {
-    if (_needsUpdate) {
-      assert(() {
-        log("$this started update");
-        return true;
-      }());
-      performUpdate();
-      _needsUpdate = false;
-      assert(() {
-        log("$this finished update");
-        return true;
-      }());
-    }
+mixin Observer {
+  final observables = <Observable>{};
+
+  @protected
+  bool performUpdate();
+
+  bool _update() {
+    if (!needsUpdate) return false;
+    assert(() {
+      log("$this started update");
+      return true;
+    }());
+    needsUpdate = false;
+    final isUpdated = performUpdate();
+    assert(() {
+      log("$this finished update");
+      return true;
+    }());
+
+    return isUpdated;
   }
 
-  bool _needsUpdate = false;
+  T observe<T>(Observable<T> observable) {
+    observables.add(observable);
+    observable.addObserver(this);
+    return observable.value;
+  }
 
-  @mustCallSuper
-  void markNeedsUpdate() => _needsUpdate = true;
+  @protected
+  bool needsUpdate = false;
+
+  void markNeedsUpdate() {
+    needsUpdate = true;
+  }
+
+  void dispose() {
+    for (final observable in observables) {
+      observable.removeObserver(this);
+    }
+  }
 }
 
 class InlineObserver with Observer {
@@ -30,5 +52,8 @@ class InlineObserver with Observer {
   final void Function() listener;
 
   @override
-  void performUpdate() => listener();
+  bool performUpdate() {
+    listener();
+    return true;
+  }
 }
