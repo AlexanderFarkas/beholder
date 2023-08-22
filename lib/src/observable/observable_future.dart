@@ -1,21 +1,13 @@
 part of '../core.dart';
 
 class ObservableFuture<T> extends ObservableObserver<AsyncValue<T>> {
-  final bool _keepPrevious;
-  final Future<T> Function(Observe observe) _compute;
-  final Duration _debounceTime;
-  final Duration _throttleTime;
-  final Equals<T> _equals;
-
   ObservableFuture._(
     this._compute, {
-    bool? keepPrevious,
     AsyncValue<T>? initial,
     Duration? debounceTime,
     Duration? throttleTime,
     Equals<T>? equals,
-  })  : _keepPrevious = keepPrevious ?? false,
-        _value = initial ?? const Loading(),
+  })  : _value = initial ?? const Loading(),
         _debounceTime = debounceTime ?? Duration.zero,
         _throttleTime = throttleTime ?? Duration.zero,
         _equals = equals ?? Observable.defaultEquals,
@@ -46,6 +38,7 @@ class ObservableFuture<T> extends ObservableObserver<AsyncValue<T>> {
   }
 
   @override
+  @protected
   bool performUpdate() {
     final throttleTimer = _throttleTimer;
     if (throttleTimer != null && throttleTimer.isActive) {
@@ -83,40 +76,24 @@ class ObservableFuture<T> extends ObservableObserver<AsyncValue<T>> {
   }
 
   bool _setLoading() => _setValue(
-        switch (_value) {
-          Success(:var value) when _keepPrevious => LoadingWithPreviousData(value),
-          LoadingWithPreviousData() => _value,
-          _ => const FreshLoading(),
-        },
+        Loading(
+          previousResult: switch (_value) {
+            Result() && var result => result,
+            Loading(previousResult: var result) => result,
+          },
+        ),
       );
 
   bool _setValue(AsyncValue<T> value) {
     final oldValue = _value;
     _value = value;
 
-    if (!_valueEquals(oldValue, _value)) {
+    if (!oldValue._equals(_value, equals: _equals)) {
       ObservableScope.markNeedsUpdate(this);
       return true;
     }
 
     return false;
-  }
-
-  bool _valueEquals(AsyncValue<T> v1, AsyncValue<T> v2) {
-    if (v1.runtimeType != v2.runtimeType) {
-      return false;
-    }
-
-    if (identical(v1, v2)) {
-      return true;
-    }
-
-    return switch (v1) {
-      Success(:var value) => _equals(value, v2.value),
-      LoadingWithPreviousData(:var previousData) =>
-        _equals(previousData, (v2 as LoadingWithPreviousData<T>).previousData),
-      _ => v1 == v2,
-    };
   }
 
   void _cancelThrottle() {
@@ -128,6 +105,11 @@ class ObservableFuture<T> extends ObservableObserver<AsyncValue<T>> {
     _debounceTimer?.cancel();
     _debounceTimer = null;
   }
+
+  final Future<T> Function(Observe observe) _compute;
+  final Duration _debounceTime;
+  final Duration _throttleTime;
+  final Equals<T> _equals;
 
   AsyncValue<T> _value;
   Timer? _debounceTimer;
@@ -143,32 +125,46 @@ sealed class AsyncValue<T> {
         Success(:var value) => value,
         _ => null,
       };
-}
-
-sealed class Loading<T> extends AsyncValue<T> {
-  const Loading._();
-  const factory Loading() = FreshLoading<T>;
-}
-
-class FreshLoading<T> extends Loading<T> {
-  const FreshLoading() : super._();
-}
-
-class LoadingWithPreviousData<T> extends Loading<T> {
-  const LoadingWithPreviousData(this.previousData) : super._();
-
-  final T previousData;
 
   @override
-  bool operator ==(Object other) {
-    return identical(this, other) &&
-        other is LoadingWithPreviousData<T> &&
-        runtimeType == other.runtimeType &&
-        previousData == other.previousData;
+  String toString() => "$runtimeType";
+
+  @override
+  bool operator ==(Object? other) {
+    return _equals(other, equals: (a, b) => a == b);
+  }
+
+  bool _equals(Object? other, {required Equals<T> equals});
+}
+
+class Loading<T> extends AsyncValue<T> {
+  final Result<T>? previousResult;
+  const Loading({this.previousResult});
+
+  @override
+  int get hashCode => runtimeType.hashCode ^ Object.hashAll([previousResult]);
+
+  @override
+  String toString() {
+    return "$runtimeType(previousResult: $previousResult)";
   }
 
   @override
-  int get hashCode => runtimeType.hashCode ^ Object.hashAll([previousData]);
+  bool _equals(Object? other, {required Equals<T> equals}) {
+    if (identical(this, other)) {
+      return true;
+    }
+
+    if (other is Loading<T> && runtimeType == other.runtimeType) {
+      if (previousResult == null && other.previousResult == null) {
+        return true;
+      } else if (previousResult != null && other.previousResult != null) {
+        return previousResult!._equals(other.previousResult!, equals: equals);
+      }
+    }
+
+    return false;
+  }
 }
 
 sealed class Result<T> extends AsyncValue<T> {
@@ -194,15 +190,16 @@ class Success<T> extends Result<T> {
   T? get valueOrNull => value;
 
   @override
-  bool operator ==(Object other) {
-    return identical(this, other) &&
-        other is Success<T> &&
-        runtimeType == other.runtimeType &&
-        value == other.value;
+  bool _equals(Object? other, {required Equals<T> equals}) {
+    return identical(this, other) ||
+        (other is Success<T> && runtimeType == other.runtimeType && value == other.value);
   }
 
   @override
   int get hashCode => runtimeType.hashCode ^ Object.hashAll([value]);
+
+  @override
+  String toString() => "$runtimeType(value: $value)";
 }
 
 class Failure<T> extends Result<T> {
@@ -212,14 +209,17 @@ class Failure<T> extends Result<T> {
   final Object? error;
 
   @override
-  bool operator ==(Object other) {
-    return identical(this, other) &&
+  bool _equals(Object? other, {required Equals<T> equals}) {
+    return identical(this, other) ||
         other is Failure<T> &&
-        runtimeType == other.runtimeType &&
-        error == other.error &&
-        stackTrace == other.stackTrace;
+            runtimeType == other.runtimeType &&
+            error == other.error &&
+            stackTrace == other.stackTrace;
   }
 
   @override
   int get hashCode => runtimeType.hashCode ^ Object.hashAll([error, stackTrace]);
+
+  @override
+  String toString() => "$runtimeType(error: $error)";
 }

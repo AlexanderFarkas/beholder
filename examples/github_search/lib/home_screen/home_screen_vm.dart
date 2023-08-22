@@ -14,5 +14,5 @@ class HomeScreenVm extends ViewModel {
     debounceTime: const Duration(milliseconds: 500),
   );
 
-  late final search = observable('');
+  late final search = state('');
 }

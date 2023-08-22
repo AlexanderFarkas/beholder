@@ -40,7 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Expanded(
               child: Warden(
                 builder: (context, watch) {
-                  print("rebuild");
+                  log("rebuild");
                   return switch (watch(vm.items)) {
                     Loading() => const Center(child: CircularProgressIndicator()),
                     Success(value: SearchResult(:var items)) => ListView.builder(

@@ -5,10 +5,11 @@ class ObservableScope {
   static void markNeedsUpdate(Observable observable) {
     final scope = _current;
     if (scope != null && scope.isExiting) {
-      assert(observable is Observer);
+      assert(scope._observers.containsKey(observable), """
+          Observable value was set synchronously after other Observable has performed update.
+          Try wrapping mutating code in Future.microtask.
+          """);
 
-      /// observable was marked after it had performed update.
-      /// Its listeners will be notified anyway
       return;
     }
 

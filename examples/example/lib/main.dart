@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:warden/warden.dart';
 
 class AnotherVm extends ViewModel {
-  late final counter = observable<num>(0);
+  late final counter = state<num>(0);
   void increment() {
     counter.update((previous) => previous + 5);
   }
@@ -11,7 +11,7 @@ class AnotherVm extends ViewModel {
 class WardenVm extends ViewModel {
   final AnotherVm anotherVm;
 
-  late final counter = observable(0);
+  late final counter = state(0);
   late final sum = computed((_) => _(counter) + _(anotherVm.counter));
 
   WardenVm(this.anotherVm);

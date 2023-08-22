@@ -4,7 +4,7 @@ import 'package:warden/warden.dart';
 
 void main() {
   test('observable', () {
-    final counter = ObservableValue(0);
+    final counter = ObservableState(0);
     var timesObserverIsCalled = 0;
     counter.addObserver(InlineObserver(() {
       timesObserverIsCalled++;
@@ -20,8 +20,8 @@ void main() {
   });
 
   test('computed', () {
-    final counter = ObservableValue(0);
-    final counter2 = ObservableValue(100);
+    final counter = ObservableState(0);
+    final counter2 = ObservableState(100);
     final computed = ObservableComputed((watch) => watch(counter) + watch(counter2));
 
     var timesObserverIsCalled = 0;
@@ -44,7 +44,7 @@ void main() {
   });
 
   test("deeply nested computed called once", () {
-    final counter = ObservableValue(0);
+    final counter = ObservableState(0);
     late ObservableComputed previousComputed;
     for (int i = 0; i < 100; i++) {
       if (i == 0) {
@@ -67,7 +67,7 @@ void main() {
   });
 
   test("observable respects equals", () {
-    final counter = ObservableValue(0, equals: (a, b) => a == b);
+    final counter = ObservableState(0, equals: (a, b) => a == b);
     var timesObserverIsCalled = 0;
     counter.addObserver(InlineObserver(() {
       timesObserverIsCalled++;
@@ -81,7 +81,7 @@ void main() {
   });
 
   test("computed respects equals", () {
-    final counter = ObservableValue(0, equals: (a, b) => a == b);
+    final counter = ObservableState(0, equals: (a, b) => a == b);
     final computed = ObservableComputed((watch) => watch(counter), equals: (a, b) => a == b);
 
     var timesObserverIsCalled = 0;
@@ -97,7 +97,7 @@ void main() {
   });
 
   test("several observers", () {
-    final counter = ObservableValue(0);
+    final counter = ObservableState(0);
     var timesObserverIsCalled = 0;
     counter.addObserver(InlineObserver(() {
       timesObserverIsCalled++;
@@ -115,8 +115,8 @@ void main() {
 
   test("deeply nested observables", () {
     Observable.debugEnabled = true;
-    final counter = ObservableValue(0);
-    final counter2 = ObservableValue(100);
+    final counter = ObservableState(0);
+    final counter2 = ObservableState(100);
     final (rebuildCounter: rebuildCounter2, computed: doubledCounter) =
         createComputed((watch) => watch(counter) * 2);
     final (rebuildCounter: rebuildCounter3, computed: tripledCounter) =
@@ -149,8 +149,8 @@ void main() {
   });
 
   test("Scoped update", () {
-    final counter = ObservableValue(10);
-    final counter2 = ObservableValue(100);
+    final counter = ObservableState(10);
+    final counter2 = ObservableState(100);
 
     final (:rebuildCounter, :computed) =
         createComputed((watch) => watch(counter) * watch(counter2));
@@ -167,6 +167,15 @@ void main() {
       counter.value = 30;
     });
     expect(rebuildCounter2.value, 2);
+  });
+
+  test("Listeners are not updated after dispose", () {
+    final counter = ObservableState(10);
+    final computed = ObservableComputed((watch) => watch(counter) * 10);
+
+    counter.dispose();
+    counter.value = 20;
+    expect(computed.value, 100);
   });
 }
 

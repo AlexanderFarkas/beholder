@@ -5,8 +5,8 @@ class ViewModel {
   final disposers = <Dispose>{};
 
   @protected
-  ObservableValue<T> observable<T>(T value, {Equals<T>? equals}) {
-    final observable = ObservableValue<T>(value, equals: equals);
+  ObservableState<T> state<T>(T value, {Equals<T>? equals}) {
+    final observable = ObservableState<T>(value, equals: equals);
     disposers.add(observable.dispose);
     return observable;
   }
@@ -23,7 +23,6 @@ class ViewModel {
 
   ObservableFuture<T> future<T>(
     Future<T> Function(Observe watch) compute, {
-    bool? keepPrevious,
     AsyncValue<T>? initial,
     Duration? debounceTime,
     Duration? throttleTime,
@@ -31,7 +30,6 @@ class ViewModel {
   }) {
     final future = ObservableFuture<T>._(
       compute,
-      keepPrevious: keepPrevious,
       initial: initial,
       debounceTime: debounceTime,
       throttleTime: throttleTime,

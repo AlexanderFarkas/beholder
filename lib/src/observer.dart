@@ -14,16 +14,11 @@ mixin Observer {
   bool _update() {
     if (!needsUpdate) return false;
     assert(() {
-      log("$this started update");
+      log("$this notified");
       return true;
     }());
     needsUpdate = false;
     final isUpdated = performUpdate();
-    assert(() {
-      log("$this finished update");
-      return true;
-    }());
-
     return isUpdated;
   }
 
@@ -36,9 +31,7 @@ mixin Observer {
   @protected
   bool needsUpdate = false;
 
-  void markNeedsUpdate() {
-    needsUpdate = true;
-  }
+  void markNeedsUpdate() => needsUpdate = true;
 
   void dispose() {
     for (final observable in observables) {
@@ -56,4 +49,7 @@ class InlineObserver with Observer {
     listener();
     return true;
   }
+
+  @override
+  String toString() => "$runtimeType${shortHash(this)}";
 }

@@ -9,7 +9,7 @@ class Warden extends StatefulWidget {
 }
 
 class _WardenState extends State<Warden> {
-  late final observer = InlineObserver(() => setState(() {}));
+  late final observer = WardenObserver(() => setState(() {}));
 
   @override
   Widget build(BuildContext context) {
@@ -21,4 +21,8 @@ class _WardenState extends State<Warden> {
     observer.dispose();
     super.dispose();
   }
+}
+
+class WardenObserver extends InlineObserver {
+  WardenObserver(super.listener);
 }

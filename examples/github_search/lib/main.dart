@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:warden/warden.dart';
 
 import 'home_screen/home_screen.dart';
 
 void main() {
+  Observable.debugEnabled = true;
   runApp(const App());
 }
 
