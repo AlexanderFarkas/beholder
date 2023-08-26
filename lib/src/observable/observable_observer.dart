@@ -1,3 +1,3 @@
 part of '../core.dart';
 
-abstract class ObservableObserver<T> extends Observable<T> with Observer {}
+abstract class ObservableObserver<T> extends BaseObservable<T> with ObserverMixin {}

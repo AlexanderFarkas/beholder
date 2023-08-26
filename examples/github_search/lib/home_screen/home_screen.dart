@@ -38,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(height: 16),
             Expanded(
-              child: Warden(
+              child: Observer(
                 builder: (context, watch) {
                   log("rebuild");
                   return switch (watch(vm.items)) {

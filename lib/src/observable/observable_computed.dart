@@ -2,7 +2,7 @@ part of '../core.dart';
 
 class ObservableComputed<T> extends ObservableObserver<T> {
   ObservableComputed(this._compute, {Equals<T>? equals})
-      : _equals = equals ?? Observable._defaultEquals {
+      : _equals = equals ?? Observable.defaultEquals {
     _value = _compute(observe);
   }
 
@@ -20,7 +20,19 @@ class ObservableComputed<T> extends ObservableObserver<T> {
   }
 
   final Equals<T> _equals;
-  final T Function(Observe watch) _compute;
+  final T Function(Watch watch) _compute;
 
   late T _value;
+}
+
+class ObservableWritableComputed<T> extends ObservableComputed<T> implements WritableObservable<T> {
+  ObservableWritableComputed(
+      {required T Function(Watch watch) get, required void Function(T value) set, super.equals})
+      : _set = set,
+        super(get);
+
+  @override
+  set value(T value) => scopedUpdate(() => _set(value));
+
+  final void Function(T value) _set;
 }

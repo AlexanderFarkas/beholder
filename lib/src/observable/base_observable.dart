@@ -1,22 +1,19 @@
 part of '../core.dart';
 
-abstract class Observable<T> {
-  static bool debugEnabled = false;
-  static bool Function(Object? previous, Object? next) defaultEquals =
-      (previous, next) => previous == next;
-
-  T get value;
-
+abstract class BaseObservable<T> implements Observable<T> {
+  @override
   Stream<T> asStream() => _controller.get().stream;
 
-  Dispose listen(void Function(T value) onChanged) {
+  @override
+  Dispose listen(ValueChanged<T> onChanged) {
     assert(!debugDisposed, "$this is already disposed");
     final observer = InlineObserver(() => onChanged(value));
     addObserver(observer);
     return () => removeObserver(observer);
   }
 
-  void addObserver(Observer observer) {
+  @override
+  void addObserver(ObserverMixin observer) {
     assert(!debugDisposed, "$this is already disposed");
     assert(() {
       if (!_observers.contains(observer)) {
@@ -27,32 +24,34 @@ abstract class Observable<T> {
     _observers.add(observer);
   }
 
-  void removeObserver(Observer observer) {
+  @override
+  void removeObserver(ObserverMixin observer) {
     assert(() {
       if (_observers.contains(observer)) {
-        log("Observer[$observer] removed from [$this]");
+        log("$observer removed from [$this]");
       }
       return true;
     }());
     _observers.remove(observer);
   }
 
+  @override
   @mustCallSuper
   void dispose() {
     assert(() {
       _debugDisposed = true;
-      log("Observable[$this] disposed");
+      log("$this disposed");
       return true;
     }());
     _controller.dispose();
     _observers.clear();
   }
 
-  static bool _defaultEquals(Object? previous, Object? next) {
-    return Observable.defaultEquals(previous, next);
-  }
+  @override
+  late final observers = UnmodifiableSetView(_observers);
 
-  final _observers = <Observer>{};
+  final _observers = <ObserverMixin>{};
+
   late final Lazy<StreamController<T>> _controller = Lazy(
     () {
       final controller = StreamController<T>.broadcast();
@@ -69,7 +68,7 @@ abstract class Observable<T> {
 
   @override
   String toString() {
-    return "$runtimeType${shortHash(this)}($value)";
+    return "$runtimeType${shortHash(this)}";
   }
 }
 

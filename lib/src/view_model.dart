@@ -13,7 +13,7 @@ class ViewModel {
 
   @protected
   ObservableComputed<T> computed<T>(
-    T Function(Observe watch) compute, {
+    T Function(Watch watch) compute, {
     Equals<T>? equals,
   }) {
     final computed = ObservableComputed(compute, equals: equals);
@@ -21,8 +21,24 @@ class ViewModel {
     return computed;
   }
 
+  @protected
+  ObservableWritableComputed<T> writableComputed<T>({
+    required T Function(Watch watch) get,
+    required void Function(T value) set,
+    Equals<T>? equals,
+  }) {
+    final computed = ObservableWritableComputed(
+      get: get,
+      set: set,
+      equals: equals,
+    );
+    disposers.add(computed.dispose);
+    return computed;
+  }
+
+  @protected
   ObservableFuture<T> future<T>(
-    Future<T> Function(Observe watch) compute, {
+    Future<T> Function(Watch watch) compute, {
     AsyncValue<T>? initial,
     Duration? debounceTime,
     Duration? throttleTime,

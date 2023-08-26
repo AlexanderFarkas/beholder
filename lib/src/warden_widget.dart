@@ -1,15 +1,15 @@
 part of 'core.dart';
 
-class Warden extends StatefulWidget {
-  const Warden({Key? key, required this.builder}) : super(key: key);
-  final Widget Function(BuildContext context, Observe watch) builder;
+class Observer extends StatefulWidget {
+  const Observer({Key? key, required this.builder}) : super(key: key);
+  final Widget Function(BuildContext context, Watch watch) builder;
 
   @override
-  State<Warden> createState() => _WardenState();
+  State<Observer> createState() => _ObserverState();
 }
 
-class _WardenState extends State<Warden> {
-  late final observer = WardenObserver(() => setState(() {}));
+class _ObserverState extends State<Observer> {
+  late final observer = InlineObserver(() => setState(() {}), debugLabel: "ObserverWidget");
 
   @override
   Widget build(BuildContext context) {
@@ -21,8 +21,4 @@ class _WardenState extends State<Warden> {
     observer.dispose();
     super.dispose();
   }
-}
-
-class WardenObserver extends InlineObserver {
-  WardenObserver(super.listener);
 }

@@ -1,24 +1,24 @@
 part of 'core.dart';
 
-// abstract class Observer {
-//   void markNeedsUpdate();
-//   bool update();
-// }
-
-mixin Observer {
+mixin ObserverMixin {
   final observables = <Observable>{};
 
   @protected
   bool performUpdate();
 
   bool _update() {
-    if (!needsUpdate) return false;
     assert(() {
       log("$this notified");
       return true;
     }());
+    if (!needsUpdate) return false;
+
     needsUpdate = false;
     final isUpdated = performUpdate();
+    assert(() {
+      log("$this updated");
+      return true;
+    }());
     return isUpdated;
   }
 
@@ -40,9 +40,10 @@ mixin Observer {
   }
 }
 
-class InlineObserver with Observer {
-  InlineObserver(this.listener);
+class InlineObserver with ObserverMixin {
+  InlineObserver(this.listener, {this.debugLabel});
   final void Function() listener;
+  final String? debugLabel;
 
   @override
   bool performUpdate() {
@@ -51,5 +52,5 @@ class InlineObserver with Observer {
   }
 
   @override
-  String toString() => "$runtimeType${shortHash(this)}";
+  String toString() => "${debugLabel ?? runtimeType}${shortHash(this)}";
 }

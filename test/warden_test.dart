@@ -180,7 +180,7 @@ void main() {
 }
 
 ({RebuildCounter rebuildCounter, ObservableComputed<T> computed}) createComputed<T>(
-    T Function(Observe watch) compute) {
+    T Function(Watch watch) compute) {
   final rebuildCounter = RebuildCounter();
   return (
     rebuildCounter: rebuildCounter,

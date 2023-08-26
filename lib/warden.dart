@@ -1,3 +1,3 @@
 library warden;
 
-export 'src/core.dart' hide WardenObserver;
+export 'src/core.dart' hide ValueChanged, Equals;
