@@ -1,6 +1,5 @@
 import 'dart:collection';
 
-import 'package:login/form_mixin.dart';
 import 'package:warden/warden.dart';
 
 class LoginFormVm extends ViewModel with FormMixin {
@@ -29,6 +28,7 @@ class LoginFormVm extends ViewModel with FormMixin {
   void submit() {
     wasEverSubmitted.value = true;
     if (isValid.value) {
+      username.error.value = "Username is already taken";
       print("Success");
     } else {
       print("Failure");

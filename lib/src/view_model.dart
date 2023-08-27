@@ -1,4 +1,8 @@
-part of 'core.dart';
+import 'package:meta/meta.dart';
+import 'computed.dart';
+import 'future.dart';
+import 'typedefs.dart';
+import 'core.dart';
 
 class ViewModel {
   @protected
@@ -44,14 +48,13 @@ class ViewModel {
     Duration? throttleTime,
     Equals<T>? equals,
   }) {
-    final future = ObservableFuture<T>._(
+    final future = ObservableFuture<T>(
       compute,
       initial: initial,
       debounceTime: debounceTime,
       throttleTime: throttleTime,
       equals: equals,
     );
-
     disposers.add(future.dispose);
     return future;
   }

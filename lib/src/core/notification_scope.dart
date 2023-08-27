@@ -1,4 +1,4 @@
-part of 'core.dart';
+part of '../core.dart';
 
 enum ScopePhase {
   markNeedsUpdate,
@@ -7,28 +7,29 @@ enum ScopePhase {
 
 class NotificationScope {
   static NotificationScope? _current;
-  static void markNeedsUpdate(Observable observable) {
+  static void markNeedsUpdate(ObservableState observable) {
     final scope = _current;
     if (scope != null && scope.phase == ScopePhase.notify) {
       assert(
-        scope._observers.containsKey(observable),
+        scope._observers.containsKey(observable.delegatedByObserver),
         "Observable value was set synchronously during ScopePhase.notify.\nTry wrapping mutating code in Future.microtask.",
       );
 
       return;
     }
 
-    scopedUpdate(() => NotificationScope._current!._markObservableNeedsUpdate(observable));
+    _current ??= NotificationScope._();
+    NotificationScope._current!._markObservableStateNeedsUpdate(observable);
   }
 
   NotificationScope._();
 
-  final observables = <Observable>{};
+  final observableStates = <ObservableState>{};
   ScopePhase phase = ScopePhase.markNeedsUpdate;
 
   final Map<ObserverMixin, int> _observers = {};
-  void _markObservableNeedsUpdate(Observable observable) {
-    if (!observables.add(observable)) {
+  void _markObservableStateNeedsUpdate(ObservableState observable) {
+    if (observable.observers.isEmpty || !observableStates.add(observable)) {
       return;
     }
 
@@ -41,7 +42,7 @@ class NotificationScope {
       observer.markNeedsUpdate();
 
       if (observer is ObservableObserver) {
-        for (final observer in observer._observers) {
+        for (final observer in observer.observers) {
           inner(observer, level + 1);
         }
       }
@@ -52,40 +53,25 @@ class NotificationScope {
     }
   }
 
-  void _updateObservers() {
+  void updateObservers() {
     phase = ScopePhase.notify;
     final queue = Queue<_Node>();
-    for (final observable in observables) {
-      print(_observers);
+    for (final observable in observableStates) {
       queue.addAll(observable.observers.map((e) => _Node(level: 0, observer: e)));
       while (queue.isNotEmpty) {
         final _Node(:observer, :level) = queue.removeFirst();
         final updateLevel = _observers[observer];
         if (updateLevel != level) continue;
 
-        final isUpdated = observer._update();
-        if (isUpdated && observer is ObservableObserver) {
-          queue.addAll(observer.observers.map((e) => _Node(level: level + 1, observer: e)));
+        final isUpdated = observer.update();
+        if (observer is ObservableObserver) {
+          for (final observer in observer.observers) {
+            if (!isUpdated) observer.undoMarkNeedsUpdate();
+            queue.add(_Node(level: level + 1, observer: observer));
+          }
         }
       }
     }
-  }
-}
-
-void scopedUpdate(void Function() callback) {
-  final isOuter = NotificationScope._current == null;
-  if (isOuter) {
-    NotificationScope._current = NotificationScope._();
-  }
-
-  assert(
-    NotificationScope._current!.phase == ScopePhase.markNeedsUpdate,
-    "Scoped update was called during update. Wrap calling code in Future.microtask",
-  );
-  callback();
-
-  if (isOuter) {
-    NotificationScope._current!._updateObservers();
     NotificationScope._current = null;
   }
 }

@@ -1,24 +1,37 @@
 part of '../core.dart';
 
-class ObservableState<T> extends BaseObservable<T> implements WritableObservable<T> {
+typedef ValueChanged<T> = void Function(T value);
+
+class ObservableState<T> extends BaseObservable<T>
+    with DebugReprMixin
+    implements WritableObservable<T> {
   ObservableState(T value, {Equals<T>? equals})
       : _value = value,
         _equals = equals ?? Observable.defaultEquals;
 
   @override
-  T get value => _value;
+  T get value {
+    NotificationScope._current?.updateObservers();
+    return _value;
+  }
+
+  @override
   set value(T value) {
+    setValue(value);
+  }
+
+  bool setValue(T value) {
     final oldValue = _value;
     _value = value;
     final willUpdate = !_equals(oldValue, value);
     if (willUpdate) {
-      scopedUpdate(() {
-        NotificationScope.markNeedsUpdate(this);
-        for (final listener in _eagerListeners) {
-          listener(value);
-        }
-      });
+      NotificationScope.markNeedsUpdate(this);
+      for (final listener in _eagerListeners) {
+        listener(value);
+      }
     }
+
+    return willUpdate;
   }
 
   T update(T Function(T previous) updater) {
@@ -41,6 +54,9 @@ class ObservableState<T> extends BaseObservable<T> implements WritableObservable
 
   T _value;
   final _eagerListeners = <ValueChanged<T>>{};
+
+  @internal
+  ObservableObserver? delegatedByObserver;
 
   @override
   void dispose() {

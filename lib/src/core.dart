@@ -4,20 +4,14 @@ import 'dart:async';
 import 'dart:collection';
 import 'dart:math' as math;
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/widgets.dart';
-import 'dart:developer' as developer;
+import 'package:meta/meta.dart';
 
-part 'warden_widget.dart';
-part 'view_model.dart';
-part 'typedefs.dart';
-part 'async_value.dart';
-part 'observable/base_observable.dart';
-part 'observable/observable_state.dart';
-part 'observable/observable_computed.dart';
-part 'observable_scope.dart';
-part 'observable/observable_future.dart';
-part 'observable/observable_observer.dart';
-part 'observable/interfaces.dart';
-part 'observer.dart';
-part 'utils.dart';
+import 'typedefs.dart';
+import 'utils.dart';
+
+part 'core/base_observable.dart';
+part 'core/observable_state.dart';
+part 'core/observable_observer.dart';
+part 'core/interfaces.dart';
+part 'core/observer_mixin.dart';
+part 'core/notification_scope.dart';

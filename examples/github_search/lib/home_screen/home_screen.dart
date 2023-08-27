@@ -39,23 +39,20 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 16),
             Expanded(
               child: Observer(
-                builder: (context, watch) {
-                  log("rebuild");
-                  return switch (watch(vm.items)) {
-                    Loading() => const Center(child: CircularProgressIndicator()),
-                    Success(value: SearchResult(:var items)) => ListView.builder(
-                        itemCount: items.length,
-                        itemBuilder: (_, index) {
-                          final repository = items[index];
-                          return ListTile(
-                            leading: Image.network(repository.owner.avatarUrl),
-                            title: Text(repository.fullName),
-                            subtitle: Text(repository.owner.login),
-                          );
-                        },
-                      ),
-                    Failure(:var error) => Text(error.toString()),
-                  };
+                builder: (context, watch) => switch (watch(vm.items)) {
+                  Loading() => const Center(child: CircularProgressIndicator()),
+                  Success(value: SearchResult(:var items)) => ListView.builder(
+                      itemCount: items.length,
+                      itemBuilder: (_, index) {
+                        final repository = items[index];
+                        return ListTile(
+                          leading: Image.network(repository.owner.avatarUrl),
+                          title: Text(repository.fullName),
+                          subtitle: Text(repository.owner.login),
+                        );
+                      },
+                    ),
+                  Failure(:var error) => Text(error.toString()),
                 },
               ),
             )

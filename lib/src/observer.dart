@@ -1,56 +1,30 @@
-part of 'core.dart';
+import 'package:flutter/widgets.dart';
 
-mixin ObserverMixin {
-  final observables = <Observable>{};
+import 'core.dart';
 
-  @protected
-  bool performUpdate();
+class Observer extends StatefulWidget {
+  const Observer({Key? key, required this.builder}) : super(key: key);
+  final Widget Function(BuildContext context, Watch watch) builder;
 
-  bool _update() {
-    assert(() {
-      log("$this notified");
-      return true;
-    }());
-    if (!needsUpdate) return false;
-
-    needsUpdate = false;
-    final isUpdated = performUpdate();
-    assert(() {
-      log("$this updated");
-      return true;
-    }());
-    return isUpdated;
-  }
-
-  T observe<T>(Observable<T> observable) {
-    observables.add(observable);
-    observable.addObserver(this);
-    return observable.value;
-  }
-
-  @protected
-  bool needsUpdate = false;
-
-  void markNeedsUpdate() => needsUpdate = true;
-
-  void dispose() {
-    for (final observable in observables) {
-      observable.removeObserver(this);
-    }
-  }
+  @override
+  State<Observer> createState() => _ObserverState();
 }
 
-class InlineObserver with ObserverMixin {
-  InlineObserver(this.listener, {this.debugLabel});
-  final void Function() listener;
-  final String? debugLabel;
+class _ObserverState extends State<Observer> with ObserverMixin {
+  @override
+  Widget build(BuildContext context) {
+    return widget.builder(context, observe);
+  }
+
+  @override
+  void dispose() {
+    stopObserving();
+    super.dispose();
+  }
 
   @override
   bool performUpdate() {
-    listener();
+    setState(() {});
     return true;
   }
-
-  @override
-  String toString() => "${debugLabel ?? runtimeType}${shortHash(this)}";
 }

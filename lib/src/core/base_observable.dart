@@ -1,23 +1,23 @@
 part of '../core.dart';
 
-abstract class BaseObservable<T> implements Observable<T> {
+abstract class BaseObservable<T> with DebugReprMixin implements Observable<T> {
   @override
   Stream<T> asStream() => _controller.get().stream;
 
   @override
   Dispose listen(ValueChanged<T> onChanged) {
-    assert(!debugDisposed, "$this is already disposed");
-    final observer = InlineObserver(() => onChanged(value));
+    assert(!_debugDisposed, "$this is already disposed");
+    final observer = ListenObserver(() => onChanged(value));
     addObserver(observer);
     return () => removeObserver(observer);
   }
 
   @override
   void addObserver(ObserverMixin observer) {
-    assert(!debugDisposed, "$this is already disposed");
+    assert(!_debugDisposed, "$this is already disposed");
     assert(() {
       if (!_observers.contains(observer)) {
-        log("$observer added to $this");
+        debugLog("$observer starts observing $this");
       }
       return true;
     }());
@@ -28,7 +28,7 @@ abstract class BaseObservable<T> implements Observable<T> {
   void removeObserver(ObserverMixin observer) {
     assert(() {
       if (_observers.contains(observer)) {
-        log("$observer removed from [$this]");
+        debugLog("$observer stops observing $this");
       }
       return true;
     }());
@@ -40,7 +40,7 @@ abstract class BaseObservable<T> implements Observable<T> {
   void dispose() {
     assert(() {
       _debugDisposed = true;
-      log("$this disposed");
+      debugLog("$this disposed");
       return true;
     }());
     _controller.dispose();
@@ -62,18 +62,4 @@ abstract class BaseObservable<T> implements Observable<T> {
   );
 
   bool _debugDisposed = false;
-
-  @protected
-  get debugDisposed => _debugDisposed;
-
-  @override
-  String toString() {
-    return "$runtimeType${shortHash(this)}";
-  }
-}
-
-/// Returns a 5 character long hexadecimal string generated from
-/// [Object.hashCode]'s 20 least-significant bits.
-String shortHash(Object? object) {
-  return "#${object.hashCode.toUnsigned(20).toRadixString(16).padLeft(5, '0')}";
 }

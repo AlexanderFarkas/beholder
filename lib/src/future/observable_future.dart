@@ -1,17 +1,17 @@
-part of '../core.dart';
+part of future;
 
-class ObservableFuture<T> extends ObservableObserver<AsyncValue<T>>
+class ObservableFuture<T> extends DelegatedObservableObserver<AsyncValue<T>>
     implements WritableObservable<AsyncValue<T>> {
-  ObservableFuture._(
+  ObservableFuture(
     this._compute, {
     AsyncValue<T>? initial,
     Duration? debounceTime,
     Duration? throttleTime,
     Equals<T>? equals,
-  })  : _value = initial ?? const Loading(),
+  })  : _initial = initial,
+        _equals = equals,
         _debounceTime = debounceTime ?? Duration.zero,
         _throttleTime = throttleTime ?? Duration.zero,
-        _equals = equals ?? Observable.defaultEquals,
         assert(debounceTime == null || throttleTime == null) {
     _executeFuture();
   }
@@ -24,13 +24,10 @@ class ObservableFuture<T> extends ObservableObserver<AsyncValue<T>>
   }
 
   @override
-  AsyncValue<T> get value => _value;
-
-  @override
   set value(AsyncValue<T> value) {
     _cancelThrottle();
     _cancelDebounce();
-    _setValue(value);
+    stateDelegate.value = value;
   }
 
   @override
@@ -74,30 +71,27 @@ class ObservableFuture<T> extends ObservableObserver<AsyncValue<T>>
     _current = future;
     final value = await Result.guard(() => future);
     if (_current == future) {
-      _setValue(value);
+      stateDelegate.value = value;
     }
   }
 
-  bool _setLoading() => _setValue(
-        Loading(
-          previousResult: switch (_value) {
-            Result() && var result => result,
-            Loading(previousResult: var result) => result,
-          },
-        ),
+  bool _setLoading() {
+    return stateDelegate.setValue(
+      Loading(
+        previousResult: switch (stateDelegate.value) {
+          Result() && var result => result,
+          Loading(previousResult: var result) => result,
+        },
+      ),
+    );
+  }
+
+  @override
+  ObservableState<AsyncValue<T>> createStateDelegate() => ObservableState(
+        _initial ?? const Loading(),
+        equals: (previous, next) =>
+            previous._equals(next, equals: _equals ?? Observable.defaultEquals),
       );
-
-  bool _setValue(AsyncValue<T> value) {
-    final oldValue = _value;
-    _value = value;
-
-    if (!oldValue._equals(_value, equals: _equals)) {
-      NotificationScope.markNeedsUpdate(this);
-      return true;
-    }
-
-    return false;
-  }
 
   void _cancelThrottle() {
     _throttleTimer?.cancel();
@@ -112,9 +106,8 @@ class ObservableFuture<T> extends ObservableObserver<AsyncValue<T>>
   final Future<T> Function(Watch watch) _compute;
   final Duration _debounceTime;
   final Duration _throttleTime;
-  final Equals<T> _equals;
-
-  AsyncValue<T> _value;
+  final AsyncValue<T>? _initial;
+  final Equals<T>? _equals;
   Timer? _debounceTimer;
   Timer? _throttleTimer;
   Future<T>? _current;

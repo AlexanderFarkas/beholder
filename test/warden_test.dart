@@ -6,7 +6,7 @@ void main() {
   test('observable', () {
     final counter = ObservableState(0);
     var timesObserverIsCalled = 0;
-    counter.addObserver(InlineObserver(() {
+    counter.addObserver(ListenObserver(() {
       timesObserverIsCalled++;
     }));
 
@@ -25,7 +25,7 @@ void main() {
     final computed = ObservableComputed((watch) => watch(counter) + watch(counter2));
 
     var timesObserverIsCalled = 0;
-    computed.addObserver(InlineObserver(() {
+    computed.addObserver(ListenObserver(() {
       timesObserverIsCalled++;
     }));
 
@@ -40,7 +40,7 @@ void main() {
     counter.value = 1;
     counter2.value = 200;
     expect(computed.value, 201);
-    expect(timesObserverIsCalled, 4);
+    expect(timesObserverIsCalled, 3);
   });
 
   test("deeply nested computed called once", () {
@@ -56,7 +56,7 @@ void main() {
     }
 
     var timesObserverIsCalled = 0;
-    previousComputed.addObserver(InlineObserver(() {
+    previousComputed.addObserver(ListenObserver(() {
       timesObserverIsCalled++;
     }));
 
@@ -69,7 +69,7 @@ void main() {
   test("observable respects equals", () {
     final counter = ObservableState(0, equals: (a, b) => a == b);
     var timesObserverIsCalled = 0;
-    counter.addObserver(InlineObserver(() {
+    counter.addObserver(ListenObserver(() {
       timesObserverIsCalled++;
     }));
 
@@ -85,7 +85,7 @@ void main() {
     final computed = ObservableComputed((watch) => watch(counter), equals: (a, b) => a == b);
 
     var timesObserverIsCalled = 0;
-    computed.addObserver(InlineObserver(() {
+    computed.addObserver(ListenObserver(() {
       timesObserverIsCalled++;
     }));
 
@@ -99,10 +99,10 @@ void main() {
   test("several observers", () {
     final counter = ObservableState(0);
     var timesObserverIsCalled = 0;
-    counter.addObserver(InlineObserver(() {
+    counter.addObserver(ListenObserver(() {
       timesObserverIsCalled++;
     }));
-    counter.addObserver(InlineObserver(() {
+    counter.addObserver(ListenObserver(() {
       timesObserverIsCalled++;
     }));
 
@@ -162,10 +162,8 @@ void main() {
     final (rebuildCounter: rebuildCounter2, computed: computed2) =
         createComputed((watch) => watch(counter) * watch(counter2));
 
-    scopedUpdate(() {
-      counter2.value = 300;
-      counter.value = 30;
-    });
+    counter2.value = 300;
+    counter.value = 30;
     expect(rebuildCounter2.value, 2);
   });
 
@@ -176,6 +174,51 @@ void main() {
     counter.dispose();
     counter.value = 20;
     expect(computed.value, 100);
+  });
+
+  test("", () {
+    final username = ObservableState("");
+    final usernameError =
+        ObservableComputed((watch) => watch(username).length < 8 ? "Min 8" : null);
+    final hasError = ObservableComputed((watch) => watch(usernameError) != null && false);
+
+    final errorIfHasError = ObservableComputed((watch) {
+      watch(hasError);
+      final error = watch(usernameError);
+      return error;
+    });
+    expect(errorIfHasError.value, "Min 8");
+    username.value = List.generate(8, (index) => "a").join();
+    expect(errorIfHasError.value, null);
+  });
+
+  test("description", () {
+    final internalError = ObservableState<String?>(null);
+    final value = ObservableState("");
+    value.listen(phase: ScopePhase.markNeedsUpdate, (value) {
+      internalError.value = null;
+    });
+    final error = ObservableComputed((watch) {
+      if (watch(internalError) case var internalError?) {
+        return internalError;
+      }
+      return watch(value).length < 8 ? "Min 8" : null;
+    });
+
+    var errorInConsumer = error.value;
+    error.listen((value) {
+      errorInConsumer = value;
+    });
+
+    expect(errorInConsumer, "Min 8");
+    value.value = List.generate(8, (index) => "a").join();
+    expect(errorInConsumer, null);
+    internalError.value = "Internal error";
+    expect(errorInConsumer, "Internal error");
+    value.value = List.generate(7, (index) => "a").join();
+    expect(errorInConsumer, "Min 8");
+    value.value = List.generate(8, (index) => "a").join();
+    expect(errorInConsumer, null);
   });
 }
 

@@ -1,11 +1,17 @@
-part of 'core.dart';
+import 'dart:developer' as developer;
+import 'package:flutter/foundation.dart';
+import 'package:meta/meta.dart';
 
-log(String message) {
+import 'core.dart';
+
+@internal
+debugLog(String message) {
   if (Observable.debugEnabled) {
     developer.log(message);
   }
 }
 
+@internal
 class Lazy<T> {
   final T Function() builder;
   final void Function(T)? _dispose;
@@ -26,5 +32,19 @@ class Lazy<T> {
     if (_dispose case var dispose? when isInitialized) {
       dispose(_value);
     }
+  }
+}
+
+@internal
+mixin DebugReprMixin {
+  String? debugLabel;
+
+  @override
+  String toString() {
+    if (Observable.debugEnabled) {
+      return "${debugLabel ?? runtimeType}#${hashCode.toUnsigned(20).toRadixString(16).padLeft(5, '0')}";
+    }
+
+    return super.toString();
   }
 }

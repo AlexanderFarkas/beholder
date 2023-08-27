@@ -1,9 +1,7 @@
-import 'package:flutter/widgets.dart';
-
-import 'form_mixin.dart';
+part of form;
 
 class FieldFocusScope extends StatelessWidget {
-  final Field field;
+  final ObservableField field;
   final Widget child;
 
   const FieldFocusScope({super.key, required this.field, required this.child});
@@ -13,7 +11,7 @@ class FieldFocusScope extends StatelessWidget {
     return Focus(
       canRequestFocus: false,
       onFocusChange: (hasFocus) {
-        field.fieldState.hasFocus.value = hasFocus;
+        field._fieldState.hasFocus.value = hasFocus;
       },
       child: child,
     );

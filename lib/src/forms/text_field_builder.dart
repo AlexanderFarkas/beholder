@@ -1,7 +1,4 @@
-import 'package:flutter/widgets.dart';
-import 'package:login/field_focus_scope.dart';
-import 'package:warden/warden.dart';
-import 'form_mixin.dart';
+part of form;
 
 class TextFieldBuilder extends StatefulWidget {
   const TextFieldBuilder({
@@ -11,7 +8,7 @@ class TextFieldBuilder extends StatefulWidget {
     required this.builder,
   });
 
-  final Field<String> field;
+  final ObservableField<String> field;
   final TextEditingController? controller;
   final Widget Function(BuildContext context, TextEditingController controller) builder;
 

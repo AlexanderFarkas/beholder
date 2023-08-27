@@ -1,4 +1,4 @@
-part of 'core.dart';
+part of future;
 
 sealed class AsyncValue<T> {
   const AsyncValue();
