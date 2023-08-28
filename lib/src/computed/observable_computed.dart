@@ -1,5 +1,6 @@
 part of '../computed.dart';
-class ObservableComputed<T> extends DelegatedObservableObserver<T> {
+
+class ObservableComputed<T> extends ObservableObserver<T> {
   ObservableComputed(this._compute, {Equals<T>? equals});
 
   @override
@@ -8,8 +9,10 @@ class ObservableComputed<T> extends DelegatedObservableObserver<T> {
   }
 
   @override
-  bool performUpdate() {
-    return stateDelegate.setValue(_compute(observe));
+  bool rebuild() {
+    final value = _compute(observe);
+    debugLog("Rebuilt $this with $value");
+    return stateDelegate.setValue(value);
   }
 
   final T Function(Watch watch) _compute;

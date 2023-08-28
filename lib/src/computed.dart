@@ -1,5 +1,7 @@
 library computed;
 
+import 'package:warden/src/utils.dart';
+
 import 'core.dart';
 import 'typedefs.dart';
 

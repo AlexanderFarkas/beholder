@@ -1,5 +1,4 @@
 import 'dart:developer' as developer;
-import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
 
 import 'core.dart';

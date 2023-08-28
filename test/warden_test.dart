@@ -3,7 +3,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:warden/warden.dart';
 
 void main() {
-  test('observable', () {
+  setUp(() {
+    ObservableScope.reset();
+  });
+
+  test('observable', () async {
     final counter = ObservableState(0);
     var timesObserverIsCalled = 0;
     counter.addObserver(ListenObserver(() {
@@ -12,14 +16,17 @@ void main() {
 
     counter.value = 1;
     expect(counter.value, 1);
+    await ObservableScope.waitForUpdate();
     expect(timesObserverIsCalled, 1);
 
     counter.update((previous) => previous + 1);
     expect(counter.value, 2);
+    await ObservableScope.waitForUpdate();
     expect(timesObserverIsCalled, 2);
   });
 
-  test('computed', () {
+  test('computed', () async {
+    Observable.debugEnabled = true;
     final counter = ObservableState(0);
     final counter2 = ObservableState(100);
     final computed = ObservableComputed((watch) => watch(counter) + watch(counter2));
@@ -31,19 +38,22 @@ void main() {
 
     counter.value = 1;
     expect(counter.value, 1);
+    await ObservableScope.waitForUpdate();
     expect(timesObserverIsCalled, 1);
 
     counter.update((previous) => previous + 1);
     expect(counter.value, 2);
+    await ObservableScope.waitForUpdate();
     expect(timesObserverIsCalled, 2);
 
     counter.value = 1;
     counter2.value = 200;
     expect(computed.value, 201);
+    await ObservableScope.waitForUpdate();
     expect(timesObserverIsCalled, 3);
   });
 
-  test("deeply nested computed called once", () {
+  test("deeply nested computed called once", () async {
     final counter = ObservableState(0);
     late ObservableComputed previousComputed;
     for (int i = 0; i < 100; i++) {
@@ -61,12 +71,14 @@ void main() {
     }));
 
     counter.value = 4;
+    await ObservableScope.waitForUpdate();
     expect(timesObserverIsCalled, 1);
     counter.value = 12;
+    await ObservableScope.waitForUpdate();
     expect(timesObserverIsCalled, 2);
   });
 
-  test("observable respects equals", () {
+  test("observable respects equals", () async {
     final counter = ObservableState(0, equals: (a, b) => a == b);
     var timesObserverIsCalled = 0;
     counter.addObserver(ListenObserver(() {
@@ -74,13 +86,15 @@ void main() {
     }));
 
     counter.value = 2;
+    await ObservableScope.waitForUpdate();
     expect(timesObserverIsCalled, 1);
 
     counter.value = 2;
+    await ObservableScope.waitForUpdate();
     expect(timesObserverIsCalled, 1);
   });
 
-  test("computed respects equals", () {
+  test("computed respects equals", () async {
     final counter = ObservableState(0, equals: (a, b) => a == b);
     final computed = ObservableComputed((watch) => watch(counter), equals: (a, b) => a == b);
 
@@ -90,13 +104,15 @@ void main() {
     }));
 
     counter.value = 2;
+    await ObservableScope.waitForUpdate();
     expect(timesObserverIsCalled, 1);
 
     counter.value = 2;
+    await ObservableScope.waitForUpdate();
     expect(timesObserverIsCalled, 1);
   });
 
-  test("several observers", () {
+  test("several observers", () async {
     final counter = ObservableState(0);
     var timesObserverIsCalled = 0;
     counter.addObserver(ListenObserver(() {
@@ -107,13 +123,15 @@ void main() {
     }));
 
     counter.value = 2;
+    await ObservableScope.waitForUpdate();
     expect(timesObserverIsCalled, 2);
 
     counter.value = 3;
+    await ObservableScope.waitForUpdate();
     expect(timesObserverIsCalled, 4);
   });
 
-  test("deeply nested observables", () {
+  test("deeply nested observables", () async {
     Observable.debugEnabled = true;
     final counter = ObservableState(0);
     final counter2 = ObservableState(100);
@@ -132,23 +150,27 @@ void main() {
       return counterValue == 0 ? 0 : (doubled * tripled / counterValue);
     });
 
-    expect([rebuildCounter2.value, rebuildCounter3.value, rebuildCounter6.value], [1, 1, 1]);
+    await ObservableScope.waitForUpdate();
     expect([doubledCounter.value, tripledCounter.value, counterMultipliedBy6.value], [0, 0, 0]);
+    expect([rebuildCounter2.value, rebuildCounter3.value, rebuildCounter6.value], [1, 1, 1]);
 
-    counter.value++;
-    expect([rebuildCounter2.value, rebuildCounter3.value, rebuildCounter6.value], [2, 2, 2]);
+    counter.value = 1;
+    await ObservableScope.waitForUpdate();
     expect([doubledCounter.value, tripledCounter.value, counterMultipliedBy6.value], [2, 3, 6]);
+    expect([rebuildCounter2.value, rebuildCounter3.value, rebuildCounter6.value], [2, 2, 2]);
 
     counter.value = 10;
-    expect([rebuildCounter2.value, rebuildCounter3.value, rebuildCounter6.value], [3, 3, 3]);
+    await ObservableScope.waitForUpdate();
     expect([doubledCounter.value, tripledCounter.value, counterMultipliedBy6.value], [20, 30, 60]);
+    expect([rebuildCounter2.value, rebuildCounter3.value, rebuildCounter6.value], [3, 3, 3]);
 
     counter2.value = 200;
-    expect([rebuildCounter2.value, rebuildCounter3.value, rebuildCounter6.value], [3, 3, 4]);
+    await ObservableScope.waitForUpdate();
     expect([doubledCounter.value, tripledCounter.value, counterMultipliedBy6.value], [20, 30, 60]);
+    expect([rebuildCounter2.value, rebuildCounter3.value, rebuildCounter6.value], [3, 3, 4]);
   });
 
-  test("Scoped update", () {
+  test("Scoped update", () async {
     final counter = ObservableState(10);
     final counter2 = ObservableState(100);
 
@@ -157,13 +179,17 @@ void main() {
 
     counter2.value = 200;
     counter.value = 20;
-    expect(rebuildCounter.value, 3);
+    await ObservableScope.waitForUpdate();
+    expect(computed.value, 4000);
+    expect(rebuildCounter.value, 2);
 
     final (rebuildCounter: rebuildCounter2, computed: computed2) =
         createComputed((watch) => watch(counter) * watch(counter2));
 
     counter2.value = 300;
     counter.value = 30;
+    await ObservableScope.waitForUpdate();
+    expect(computed2.value, 9000);
     expect(rebuildCounter2.value, 2);
   });
 
@@ -176,23 +202,26 @@ void main() {
     expect(computed.value, 100);
   });
 
-  test("", () {
-    final username = ObservableState("");
-    final usernameError =
-        ObservableComputed((watch) => watch(username).length < 8 ? "Min 8" : null);
-    final hasError = ObservableComputed((watch) => watch(usernameError) != null && false);
+  group("namegroup", () {
+    test("name", () {
+      final username = ObservableState("");
+      final usernameError =
+          ObservableComputed((watch) => watch(username).length < 8 ? "Min 8" : null);
+      final hasError = ObservableComputed((watch) => watch(usernameError) != null && false);
 
-    final errorIfHasError = ObservableComputed((watch) {
-      watch(hasError);
-      final error = watch(usernameError);
-      return error;
+      final errorIfHasError = ObservableComputed((watch) {
+        watch(hasError);
+        final error = watch(usernameError);
+        return error;
+      });
+      expect(errorIfHasError.value, "Min 8");
+      username.value = List.generate(8, (index) => "a").join();
+      expect(errorIfHasError.value, null);
     });
-    expect(errorIfHasError.value, "Min 8");
-    username.value = List.generate(8, (index) => "a").join();
-    expect(errorIfHasError.value, null);
   });
 
-  test("description", () {
+  test("description", () async {
+    Observable.debugEnabled = true;
     final internalError = ObservableState<String?>(null);
     final value = ObservableState("");
     value.listen(phase: ScopePhase.markNeedsUpdate, (value) {
@@ -212,12 +241,16 @@ void main() {
 
     expect(errorInConsumer, "Min 8");
     value.value = List.generate(8, (index) => "a").join();
+    await ObservableScope.waitForUpdate();
     expect(errorInConsumer, null);
     internalError.value = "Internal error";
+    await ObservableScope.waitForUpdate();
     expect(errorInConsumer, "Internal error");
     value.value = List.generate(7, (index) => "a").join();
+    await ObservableScope.waitForUpdate();
     expect(errorInConsumer, "Min 8");
     value.value = List.generate(8, (index) => "a").join();
+    await ObservableScope.waitForUpdate();
     expect(errorInConsumer, null);
   });
 }
@@ -225,12 +258,13 @@ void main() {
 ({RebuildCounter rebuildCounter, ObservableComputed<T> computed}) createComputed<T>(
     T Function(Watch watch) compute) {
   final rebuildCounter = RebuildCounter();
+  final computed = ObservableComputed<T>((watch) {
+    rebuildCounter.increase();
+    return compute(watch);
+  });
   return (
     rebuildCounter: rebuildCounter,
-    computed: ObservableComputed<T>((watch) {
-      rebuildCounter.increase();
-      return compute(watch);
-    })
+    computed: computed,
   );
 }
 

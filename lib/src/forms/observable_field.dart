@@ -2,18 +2,15 @@ part of form;
 
 typedef ComputeError<T> = String? Function(Watch watch, FieldState<T> state);
 
-class ObservableField<T> extends ViewModel implements WritableObservable<T> {
+class ObservableField<T> extends ViewModel with WritableObservableMixin<T> {
   ObservableField(
     T value, {
     required ComputeError<T> computeError,
   }) : _computeError = computeError {
     _fieldState = FieldState(value);
     _fieldState.value.listen(
+      (value) => this._innerError.value = null,
       phase: ScopePhase.markNeedsUpdate,
-      (value) {
-        print("set inner error to null");
-        this._innerError.value = null;
-      },
     );
     disposers.add(_fieldState.dispose);
   }
@@ -30,10 +27,7 @@ class ObservableField<T> extends ViewModel implements WritableObservable<T> {
         _fieldState,
       );
     },
-    set: (value) {
-      print("old: ${_innerError.value}, new: $value");
-      _innerError.value = value;
-    },
+    set: (value) => _innerError.value = value,
   );
 
   late final FieldState<T> _fieldState;
@@ -59,27 +53,30 @@ class ObservableField<T> extends ViewModel implements WritableObservable<T> {
   T get value => _fieldState.value.value;
 
   @override
-  set value(T value) => _fieldState.value.value = value;
+  bool setValue(T value) => _fieldState.value.setValue(value);
 }
 
 class FieldState<T> extends ViewModel {
   FieldState(T initialValue) {
     value = state(initialValue);
     value.listen(
-      phase: ScopePhase.markNeedsUpdate,
       (value) {
         _wasSet.value = true;
         if (hasFocus.value) {
           _wasSetAfterFocus.value = true;
         }
       },
+      phase: ScopePhase.markNeedsUpdate,
     );
-    hasFocus.listen(phase: ScopePhase.markNeedsUpdate, (isFocused) {
-      _wasSetAfterFocus.value = false;
-      if (!isFocused) {
-        _wasEverUnfocused.value = true;
-      }
-    });
+    hasFocus.listen(
+      (isFocused) {
+        _wasSetAfterFocus.value = false;
+        if (!isFocused) {
+          _wasEverUnfocused.value = true;
+        }
+      },
+      phase: ScopePhase.markNeedsUpdate,
+    );
   }
 
   late final ObservableState<T> value;

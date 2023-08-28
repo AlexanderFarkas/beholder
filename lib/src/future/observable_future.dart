@@ -1,7 +1,7 @@
 part of future;
 
-class ObservableFuture<T> extends DelegatedObservableObserver<AsyncValue<T>>
-    implements WritableObservable<AsyncValue<T>> {
+class ObservableFuture<T> extends ObservableObserver<AsyncValue<T>>
+    with WritableObservableMixin<AsyncValue<T>> {
   ObservableFuture(
     this._compute, {
     AsyncValue<T>? initial,
@@ -24,10 +24,10 @@ class ObservableFuture<T> extends DelegatedObservableObserver<AsyncValue<T>>
   }
 
   @override
-  set value(AsyncValue<T> value) {
+  bool setValue(AsyncValue<T> value) {
     _cancelThrottle();
     _cancelDebounce();
-    stateDelegate.value = value;
+    return stateDelegate.setValue(value);
   }
 
   @override
@@ -39,7 +39,7 @@ class ObservableFuture<T> extends DelegatedObservableObserver<AsyncValue<T>>
 
   @override
   @protected
-  bool performUpdate() {
+  bool rebuild() {
     final throttleTimer = _throttleTimer;
     if (throttleTimer != null && throttleTimer.isActive) {
       return false;

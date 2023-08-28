@@ -17,3 +17,13 @@ abstract interface class Observable<T> {
 abstract interface class WritableObservable<T> implements Observable<T> {
   set value(T value);
 }
+
+mixin WritableObservableMixin<T> implements WritableObservable<T> {
+  bool setValue(T value);
+  void update(T Function(T current) updater) {
+    value = updater(this.value);
+  }
+
+  @override
+  set value(T value) => setValue(value);
+}
