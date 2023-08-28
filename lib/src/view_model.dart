@@ -42,7 +42,7 @@ class ViewModel {
 
   @protected
   ObservableFuture<T> future<T>(
-    Future<T> Function(Watch watch) compute, {
+    Future<T> Function() Function(Watch watch) compute, {
     AsyncValue<T>? initial,
     Duration? debounceTime,
     Duration? throttleTime,

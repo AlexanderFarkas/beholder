@@ -5,10 +5,12 @@ class HomeScreenVm extends ViewModel {
   final githubApi = GithubApi();
 
   late final items = future(
-    (watch) async {
-      final searchValue = watch(search);
-      if (searchValue.isEmpty) return const SearchResult(items: []);
-      return githubApi.searchRepositories(searchValue);
+    (watch) {
+      final search = watch(this.search);
+      return () async {
+        if (search.isEmpty) return const SearchResult(items: []);
+        return githubApi.searchRepositories(search);
+      };
     },
     initial: const Success(SearchResult(items: [])),
     debounceTime: const Duration(milliseconds: 500),

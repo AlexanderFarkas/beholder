@@ -13,14 +13,14 @@ class ObservableFuture<T> extends ObservableObserver<AsyncValue<T>>
         _debounceTime = debounceTime ?? Duration.zero,
         _throttleTime = throttleTime ?? Duration.zero,
         assert(debounceTime == null || throttleTime == null) {
-    _executeFuture();
+    _startFuture(_compute(observe));
   }
 
   Future<void> refresh() {
     _cancelThrottle();
     _cancelDebounce();
     _setLoading();
-    return _executeFuture();
+    return _startFuture(_compute(observe));
   }
 
   @override
@@ -39,35 +39,39 @@ class ObservableFuture<T> extends ObservableObserver<AsyncValue<T>>
 
   @override
   @protected
-  bool rebuild() {
-    final throttleTimer = _throttleTimer;
-    if (throttleTimer != null && throttleTimer.isActive) {
-      return false;
-    } else if (_throttleTime != Duration.zero) {
-      _cancelThrottle();
-      _throttleTimer = Timer(
-        _throttleTime,
-        () => _throttleTimer = null,
-      );
-    }
+  bool Function() performRebuild() {
+    final execute = _compute(observe);
 
-    final isUpdated = _setLoading();
+    return () {
+      final throttleTimer = _throttleTimer;
+      if (throttleTimer != null && throttleTimer.isActive) {
+        return false;
+      } else if (_throttleTime != Duration.zero) {
+        _cancelThrottle();
+        _throttleTimer = Timer(
+          _throttleTime,
+          () => _throttleTimer = null,
+        );
+      }
 
-    if (_debounceTime != Duration.zero) {
-      _cancelDebounce();
-      _debounceTimer = Timer(_debounceTime, () {
-        _debounceTimer = null;
-        _executeFuture();
-      });
-    } else {
-      _executeFuture();
-    }
+      final isUpdated = _setLoading();
 
-    return isUpdated;
+      if (_debounceTime != Duration.zero) {
+        _cancelDebounce();
+        _debounceTimer = Timer(_debounceTime, () {
+          _debounceTimer = null;
+          _startFuture(execute);
+        });
+      } else {
+        _startFuture(execute);
+      }
+
+      return isUpdated;
+    };
   }
 
-  Future<void> _executeFuture() async {
-    final future = _compute(observe);
+  Future<void> _startFuture(Future<T> Function() execute) async {
+    final future = execute();
     _current = future;
     final value = await Result.guard(() => future);
     if (_current == future) {
@@ -103,7 +107,7 @@ class ObservableFuture<T> extends ObservableObserver<AsyncValue<T>>
     _debounceTimer = null;
   }
 
-  final Future<T> Function(Watch watch) _compute;
+  final Future<T> Function() Function(Watch watch) _compute;
   final Duration _debounceTime;
   final Duration _throttleTime;
   final AsyncValue<T>? _initial;

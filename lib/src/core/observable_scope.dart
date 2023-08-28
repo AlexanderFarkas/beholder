@@ -56,7 +56,7 @@ class ObservableScope {
     if (_isScheduled) return;
     _isScheduled = true;
 
-    Future.microtask(_updateObservers);
+    Future(_updateObservers);
   }
 
   void _updateObservers() {
@@ -72,11 +72,16 @@ class ObservableScope {
   }
 
   void updateObserver(ObserverMixin observer) {
-    _updateObserver(observer);
+    final clearCacheFor = <ObserverMixin>{};
+    _updateObserver(observer, (o) => clearCacheFor.add(o));
+    for (final clear in clearCacheFor) {
+      _updateObserverCache.remove(clear);
+    }
   }
 
   final _updateObserverCache = <ObserverMixin, bool?>{};
-  bool? _updateObserver(ObserverMixin observer) {
+  bool? _updateObserver(ObserverMixin observer,
+      [void Function(ObserverMixin observer)? onVisited]) {
     if (_updateObserverCache.containsKey(observer)) {
       return _updateObserverCache[observer];
     } else if (!_invalidatedObservers.contains(observer)) {
@@ -91,7 +96,7 @@ class ObservableScope {
 
       final observer = observable.delegatedByObserver;
       if (observer != null) {
-        final isRebuilt = _updateObserver(observer);
+        final isRebuilt = _updateObserver(observer, onVisited);
         if (isRebuilt == true) {
           isAnyUpdated = true;
         } else {
@@ -102,9 +107,23 @@ class ObservableScope {
       }
     }
 
-    final isRebuilt = isAnyUpdated != false ? observer.rebuild() : false;
+    final bool isRebuilt;
+    if (isAnyUpdated != false) {
+      final (isRebuiltFn, isNewObservableAdded) = observer.rebuild();
+      if (isNewObservableAdded) {
+        return _updateObserver(observer);
+      }
+      isRebuilt = isRebuiltFn();
+    } else {
+      isRebuilt = false;
+    }
     _invalidatedObservers.remove(observer);
     _updateObserverCache[observer] = isRebuilt;
+    onVisited?.call(observer);
+    assert(() {
+      debugLog("$observer notified. Rebuilt: $isRebuilt");
+      return true;
+    }());
     return isRebuilt;
   }
 }

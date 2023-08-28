@@ -252,6 +252,43 @@ void main() {
     value.value = List.generate(8, (index) => "a").join();
     await ObservableScope.waitForUpdate();
     expect(errorInConsumer, null);
+
+    value.value = List.generate(7, (index) => "a").join();
+    await ObservableScope.waitForUpdate();
+
+    internalError.value = "Internal error";
+    value.value = List.generate(8, (index) => "a").join();
+    await ObservableScope.waitForUpdate();
+    expect(errorInConsumer, null);
+  });
+
+  test("dsds", () async {
+    Observable.debugEnabled = true;
+    final internalError = ObservableState<String?>("internal");
+    final value = ObservableState("");
+    value.listen(phase: ScopePhase.markNeedsUpdate, (value) {
+      internalError.value = null;
+    });
+    final error = ObservableComputed((watch) {
+      print("rebuild_int: ${watch(internalError)}");
+      if (watch(internalError) case var internalError?) {
+        return internalError;
+      }
+      final result = watch(value).length < 8 ? "Min 8" : null;
+      print("rebuild_res: $result");
+      return result;
+    });
+
+    var errorInConsumer = error.value;
+    error.listen((value) {
+      print("observer: $value");
+      errorInConsumer = value;
+    });
+
+    internalError.value = "Internal error";
+    value.value = List.generate(7, (index) => "a").join();
+    await ObservableScope.waitForUpdate();
+    expect(errorInConsumer, "Min 8");
   });
 }
 

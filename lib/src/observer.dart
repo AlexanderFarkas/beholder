@@ -23,8 +23,10 @@ class _ObserverState extends State<Observer> with ObserverMixin {
   }
 
   @override
-  bool rebuild() {
-    setState(() {});
-    return true;
+  bool Function() performRebuild() {
+    return () {
+      setState(() {});
+      return true;
+    };
   }
 }

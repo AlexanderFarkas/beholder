@@ -9,10 +9,9 @@ class ObservableComputed<T> extends ObservableObserver<T> {
   }
 
   @override
-  bool rebuild() {
+  bool Function() performRebuild() {
     final value = _compute(observe);
-    debugLog("Rebuilt $this with $value");
-    return stateDelegate.setValue(value);
+    return () => stateDelegate.setValue(value);
   }
 
   final T Function(Watch watch) _compute;

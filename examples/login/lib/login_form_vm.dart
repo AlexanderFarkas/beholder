@@ -25,7 +25,7 @@ class LoginFormVm extends ViewModel with FormMixin {
   );
 
   late final wasEverSubmitted = state(false);
-  void submit() {
+  void submit() async {
     wasEverSubmitted.value = true;
     if (isValid.value) {
       username.error.value = "Username is already taken";

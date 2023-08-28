@@ -72,7 +72,7 @@ class ObservableState<T> with DebugReprMixin, WritableObservableMixin<T> {
       }
       return true;
     }());
-    observer.observables.add(this);
+    observer.onAddedToState(this);
     _observers.add(observer);
   }
 
