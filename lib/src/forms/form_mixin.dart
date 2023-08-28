@@ -1,8 +1,8 @@
 part of form;
 
 mixin FormMixin on ViewModel {
-  ObservableField<T> field<T>(
-    T initialValue, {
+  ObservableField<T> field<T>({
+    required T initialValue,
     ComputeError<T>? computeError,
     String? Function(T value)? validate,
   }) {

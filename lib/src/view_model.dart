@@ -42,15 +42,15 @@ class ViewModel {
 
   @protected
   ObservableFuture<T> future<T>(
-    Future<T> Function() Function(Watch watch) compute, {
-    AsyncValue<T>? initial,
+    Future<T> Function() Function(Watch watch) build, {
+    AsyncValue<T>? initialValue,
     Duration? debounceTime,
     Duration? throttleTime,
     Equals<T>? equals,
   }) {
     final future = ObservableFuture<T>(
-      compute,
-      initial: initial,
+      build,
+      initialValue: initialValue,
       debounceTime: debounceTime,
       throttleTime: throttleTime,
       equals: equals,

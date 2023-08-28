@@ -13,7 +13,7 @@ class Observer extends StatefulWidget {
 class _ObserverState extends State<Observer> with ObserverMixin {
   @override
   Widget build(BuildContext context) {
-    return widget.builder(context, observe);
+    return observe((watch) => widget.builder(context, watch));
   }
 
   @override

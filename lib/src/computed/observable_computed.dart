@@ -5,12 +5,12 @@ class ObservableComputed<T> extends ObservableObserver<T> {
 
   @override
   ObservableState<T> createStateDelegate() {
-    return ObservableState(_compute(observe));
+    return ObservableState(observe(_compute));
   }
 
   @override
   bool Function() performRebuild() {
-    final value = _compute(observe);
+    final value = observe(_compute);
     return () => stateDelegate.setValue(value);
   }
 

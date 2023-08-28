@@ -1,7 +1,7 @@
 part of form;
 
-class TextFieldBuilder extends StatefulWidget {
-  const TextFieldBuilder({
+class FieldObserver extends StatefulWidget {
+  const FieldObserver({
     super.key,
     this.controller,
     required this.field,
@@ -10,13 +10,14 @@ class TextFieldBuilder extends StatefulWidget {
 
   final ObservableField<String> field;
   final TextEditingController? controller;
-  final Widget Function(BuildContext context, TextEditingController controller) builder;
+  final Widget Function(BuildContext context, Watch watch, TextEditingController controller)
+      builder;
 
   @override
-  State<TextFieldBuilder> createState() => _TextFieldBuilderState();
+  State<FieldObserver> createState() => _FieldObserverState();
 }
 
-class _TextFieldBuilderState extends State<TextFieldBuilder> {
+class _FieldObserverState extends State<FieldObserver> {
   TextEditingController? controller;
   Dispose? removeFieldListener;
   @override
@@ -43,7 +44,9 @@ class _TextFieldBuilderState extends State<TextFieldBuilder> {
   Widget build(BuildContext context) {
     return FieldFocusScope(
       field: widget.field,
-      child: widget.builder(context, controller!),
+      child: Observer(
+        builder: (context, watch) => widget.builder(context, watch, controller!),
+      ),
     );
   }
 

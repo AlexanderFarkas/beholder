@@ -3,8 +3,8 @@ part of '../core.dart';
 typedef ValueChanged<T> = void Function(T value);
 
 class ObservableState<T> with DebugReprMixin, WritableObservableMixin<T> {
-  ObservableState(T value, {Equals<T>? equals})
-      : _value = value,
+  ObservableState(T initialValue, {Equals<T>? equals})
+      : _value = initialValue,
         _equals = equals ?? Observable.defaultEquals;
 
   @override

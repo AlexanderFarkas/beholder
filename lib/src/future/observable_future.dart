@@ -4,23 +4,23 @@ class ObservableFuture<T> extends ObservableObserver<AsyncValue<T>>
     with WritableObservableMixin<AsyncValue<T>> {
   ObservableFuture(
     this._compute, {
-    AsyncValue<T>? initial,
+    AsyncValue<T>? initialValue,
     Duration? debounceTime,
     Duration? throttleTime,
     Equals<T>? equals,
-  })  : _initial = initial,
+  })  : _initialValue = initialValue,
         _equals = equals,
         _debounceTime = debounceTime ?? Duration.zero,
         _throttleTime = throttleTime ?? Duration.zero,
         assert(debounceTime == null || throttleTime == null) {
-    _startFuture(_compute(observe));
+    _startFuture(observe(_compute));
   }
 
   Future<void> refresh() {
     _cancelThrottle();
     _cancelDebounce();
     _setLoading();
-    return _startFuture(_compute(observe));
+    return _startFuture(observe(_compute));
   }
 
   @override
@@ -40,7 +40,7 @@ class ObservableFuture<T> extends ObservableObserver<AsyncValue<T>>
   @override
   @protected
   bool Function() performRebuild() {
-    final execute = _compute(observe);
+    final execute = observe(_compute);
 
     return () {
       final throttleTimer = _throttleTimer;
@@ -92,7 +92,7 @@ class ObservableFuture<T> extends ObservableObserver<AsyncValue<T>>
 
   @override
   ObservableState<AsyncValue<T>> createStateDelegate() => ObservableState(
-        _initial ?? const Loading(),
+        _initialValue ?? const Loading(),
         equals: (previous, next) =>
             previous._equals(next, equals: _equals ?? Observable.defaultEquals),
       );
@@ -110,7 +110,7 @@ class ObservableFuture<T> extends ObservableObserver<AsyncValue<T>>
   final Future<T> Function() Function(Watch watch) _compute;
   final Duration _debounceTime;
   final Duration _throttleTime;
-  final AsyncValue<T>? _initial;
+  final AsyncValue<T>? _initialValue;
   final Equals<T>? _equals;
   Timer? _debounceTimer;
   Timer? _throttleTimer;

@@ -6,8 +6,7 @@ import 'core.dart';
 @internal
 debugLog(String message) {
   if (Observable.debugEnabled) {
-    print(message);
-    // developer.log(message);
+    developer.log(message);
   }
 }
 

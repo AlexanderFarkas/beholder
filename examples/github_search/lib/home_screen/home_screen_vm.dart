@@ -7,12 +7,9 @@ class HomeScreenVm extends ViewModel {
   late final items = future(
     (watch) {
       final search = watch(this.search);
-      return () async {
-        if (search.isEmpty) return const SearchResult(items: []);
-        return githubApi.searchRepositories(search);
-      };
+      return () => githubApi.searchRepositories(search);
     },
-    initial: const Success(SearchResult(items: [])),
+    initialValue: const Success(SearchResult(items: [])),
     debounceTime: const Duration(milliseconds: 500),
   );
 

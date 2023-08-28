@@ -5,6 +5,7 @@ import 'dart:collection';
 import 'package:flutter/widgets.dart';
 
 import 'core.dart';
+import 'observer.dart';
 import 'typedefs.dart';
 import 'view_model.dart';
 
