@@ -39,7 +39,7 @@ class ObservableScope {
   }
 
   final _invalidatedObservers = <ObserverMixin>{};
-  final _observableStates = <ObservableState>{};
+  var _observableStates = <ObservableState>{};
 
   static ObservableScope? _current;
   ObservableScope._();
@@ -62,41 +62,62 @@ class ObservableScope {
   void _updateObservers() {
     final observers = _consumerObservers;
     _consumerObservers = {};
+    final observableStates = _observableStates;
+    final updateObserverCache = _updateObserverCache;
+    _observableStates = {};
+    _updateObserverCache = {};
+    _isScheduled = false;
+
     for (final observer in observers) {
-      _updateObserver(observer);
+      _updateObserver(
+        observer,
+        observableStates: observableStates,
+        updateObserverCache: updateObserverCache,
+      );
       _invalidatedObservers.remove(observer);
     }
-    _observableStates.clear();
-    _updateObserverCache.clear();
-    _isScheduled = false;
   }
 
   void updateObserver(ObserverMixin observer) {
     final clearCacheFor = <ObserverMixin>{};
-    _updateObserver(observer, (o) => clearCacheFor.add(o));
+    _updateObserver(
+      observer,
+      onVisited: (o) => clearCacheFor.add(o),
+      observableStates: _observableStates,
+      updateObserverCache: _updateObserverCache,
+    );
     for (final clear in clearCacheFor) {
       _updateObserverCache.remove(clear);
     }
   }
 
-  final _updateObserverCache = <ObserverMixin, bool?>{};
-  bool? _updateObserver(ObserverMixin observer,
-      [void Function(ObserverMixin observer)? onVisited]) {
-    if (_updateObserverCache.containsKey(observer)) {
-      return _updateObserverCache[observer];
+  var _updateObserverCache = <ObserverMixin, bool?>{};
+  bool? _updateObserver(
+    ObserverMixin observer, {
+    void Function(ObserverMixin observer)? onVisited,
+    required Set<ObservableState> observableStates,
+    required Map<ObserverMixin, bool?> updateObserverCache,
+  }) {
+    if (updateObserverCache.containsKey(observer)) {
+      return updateObserverCache[observer];
     } else if (!_invalidatedObservers.contains(observer)) {
       return null;
     }
 
     bool? isAnyUpdated;
     for (final observable in observer.observables) {
-      if (!_observableStates.contains(observable)) {
+      if (!observableStates.contains(observable)) {
         continue;
       }
 
       final observer = observable.delegatedByObserver;
       if (observer != null) {
-        final isRebuilt = _updateObserver(observer, onVisited);
+        final isRebuilt = _updateObserver(
+          observer,
+          onVisited: onVisited,
+          observableStates: observableStates,
+          updateObserverCache: updateObserverCache,
+        );
         if (isRebuilt == true) {
           isAnyUpdated = true;
         } else {
@@ -111,14 +132,19 @@ class ObservableScope {
     if (isAnyUpdated != false) {
       final (isRebuiltFn, isNewObservableAdded) = observer.rebuild();
       if (isNewObservableAdded) {
-        return _updateObserver(observer);
+        return _updateObserver(
+          observer,
+          onVisited: onVisited,
+          observableStates: observableStates,
+          updateObserverCache: updateObserverCache,
+        );
       }
       isRebuilt = isRebuiltFn();
     } else {
       isRebuilt = false;
     }
     _invalidatedObservers.remove(observer);
-    _updateObserverCache[observer] = isRebuilt;
+    updateObserverCache[observer] = isRebuilt;
     onVisited?.call(observer);
     assert(() {
       debugLog("$observer notified. Rebuilt: $isRebuilt");

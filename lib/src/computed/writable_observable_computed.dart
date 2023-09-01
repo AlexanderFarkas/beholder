@@ -8,6 +8,9 @@ class ObservableWritableComputed<T> extends ObservableComputed<T> implements Wri
 
   @override
   set value(T value) => _set(value);
+  void update(T Function(T current) updater) {
+    value = updater(value);
+  }
 
   final void Function(T value) _set;
 }

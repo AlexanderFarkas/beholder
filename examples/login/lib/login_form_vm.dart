@@ -4,20 +4,19 @@ import 'package:warden/warden.dart';
 
 class LoginFormVm extends ViewModel with FormMixin {
   late final username = field(
-    initialValue: '',
+    value: '',
     validate: (value) => value.length > 8 ? null : 'Username must be at least 8 characters long',
   );
 
   late final password = field(
-    initialValue: '',
+    value: '',
     validate: (value) => value.length > 8 ? null : 'Password must be at least 8 characters long',
   );
 
   late final repeatPassword = field(
-    initialValue: '',
+    value: '',
     computeError: (watch, state) {
-      final password = watch(this.password);
-      if (password != watch(state.value)) {
+      if (watch(password) != watch(state.value)) {
         return 'Passwords do not match';
       }
       return null;

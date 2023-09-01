@@ -2,12 +2,12 @@ part of form;
 
 mixin FormMixin on ViewModel {
   ObservableField<T> field<T>({
-    required T initialValue,
+    required T value,
     ComputeError<T>? computeError,
     String? Function(T value)? validate,
   }) {
     final field = ObservableField(
-      initialValue,
+      value,
       computeError: (watch, state) {
         final String? error;
         if (computeError != null) {

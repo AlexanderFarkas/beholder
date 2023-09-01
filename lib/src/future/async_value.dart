@@ -18,11 +18,29 @@ sealed class AsyncValue<T> {
   }
 
   bool _equals(Object? other, {required Equals<T> equals});
+
+  AsyncValue<K> mapValue<K>(K Function(T value) mapper) {
+    return switch (this) {
+      Success(:var value) => Success(mapper(value)),
+      Loading(:var previousResult?) =>
+        Loading(previousResult: previousResult.mapValue(mapper) as Result<K>),
+      Loading() => const Loading(),
+      Failure(:var error, :var stackTrace) => Failure(error, stackTrace: stackTrace),
+    };
+  }
 }
 
 class Loading<T> extends AsyncValue<T> {
   final Result<T>? previousResult;
   const Loading({this.previousResult});
+  factory Loading.fromPrevious(AsyncValue<T> previous) {
+    return Loading(
+      previousResult: switch (previous) {
+        Result() && var result => result,
+        Loading(previousResult: var result) => result,
+      },
+    );
+  }
 
   @override
   int get hashCode => runtimeType.hashCode ^ Object.hashAll([previousResult]);
@@ -75,7 +93,7 @@ class Success<T> extends Result<T> {
   @override
   bool _equals(Object? other, {required Equals<T> equals}) {
     return identical(this, other) ||
-        (other is Success<T> && runtimeType == other.runtimeType && value == other.value);
+        (other is Success<T> && runtimeType == other.runtimeType && equals(value, other.value));
   }
 
   @override

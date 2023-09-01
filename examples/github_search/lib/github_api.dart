@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 class GithubApi {
   GithubApi({
     this.baseUrl = "https://api.github.com",
-  }) : this.httpClient = http.Client();
+  }) : httpClient = http.Client();
 
   final String baseUrl;
   final http.Client httpClient;
@@ -25,6 +25,7 @@ class GithubApi {
 
 class SearchResult {
   const SearchResult({required this.items});
+  const SearchResult.empty() : items = const [];
 
   final List<GithubRepository> items;
 

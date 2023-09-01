@@ -10,9 +10,9 @@ class ViewModel {
 
   @protected
   ObservableState<T> state<T>(T value, {Equals<T>? equals}) {
-    final observable = ObservableState<T>(value, equals: equals);
-    disposers.add(observable.dispose);
-    return observable;
+    final state = ObservableState<T>(value, equals: equals);
+    disposers.add(state.dispose);
+    return state;
   }
 
   @protected
@@ -31,32 +31,28 @@ class ViewModel {
     required void Function(T value) set,
     Equals<T>? equals,
   }) {
-    final computed = ObservableWritableComputed(
+    final writableComputed = ObservableWritableComputed(
       get: get,
       set: set,
       equals: equals,
     );
-    disposers.add(computed.dispose);
-    return computed;
+    disposers.add(writableComputed.dispose);
+    return writableComputed;
   }
 
   @protected
-  ObservableFuture<T> future<T>(
-    Future<T> Function() Function(Watch watch) build, {
-    AsyncValue<T>? initialValue,
+  ObservableAsyncState<T> asyncState<T>({
+    AsyncValue<T>? value,
     Duration? debounceTime,
     Duration? throttleTime,
-    Equals<T>? equals,
   }) {
-    final future = ObservableFuture<T>(
-      build,
-      initialValue: initialValue,
+    final asyncState = ObservableAsyncState<T>(
+      value: value,
       debounceTime: debounceTime,
       throttleTime: throttleTime,
-      equals: equals,
     );
-    disposers.add(future.dispose);
-    return future;
+    disposers.add(asyncState.dispose);
+    return asyncState;
   }
 
   @mustCallSuper

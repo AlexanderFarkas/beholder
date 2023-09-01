@@ -10,7 +10,7 @@ class ObservableField<T> extends ViewModel with WritableObservableMixin<T> {
     _fieldState = FieldState(value);
     _fieldState.value.listen(
       (value) => this._innerError.value = null,
-      phase: ScopePhase.markNeedsUpdate,
+      eager: true,
     );
     disposers.add(_fieldState.dispose);
   }
@@ -66,7 +66,7 @@ class FieldState<T> extends ViewModel {
           _wasSetAfterFocus.value = true;
         }
       },
-      phase: ScopePhase.markNeedsUpdate,
+      eager: true,
     );
     hasFocus.listen(
       (isFocused) {
@@ -75,7 +75,7 @@ class FieldState<T> extends ViewModel {
           _wasEverUnfocused.value = true;
         }
       },
-      phase: ScopePhase.markNeedsUpdate,
+      eager: true,
     );
   }
 

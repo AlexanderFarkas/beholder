@@ -1,10 +1,11 @@
 part of '../core.dart';
 
 typedef ValueChanged<T> = void Function(T value);
+typedef ValueSetter<T> = T Function(T value);
 
 class ObservableState<T> with DebugReprMixin, WritableObservableMixin<T> {
-  ObservableState(T initialValue, {Equals<T>? equals})
-      : _value = initialValue,
+  ObservableState(T value, {Equals<T>? equals})
+      : _value = value,
         _equals = equals ?? Observable.defaultEquals;
 
   @override
@@ -26,17 +27,17 @@ class ObservableState<T> with DebugReprMixin, WritableObservableMixin<T> {
   }
 
   @override
-  Dispose listen(ValueChanged<T> onChanged, {ScopePhase phase = ScopePhase.notify}) {
+  Dispose listen(ValueChanged<T> onChanged, {bool eager = false}) {
     assert(!_debugDisposed, "$this is already disposed");
 
-    if (phase == ScopePhase.notify) {
-      final observer = ListenObserver(() => onChanged(value));
-      addObserver(observer);
-      return () => removeObserver(observer);
-    } else {
+    if (eager) {
       final isNew = _eagerListeners.add(onChanged);
       assert(isNew, "Listener already added");
       return () => _eagerListeners.remove(onChanged);
+    } else {
+      final observer = ListenObserver(() => onChanged(value));
+      addObserver(observer);
+      return () => removeObserver(observer);
     }
   }
 

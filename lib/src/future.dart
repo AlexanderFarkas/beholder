@@ -10,4 +10,4 @@ import 'core.dart';
 import 'typedefs.dart';
 
 part 'future/async_value.dart';
-part 'future/observable_future.dart';
+part 'future/async_state.dart';

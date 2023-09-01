@@ -2,6 +2,8 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:warden/warden.dart';
 
+import 'utils.dart';
+
 void main() {
   setUp(() {
     ObservableScope.reset();
@@ -224,7 +226,7 @@ void main() {
     Observable.debugEnabled = true;
     final internalError = ObservableState<String?>(null);
     final value = ObservableState("");
-    value.listen(phase: ScopePhase.markNeedsUpdate, (value) {
+    value.listen(eager: true, (value) {
       internalError.value = null;
     });
     final error = ObservableComputed((watch) {
@@ -266,22 +268,19 @@ void main() {
     Observable.debugEnabled = true;
     final internalError = ObservableState<String?>("internal");
     final value = ObservableState("");
-    value.listen(phase: ScopePhase.markNeedsUpdate, (value) {
+    value.listen(eager: true, (value) {
       internalError.value = null;
     });
     final error = ObservableComputed((watch) {
-      print("rebuild_int: ${watch(internalError)}");
       if (watch(internalError) case var internalError?) {
         return internalError;
       }
       final result = watch(value).length < 8 ? "Min 8" : null;
-      print("rebuild_res: $result");
       return result;
     });
 
     var errorInConsumer = error.value;
     error.listen((value) {
-      print("observer: $value");
       errorInConsumer = value;
     });
 
@@ -290,24 +289,27 @@ void main() {
     await ObservableScope.waitForUpdate();
     expect(errorInConsumer, "Min 8");
   });
-}
 
-({RebuildCounter rebuildCounter, ObservableComputed<T> computed}) createComputed<T>(
-    T Function(Watch watch) compute) {
-  final rebuildCounter = RebuildCounter();
-  final computed = ObservableComputed<T>((watch) {
-    rebuildCounter.increase();
-    return compute(watch);
+  test("dsd", () async {
+    final doubledCounter = ObservableState(0);
+    final counter = ObservableState(0)
+      ..listen((value) {
+        doubledCounter.value = value * 2;
+      });
+
+    var doubledCounterInListener = doubledCounter.value;
+    doubledCounter.listen((value) {
+      doubledCounterInListener = value;
+    });
+    counter.value = 2;
+    await ObservableScope.waitForUpdate();
+    await ObservableScope.waitForUpdate();
+    expect(doubledCounterInListener, equals(4));
+    expect(doubledCounter.value, equals(4));
+    counter.value = 0;
+    await ObservableScope.waitForUpdate();
+    await ObservableScope.waitForUpdate();
+    expect(doubledCounterInListener, equals(0));
+    expect(doubledCounter.value, equals(0));
   });
-  return (
-    rebuildCounter: rebuildCounter,
-    computed: computed,
-  );
-}
-
-class RebuildCounter {
-  int value = 0;
-  void increase() {
-    value++;
-  }
 }

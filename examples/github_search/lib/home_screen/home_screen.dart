@@ -30,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextField(
-              onChanged: (value) => vm.search.value = value,
+              onChanged: vm.searchString.setValue,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 hintText: 'Search',
@@ -41,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Observer(
                 builder: (context, watch) => switch (watch(vm.items)) {
                   Loading() => const Center(child: CircularProgressIndicator()),
-                  Success(value: SearchResult(:var items)) => ListView.builder(
+                  Success(value: var items) => ListView.builder(
                       itemCount: items.length,
                       itemBuilder: (_, index) {
                         final repository = items[index];
