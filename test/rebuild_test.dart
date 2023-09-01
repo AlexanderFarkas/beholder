@@ -60,4 +60,18 @@ void main() {
     await ObservableScope.waitForUpdate();
     expect(sum.rebuildCounter.value, equals(2));
   });
+
+  test("Listener is rebuilt, even if added after observables updated", () async {
+    final counter = ObservableState(0);
+    final sum = createComputed((watch) => watch(counter));
+
+    expect(sum.rebuildCounter.value, equals(1));
+    counter.value++;
+    sum.computed.listen((value) {});
+    expect(sum.rebuildCounter.value, equals(1));
+    await ObservableScope.waitForUpdate();
+    counter.value++;
+    await ObservableScope.waitForUpdate();
+    expect(sum.rebuildCounter.value, equals(2));
+  });
 }

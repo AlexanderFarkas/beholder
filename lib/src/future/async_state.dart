@@ -8,12 +8,14 @@ class ObservableAsyncState<T>
     Duration? debounceTime,
     Duration? throttleTime,
     Equals<T>? equals,
+    ValueChanged<AsyncValue<T>>? onSet,
   })  : _debounceTime = debounceTime ?? const Duration(milliseconds: 0),
         _throttleTime = throttleTime ?? const Duration(milliseconds: 0),
         _equals = equals ?? Observable.defaultEquals {
     _value = ObservableState<AsyncValue<T>>(
       value ?? const Loading(),
       equals: (a1, a2) => a1._equals(a2, equals: _equals),
+      onSet: onSet,
     );
   }
 

@@ -1,4 +1,6 @@
 import 'dart:developer' as developer;
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
 
 import 'core.dart';
@@ -6,7 +8,11 @@ import 'core.dart';
 @internal
 debugLog(String message) {
   if (Observable.debugEnabled) {
-    developer.log(message);
+    if (Platform.environment.containsKey('FLUTTER_TEST')) {
+      print(message);
+    } else {
+      developer.log(message);
+    }
   }
 }
 

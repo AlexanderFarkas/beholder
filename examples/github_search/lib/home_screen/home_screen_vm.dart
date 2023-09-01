@@ -4,8 +4,9 @@ import 'package:warden/warden.dart';
 class HomeScreenVm extends ViewModel {
   final githubApi = GithubApi();
 
-  late final searchString = state('')
-    ..listen((value) {
+  late final searchString = state(
+    '',
+    onSet: (value) {
       if (value.isEmpty) {
         _searchResult.value = const Success(SearchResult.empty());
       } else {
@@ -14,7 +15,8 @@ class HomeScreenVm extends ViewModel {
           return repositories;
         });
       }
-    });
+    },
+  );
 
   late final items = computed(
     (watch) => watch(_searchResult).mapValue((value) => value.items),

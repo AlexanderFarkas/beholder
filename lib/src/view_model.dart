@@ -9,8 +9,16 @@ class ViewModel {
   final disposers = <Dispose>{};
 
   @protected
-  ObservableState<T> state<T>(T value, {Equals<T>? equals}) {
-    final state = ObservableState<T>(value, equals: equals);
+  ObservableState<T> state<T>(
+    T value, {
+    Equals<T>? equals,
+    ValueChanged<T>? onSet,
+  }) {
+    final state = ObservableState<T>(
+      value,
+      equals: equals,
+      onSet: onSet,
+    );
     disposers.add(state.dispose);
     return state;
   }
@@ -45,11 +53,13 @@ class ViewModel {
     AsyncValue<T>? value,
     Duration? debounceTime,
     Duration? throttleTime,
+    Equals<T>? equals,
   }) {
     final asyncState = ObservableAsyncState<T>(
       value: value,
       debounceTime: debounceTime,
       throttleTime: throttleTime,
+      equals: equals,
     );
     disposers.add(asyncState.dispose);
     return asyncState;

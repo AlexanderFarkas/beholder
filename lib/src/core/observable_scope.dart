@@ -15,27 +15,29 @@ class ObservableScope {
     _current = ObservableScope._();
   }
 
-  void invalidate(ObservableState observable) {
-    if (!_observableStates.add(observable)) return;
-
-    void inner(ObserverMixin observer) {
-      if (!_invalidatedObservers.add(observer)) return;
+  void invalidateState(ObservableState observable) {
+    bool shouldSchedule = false;
+    void visitObserver(ObserverMixin observer) {
+      _invalidatedObservers.add(observer);
 
       if (observer is ObservableObserver) {
         _observableStates.add(observer.stateDelegate);
         for (final observer in observer.observers) {
-          inner(observer);
+          visitObserver(observer);
         }
       } else {
+        shouldSchedule = true;
         _consumerObservers.add(observer);
       }
     }
 
     for (final observer in observable.observers) {
-      inner(observer);
+      visitObserver(observer);
     }
 
-    _scheduleUpdateConsumers();
+    if (shouldSchedule) {
+      _scheduleUpdateConsumers();
+    }
   }
 
   final _invalidatedObservers = <ObserverMixin>{};
@@ -61,11 +63,12 @@ class ObservableScope {
 
   void _updateObservers() {
     final observers = _consumerObservers;
-    _consumerObservers = {};
     final observableStates = _observableStates;
     final updateObserverCache = _updateObserverCache;
+    _consumerObservers = {};
     _observableStates = {};
     _updateObserverCache = {};
+
     _isScheduled = false;
 
     for (final observer in observers) {

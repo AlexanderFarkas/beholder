@@ -3,8 +3,8 @@ Simple state management for Flutter.
 # Getting Started
 1. Define ViewModel
     ```dart
-   // import warden 
-   import "package:warden/warden.dart"; 
+   // import Observer 
+   import "package:Observer/Observer.dart"; 
    
     class CounterViewModel extends ViewModel {
       // define observable using `state` member function.
@@ -12,14 +12,14 @@ Simple state management for Flutter.
       increment() => counter.value++;
     }
     ```
-2. Watch value with `Warden` - it will rebuild the widget when the value changes:
+2. Watch value with `Observer` - it will rebuild the widget when the value changes:
     ```dart
    final vm = CounterViewModel();
    
    // ...
    
    Widget build(BuildContext context) {
-      return Warden(
+      return Observer(
         builder: (context, watch) => OutlinedButton(
           onPressed: vm.increment,
           child: Text("${watch(vm.counter)}")
@@ -43,21 +43,17 @@ class UserProfileVm extends ViewModel {
 }
 ```
 
-# `Future`
-`future` is an asynchronous `computed`:
+# `AsyncState`
+`asyncState` is an asynchronous `state` with quality of life additions:
 ```dart
 // view_model.dart
 
 class PostListVm extends ViewModel {
-  late final page = state(1);
-  late final posts = future(
-    debounceTime: Duration(milliseconds: 500),         
-    (watch) async {
-       final page = watch(this.page);
-       final posts = await Api.fetchPosts(page: page);
-       return posts;
-    },
-  );
+  late final page = state(1, onSet: (page) {
+     posts.refreshWith(() => Api.fetchPosts(page: page));
+  });
+  
+  late final posts = asyncState(debounceTime: Duration(milliseconds: 500));
   
   // it will trigger `posts`'s refresh with increased page number, respecting debounceTime
   void nextPage() => page.value++;
@@ -74,7 +70,7 @@ class PostsWidget extends StatelessWidget {
   const PostsWidget(this.vm);
 
   Widget build(BuildContext context) {
-    return Warden(
+    return Observer(
        builder: (context, watch) {
           final posts = watch(vm.posts);
           return switch (posts) {
@@ -91,7 +87,7 @@ class PostsWidget extends StatelessWidget {
 }
 ```
 ## `AsyncValue`
-`AsyncValue` is a default type for handling async data in `future`s.
+`AsyncValue` is a default type for handling async data in `asyncState`s.
 
 It has three subtypes:
 - `Loading` - the future is not completed yet
@@ -104,7 +100,7 @@ It's a sealed class, so you can use `switch` to handle all cases.
 It might be useful for showing old data while loading new one:
 ```dart
 Widget build(BuildContext context) {
-  return Warden(
+  return Observer(
      builder: (context, watch) {
        final posts = watch(vm.posts);
        if (posts case Loading(previousResult: Success(value: var posts))) {

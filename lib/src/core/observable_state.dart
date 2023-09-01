@@ -4,9 +4,16 @@ typedef ValueChanged<T> = void Function(T value);
 typedef ValueSetter<T> = T Function(T value);
 
 class ObservableState<T> with DebugReprMixin, WritableObservableMixin<T> {
-  ObservableState(T value, {Equals<T>? equals})
-      : _value = value,
-        _equals = equals ?? Observable.defaultEquals;
+  ObservableState(
+    T value, {
+    Equals<T>? equals,
+    ValueChanged<T>? onSet,
+  })  : _value = value,
+        _equals = equals ?? Observable.defaultEquals {
+    if (onSet != null) {
+      _eagerListeners.add(onSet);
+    }
+  }
 
   @override
   T get value => _value;
@@ -17,7 +24,7 @@ class ObservableState<T> with DebugReprMixin, WritableObservableMixin<T> {
     _value = value;
     final willUpdate = !_equals(oldValue, value);
     if (willUpdate) {
-      ObservableScope().invalidate(this);
+      ObservableScope().invalidateState(this);
       for (final listener in _eagerListeners) {
         listener(value);
       }
@@ -93,11 +100,15 @@ class ObservableState<T> with DebugReprMixin, WritableObservableMixin<T> {
   late final observers = UnmodifiableSetView(_observers);
 
   final _observers = <ObserverMixin>{};
-
   late final Lazy<StreamController<T>> _controller = Lazy(
     () {
-      final controller = StreamController<T>.broadcast();
-      listen((value) => controller.add(value));
+      Dispose? disposeListen;
+      late StreamController<T> controller;
+      controller = StreamController<T>.broadcast(
+        sync: true,
+        onCancel: () => disposeListen?.call(),
+        onListen: () => disposeListen = listen((value) => controller.add(value)),
+      );
       return controller;
     },
     dispose: (controller) => controller.close(),
