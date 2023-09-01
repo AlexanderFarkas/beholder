@@ -3,13 +3,13 @@ Simple state management for Flutter.
 # Getting Started
 1. Define ViewModel
     ```dart
-   // import Observer 
-   import "package:Observer/Observer.dart"; 
-   
+    // import Observer 
+    import "package:Observer/Observer.dart"; 
+    
     class CounterViewModel extends ViewModel {
-      // define observable using `state` member function.
-      late final counter = state(0);
-      increment() => counter.value++;
+       // define observable using `state` member function.
+       late final counter = state(0);
+       increment() => counter.value++;
     }
     ```
 2. Watch value with `Observer` - it will rebuild the widget when the value changes:
@@ -49,17 +49,30 @@ class UserProfileVm extends ViewModel {
 // view_model.dart
 
 class PostListVm extends ViewModel {
-  late final page = state(1, onSet: (page) {
-     posts.refreshWith(() => Api.fetchPosts(page: page));
-  });
+  PostListVm() {
+    refresh();
+  }
   
-  late final posts = asyncState(debounceTime: Duration(milliseconds: 500));
+  late final page = state(
+    1, 
+    onSet: (page) {
+      posts.refreshWith(() => Api.fetchPosts(page: page));
+    },
+  );
+  
+  late final posts = asyncState(
+    initialValue: const Loading(), 
+    debounceTime: const Duration(milliseconds: 500)
+  );
   
   // it will trigger `posts`'s refresh with increased page number, respecting debounceTime
   void nextPage() => page.value++;
   
   // triggers `posts`'s refresh ignoring debounce time and cancelling previous refresh
-  void refresh() => posts.refresh();
+  void refresh() {
+    posts.value = Loading();
+    posts.value = Result.guard(() => Api.fetchPosts(page: page.value));
+  }
 }
 ```
 ```dart
@@ -191,7 +204,7 @@ class CounterViewModel extends ViewModel {
   late final counter = state(0);
 }
 ```
-is a shorter (**but not the same!**) version for:
+is a shorter (**but not the same!***) version for:
 ```dart
 class CounterViewModel extends ViewModel {
   final ObservableState<int> counter;
@@ -199,21 +212,6 @@ class CounterViewModel extends ViewModel {
     disposers.add(counter.dispose);
   }
 }
-```
 
-### Why "not the same"?
-`late` fields are initialized *lazily* - when they are first accessed.
-It's more notable with `future` observables:
-```dart
-class CounterViewModel extends ViewModel {
-  late final counter = future(() async {
-    print('Future is executed');
-    return Future.delayed(const Duration(seconds: 1), () => 42);
-  });
-}
-
-void main() {
-  final vm = CounterViewModel(); // prints nothing
-  vm.counter; // prints 'Future is executed'
-}
 ```
+*\*`late` fields are initialized *lazily* - when they are first accessed.*
