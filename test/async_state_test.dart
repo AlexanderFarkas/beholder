@@ -7,7 +7,7 @@ import 'utils.dart';
 void main() {
   test("Standard", () async {
     final asyncState = ObservableAsyncState<String>(value: const Loading());
-    asyncState.refreshWith(() async => "value");
+    asyncState.scheduleRefresh(() async => "value");
     expect(asyncState.value, equals(const Loading<String>()));
     await ObservableScope.waitForUpdate();
     expect(asyncState.value, equals(const Success("value")));
@@ -15,7 +15,7 @@ void main() {
 
   test("Loading with previous", () async {
     final asyncState = ObservableAsyncState<String>(value: const Success("another"));
-    asyncState.refreshWith(() async => "value");
+    asyncState.scheduleRefresh(() async => "value");
     expect(asyncState.value, equals(const Loading(previousResult: Success("another"))));
     await ObservableScope.waitForUpdate();
     expect(asyncState.value, equals(const Success("value")));
@@ -23,7 +23,7 @@ void main() {
 
   test("Loading with skip previous", () async {
     final asyncState = ObservableAsyncState<String>(value: const Success("another"));
-    asyncState.refreshWith(() async => "value");
+    asyncState.scheduleRefresh(() async => "value");
     expect(asyncState.value, equals(const Loading(previousResult: Success("another"))));
     await ObservableScope.waitForUpdate();
     expect(asyncState.value, equals(const Success("value")));
@@ -31,7 +31,7 @@ void main() {
 
   test("Set value before refresh end cancels future", () async {
     final asyncState = ObservableAsyncState<String>(value: const Success("another"));
-    asyncState.refreshWith(() async => "value");
+    asyncState.scheduleRefresh(() async => "value");
     asyncState.value = const Success("another value");
     expect(asyncState.value, equals(const Success("another value")));
     await ObservableScope.waitForUpdate();
@@ -42,9 +42,9 @@ void main() {
     final asyncState = ObservableAsyncState<String>(
       value: const Loading(),
     );
-    asyncState.refreshWith(() async => "value1");
-    asyncState.refreshWith(() async => "value2");
-    asyncState.refreshWith(() async => "value3");
+    asyncState.scheduleRefresh(() async => "value1");
+    asyncState.scheduleRefresh(() async => "value2");
+    asyncState.scheduleRefresh(() async => "value3");
     expect(asyncState.value, equals(const Loading<String>()));
     await ObservableScope.waitForUpdate();
     expect(asyncState.value, equals(const Success("value3")));
@@ -56,9 +56,9 @@ void main() {
       value: const Loading(),
       debounceTime: duration,
     );
-    asyncState.refreshWith(() async => "value1");
-    asyncState.refreshWith(() async => "value2");
-    asyncState.refreshWith(() async => "value3");
+    asyncState.scheduleRefresh(() async => "value1");
+    asyncState.scheduleRefresh(() async => "value2");
+    asyncState.scheduleRefresh(() async => "value3");
     expect(asyncState.value, equals(const Loading<String>()));
     await ObservableScope.waitForUpdate();
     expect(asyncState.value, equals(const Loading<String>()));
@@ -73,14 +73,14 @@ void main() {
       value: const Loading(),
       throttleTime: duration,
     );
-    asyncState.refreshWith(() async => "value1");
-    asyncState.refreshWith(() async => "value2");
-    asyncState.refreshWith(() async => "value3");
+    asyncState.scheduleRefresh(() async => "value1");
+    asyncState.scheduleRefresh(() async => "value2");
+    asyncState.scheduleRefresh(() async => "value3");
     expect(asyncState.value, equals(const Loading<String>()));
     await ObservableScope.waitForUpdate();
     expect(asyncState.value, equals(const Success("value1")));
     await Future.delayed(duration);
-    asyncState.refreshWith(() async => "value4");
+    asyncState.scheduleRefresh(() async => "value4");
     await ObservableScope.waitForUpdate();
     expect(asyncState.value, equals(const Success("value4")));
   });
@@ -126,5 +126,14 @@ void main() {
     asyncState.value = Success(value);
     await ObservableScope.waitForUpdate();
     expect(trimmed.rebuildCounter.value, equals(5));
+  });
+
+  test("Immediate throw", () async {
+    final asyncState = ObservableAsyncState<String>(value: const Loading());
+    asyncState.scheduleRefresh(() async => "");
+    asyncState.scheduleRefresh(() => throw "error");
+    expect(asyncState.value, equals(const Loading<String>()));
+    await ObservableScope.waitForUpdate();
+    expect((asyncState.value as Failure).error, equals(const Failure<String>("error").error));
   });
 }

@@ -106,16 +106,16 @@ class Success<T> extends Result<T> {
 class Failure<T> extends Result<T> {
   const Failure(this.error, {this.stackTrace});
 
-  final StackTrace? stackTrace;
   final Object? error;
+  final StackTrace? stackTrace;
 
   @override
   bool _equals(Object? other, {required Equals<T> equals}) {
     return identical(this, other) ||
-        other is Failure<T> &&
+        (other is Failure<T> &&
             runtimeType == other.runtimeType &&
             error == other.error &&
-            stackTrace == other.stackTrace;
+            stackTrace == other.stackTrace);
   }
 
   @override

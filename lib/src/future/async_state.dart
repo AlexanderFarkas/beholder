@@ -21,10 +21,10 @@ class ObservableAsyncState<T>
 
   late final ObservableState<AsyncValue<T>> _value;
 
-  refreshWith(Future<T> Function() computation) async {
+  void scheduleRefresh(Future<T> Function() computation) async {
     final throttleTimer = _throttleTimer;
     if (throttleTimer != null && throttleTimer.isActive) {
-      return false;
+      return;
     } else if (_throttleTime != Duration.zero) {
       _cancelThrottle();
       _throttleTimer = Timer(
@@ -44,6 +44,13 @@ class ObservableAsyncState<T>
     } else {
       _process(computation);
     }
+  }
+
+  Future<AsyncValue<T>> refresh(Future<T> Function() computation) {
+    _cancelThrottle();
+    _cancelDebounce();
+    _value.value = Loading.fromPrevious(_value.value);
+    return _process(computation);
   }
 
   @override
@@ -72,13 +79,19 @@ class ObservableAsyncState<T>
   @override
   void removeObserver(ObserverMixin observer) => _value.observers;
 
-  Future<void> _process(Future<T> Function() execute) async {
-    final future = execute();
+  Future<AsyncValue<T>> _process(Future<T> Function() execute) async {
+    Future<T>? future;
+    try {
+      future = execute();
+    } catch (e, s) {
+      future ??= Future.error(e, s);
+    }
     _currentFuture = future;
-    final value = await Result.guard(() => future);
+    final value = await Result.guard(() => future!);
     if (_currentFuture == future) {
       _value.value = value;
     }
+    return value;
   }
 
   void _cancelThrottle() {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:warden/warden.dart';
 
-import 'home_screen/home_screen.dart';
+import 'home_screen/search_repositories_screen.dart';
 
 void main() {
   Observable.debugEnabled = true;
@@ -15,7 +15,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData.dark(useMaterial3: true),
-      home: const HomeScreen(),
+      home: const SearchRepositoriesScreen(),
     );
   }
 }

@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:github_search/github_api.dart';
-import 'package:github_search/home_screen/home_screen_vm.dart';
+import 'package:github_search/home_screen/search_repositories_screen_vm.dart';
 import 'package:warden/warden.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+class SearchRepositoriesScreen extends StatefulWidget {
+  const SearchRepositoriesScreen({Key? key}) : super(key: key);
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<SearchRepositoriesScreen> createState() => _SearchRepositoriesScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  final vm = HomeScreenVm();
+class _SearchRepositoriesScreenState extends State<SearchRepositoriesScreen> {
+  final vm = SearchRepositoriesScreenVm();
 
   @override
   void dispose() {
@@ -52,7 +51,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         );
                       },
                     ),
-                  Failure(:var error) => Text(error.toString()),
+                  Failure(:var error) => RefreshIndicator(
+                      onRefresh: vm.refresh,
+                      child: ListView(children: [Center(child: Text("$error"))]),
+                    ),
                 },
               ),
             )
