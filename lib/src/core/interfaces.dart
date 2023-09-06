@@ -1,6 +1,10 @@
 part of '../core.dart';
 
-abstract interface class Observable<T> {
+abstract interface class Disposable {
+  void dispose();
+}
+
+abstract interface class Observable<T> implements Disposable {
   static bool debugEnabled = false;
   static bool Function(Object? previous, Object? next) defaultEquals =
       (previous, next) => previous == next;
@@ -11,7 +15,6 @@ abstract interface class Observable<T> {
   void addObserver(ObserverMixin observer);
   void removeObserver(ObserverMixin observer);
   UnmodifiableSetView<ObserverMixin> get observers;
-  void dispose();
 }
 
 abstract interface class WritableObservable<T> implements Observable<T> {
