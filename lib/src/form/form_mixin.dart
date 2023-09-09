@@ -1,12 +1,12 @@
 part of form;
 
 mixin FormMixin on ViewModel {
-  ObservableField<T> field<T>({
+  WritableObservableField<T> field<T>({
     required T value,
     ComputeError<T>? computeError,
     String? Function(T value)? validate,
   }) {
-    final field = ObservableField(
+    final field = WritableObservableField(
       value,
       computeError: (watch, state) {
         final String? error;
@@ -30,7 +30,7 @@ mixin FormMixin on ViewModel {
     return field;
   }
 
-  late final fields = state<UnmodifiableSetView<ObservableField>>(UnmodifiableSetView({}));
+  late final fields = state<UnmodifiableSetView<WritableObservableField>>(UnmodifiableSetView({}));
   late final isValid = computed((watch) {
     final fields = watch(this.fields);
     for (final field in fields) {

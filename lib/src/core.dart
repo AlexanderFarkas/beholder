@@ -2,9 +2,9 @@ library core;
 
 import 'dart:async';
 import 'dart:collection';
-import 'dart:math' as math;
 
 import 'package:meta/meta.dart';
+import 'package:warden/src/proxy_observable_mixin.dart';
 
 import 'typedefs.dart';
 import 'utils.dart';

@@ -1,7 +1,7 @@
 part of form;
 
 class FieldFocusScope extends StatelessWidget {
-  final ObservableField field;
+  final WritableObservableField field;
   final Widget child;
 
   const FieldFocusScope({super.key, required this.field, required this.child});

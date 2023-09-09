@@ -1,8 +1,7 @@
 part of future;
 
 class ObservableAsyncState<T>
-    with WritableObservableMixin<AsyncValue<T>>
-    implements WritableObservable<AsyncValue<T>> {
+    with ProxyObservableMixin<AsyncValue<T>>, WritableObservableMixin<AsyncValue<T>> {
   ObservableAsyncState({
     AsyncValue<T>? value,
     Duration? debounceTime,
@@ -10,16 +9,16 @@ class ObservableAsyncState<T>
     Equals<T>? equals,
     ValueChanged<AsyncValue<T>>? onSet,
   })  : _debounceTime = debounceTime ?? const Duration(milliseconds: 0),
-        _throttleTime = throttleTime ?? const Duration(milliseconds: 0),
-        _equals = equals ?? Observable.defaultEquals {
-    _value = ObservableState<AsyncValue<T>>(
+        _throttleTime = throttleTime ?? const Duration(milliseconds: 0) {
+    inner = ObservableState<AsyncValue<T>>(
       value ?? const Loading(),
-      equals: (a1, a2) => a1._equals(a2, equals: _equals),
+      equals: (a1, a2) => a1._equals(a2, equals: equals ?? Observable.defaultEquals),
       onSet: onSet,
     );
   }
 
-  late final ObservableState<AsyncValue<T>> _value;
+  @override
+  late final ObservableState<AsyncValue<T>> inner;
 
   void scheduleRefresh(Future<T> Function() computation) async {
     final throttleTimer = _throttleTimer;
@@ -33,7 +32,7 @@ class ObservableAsyncState<T>
       );
     }
 
-    _value.value = Loading.fromPrevious(_value.value);
+    inner.value = Loading.fromPrevious(inner.value);
 
     if (_debounceTime != Duration.zero) {
       _cancelDebounce();
@@ -49,7 +48,7 @@ class ObservableAsyncState<T>
   Future<AsyncValue<T>> refresh(Future<T> Function() computation) {
     _cancelThrottle();
     _cancelDebounce();
-    _value.value = Loading.fromPrevious(_value.value);
+    inner.value = Loading.fromPrevious(inner.value);
     return _process(computation);
   }
 
@@ -58,26 +57,8 @@ class ObservableAsyncState<T>
     _cancelThrottle();
     _cancelDebounce();
     _currentFuture = null;
-    return _value.setValue(value);
+    return inner.setValue(value);
   }
-
-  @override
-  AsyncValue<T> get value => _value.value;
-
-  @override
-  void addObserver(ObserverMixin observer) => _value.addObserver(observer);
-
-  @override
-  Stream<AsyncValue<T>> asStream() => _value.asStream();
-
-  @override
-  Dispose listen(ValueChanged<AsyncValue<T>> onChanged) => _value.listen(onChanged);
-
-  @override
-  UnmodifiableSetView<ObserverMixin> get observers => _value.observers;
-
-  @override
-  void removeObserver(ObserverMixin observer) => _value.observers;
 
   Future<AsyncValue<T>> _process(Future<T> Function() execute) async {
     Future<T>? future;
@@ -89,7 +70,7 @@ class ObservableAsyncState<T>
     _currentFuture = future;
     final value = await Result.guard(() => future!);
     if (_currentFuture == future) {
-      _value.value = value;
+      inner.value = value;
     }
     return value;
   }
@@ -106,7 +87,7 @@ class ObservableAsyncState<T>
 
   @override
   void dispose() {
-    _value.dispose();
+    inner.dispose();
     _cancelDebounce();
     _cancelThrottle();
   }
@@ -117,5 +98,4 @@ class ObservableAsyncState<T>
   Future? _currentFuture;
   Timer? _debounceTimer;
   Timer? _throttleTimer;
-  Equals<T> _equals;
 }

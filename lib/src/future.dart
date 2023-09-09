@@ -1,10 +1,8 @@
 library future;
 
 import 'dart:async';
-import 'dart:collection';
 
-import 'package:meta/meta.dart';
-import 'package:warden/src/view_model.dart';
+import 'package:warden/src/proxy_observable_mixin.dart';
 
 import 'core.dart';
 import 'typedefs.dart';

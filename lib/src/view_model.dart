@@ -53,11 +53,13 @@ class ViewModel implements Disposable {
         equals: equals,
       ));
 
+  @protected
   T autoDispose<T extends Disposable>(T disposable) {
     disposers.add(disposable.dispose);
     return disposable;
   }
 
+  @override
   @mustCallSuper
   void dispose() {
     for (final disposer in disposers) {

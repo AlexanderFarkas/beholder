@@ -21,7 +21,7 @@ class ObservableScope {
       _invalidatedObservers.add(observer);
 
       if (observer is ObservableObserver) {
-        _observableStates.add(observer.stateDelegate);
+        _observableStates.add(observer.inner);
         for (final observer in observer.observers) {
           visitObserver(observer);
         }

@@ -1,44 +1,32 @@
 part of '../core.dart';
 
-abstract class ObservableObserver<T> with ObserverMixin, DebugReprMixin implements Observable<T> {
+abstract class ObservableObserver<T>
+    with ObserverMixin, ProxyObservableMixin<T>, DebugReprMixin
+    implements Observable<T> {
   ObservableObserver() {
     final stateDelegate = createStateDelegate();
     assert(stateDelegate.delegatedByObserver == null);
     stateDelegate.delegatedByObserver = this;
-    this.stateDelegate = stateDelegate;
+    this.inner = stateDelegate;
   }
 
   @protected
   ObservableState<T> createStateDelegate();
 
+  @override
   @protected
-  late final ObservableState<T> stateDelegate;
-
-  @override
-  void addObserver(ObserverMixin observer) => stateDelegate.addObserver(observer);
-
-  @override
-  Stream<T> asStream() => stateDelegate.asStream();
-
-  @override
-  Dispose listen(ValueChanged<T> onChanged) => stateDelegate.listen(onChanged);
-
-  @override
-  UnmodifiableSetView<ObserverMixin> get observers => stateDelegate.observers;
-
-  @override
-  void removeObserver(ObserverMixin observer) => stateDelegate.removeObserver(observer);
+  late final ObservableState<T> inner;
 
   @override
   T get value {
     ObservableScope().updateObserver(this);
-    return stateDelegate.value;
+    return inner.value;
   }
 
   @override
   @mustCallSuper
   void dispose() {
-    stateDelegate.dispose();
+    inner.dispose();
     stopObserving();
   }
 }

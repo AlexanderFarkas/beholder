@@ -8,7 +8,7 @@ class FieldObserver extends StatefulWidget {
     required this.builder,
   });
 
-  final ObservableField<String> field;
+  final WritableObservableField<String> field;
   final TextEditingController? controller;
   final Widget Function(BuildContext context, Watch watch, TextEditingController controller)
       builder;
