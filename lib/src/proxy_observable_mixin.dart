@@ -7,7 +7,7 @@ import 'core.dart';
 
 mixin ProxyObservableMixin<T> implements Observable<T> {
   @visibleForTesting
-  abstract final Observable<T> inner;
+  abstract final WritableObservable<T> inner;
 
   @override
   void addObserver(ObserverMixin observer) => inner.addObserver(observer);
