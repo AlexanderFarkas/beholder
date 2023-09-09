@@ -4,7 +4,7 @@ import 'future.dart';
 import 'typedefs.dart';
 import 'core.dart';
 
-class ViewModel implements Disposable {
+abstract mixin class ViewModel implements Disposable {
   @protected
   final disposers = <Dispose>{};
 
