@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:warden/warden.dart';
+import 'package:beholder/beholder.dart';
 
 class AnotherVm extends ViewModel {
   late final counter = state(0);

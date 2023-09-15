@@ -1,0 +1,5 @@
+name: beholder
+
+packages:
+  - packages/*
+  - examples/*

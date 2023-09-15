@@ -4,7 +4,7 @@ Simple state management for Flutter.
 1. Define ViewModel
     ```dart
     // import warden 
-    import "package:warden/warden.dart"; 
+    import "package:beholder/beholder.dart"; 
     
     class CounterViewModel extends ViewModel {
        // define observable using `state` member function.

@@ -1,5 +1,5 @@
 import 'package:github_search/github_api.dart';
-import 'package:warden/warden.dart';
+import 'package:beholder/beholder.dart';
 
 class SearchRepositoriesScreenVm extends ViewModel {
   final githubApi = GithubApi();

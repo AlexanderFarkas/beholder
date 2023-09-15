@@ -1,0 +1,4 @@
+# melos_managed_dependency_overrides: beholder
+dependency_overrides:
+  beholder:
+    path: ../beholder
