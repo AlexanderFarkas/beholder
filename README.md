@@ -3,7 +3,7 @@ Simple state management for Flutter.
 # Getting Started
 1. Define ViewModel
     ```dart
-    // import warden 
+    // import beholder 
     import "package:beholder/beholder.dart"; 
     
     class CounterViewModel extends ViewModel {
