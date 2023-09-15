@@ -28,7 +28,7 @@ Simple state management for Flutter.
    }
     ```
 
-# `Computed`
+# `computed`
 Use `computed` to derive from `state`:
 
 ```dart
@@ -43,7 +43,7 @@ class UserProfileVm extends ViewModel {
 }
 ```
 
-# `AsyncState`
+# `asyncState`
 `asyncState` is an asynchronous `state` with quality of life additions:
 ```dart
 // view_model.dart
@@ -55,9 +55,7 @@ class PostListVm extends ViewModel {
   
   late final page = state(
     1, 
-    onSet: (page) {
-      posts.refreshWith(() => Api.fetchPosts(page: page));
-    },
+    onSet: (page) => posts.scheduleRefresh(() => Api.fetchPosts(page: page)),
   );
   
   late final posts = asyncState(
@@ -69,10 +67,7 @@ class PostListVm extends ViewModel {
   void nextPage() => page.value++;
   
   // triggers `posts`'s refresh ignoring debounce time and cancelling previous refresh
-  void refresh() {
-    posts.value = Loading();
-    posts.value = Result.guard(() => Api.fetchPosts(page: page.value));
-  }
+  void refresh() => posts.refresh(() => Api.fetchPosts(page: page.value));
 }
 ```
 ```dart
@@ -99,7 +94,7 @@ class PostsWidget extends StatelessWidget {
   }
 }
 ```
-## `AsyncValue`
+### `AsyncValue`
 `AsyncValue` is a default type for handling async data in `asyncState`s.
 
 It has three subtypes:
@@ -176,6 +171,16 @@ class MyViewModel extends ViewModel {
 void main() {
   final vm = MyViewModel();
   vm.dispose(); // prints 'MyViewModel is disposed'
+}
+```
+
+## `autoDispose`
+`autoDispose` comes in handy when you're composing several `ViewModel`s:
+
+```dart
+class HomeViewModel extends ViewModel {
+  late final appBarVm = autoDispose(AppBarViewModel());
+  late final bottomBarVm = autoDispose(BottomBarViewModel());
 }
 ```
 
