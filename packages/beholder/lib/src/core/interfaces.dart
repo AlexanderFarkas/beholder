@@ -4,6 +4,11 @@ abstract interface class Disposable {
   void dispose();
 }
 
+abstract interface class RootObservable<T> implements WritableObservable<T> {
+  void registerPlugin(StatePlugin<T> plugin);
+  void unregisterPlugin(StatePlugin<T> plugin);
+}
+
 abstract interface class Observable<T> implements Disposable {
   static bool debugEnabled = false;
   static bool Function(Object? previous, Object? next) defaultEquals =

@@ -10,9 +10,16 @@ packages:
     source: hosted
     version: "2.11.0"
   beholder:
-    dependency: "direct main"
+    dependency: "direct overridden"
     description:
       path: "../../packages/beholder"
+      relative: true
+    source: path
+    version: "1.0.0"
+  beholder_flutter:
+    dependency: "direct main"
+    description:
+      path: "../../packages/beholder_flutter"
       relative: true
     source: path
     version: "0.0.1"

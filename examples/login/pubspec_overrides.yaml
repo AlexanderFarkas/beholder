@@ -1,6 +1,8 @@
-# melos_managed_dependency_overrides: warden,beholder_form
+# melos_managed_dependency_overrides: warden,beholder_flutter,beholder_form
 dependency_overrides:
   beholder:
     path: ../../packages/beholder
+  beholder_flutter:
+    path: ../../packages/beholder_flutter
   beholder_form:
     path: ../../packages/beholder_form

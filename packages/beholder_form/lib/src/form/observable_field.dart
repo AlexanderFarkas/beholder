@@ -28,7 +28,7 @@ class WritableObservableField<T> extends ViewModel
   bool setValue(T value) => inner.setValue(value);
 
   @override
-  late final ObservableWritableComputed<String?> error = writableComputed(
+  late final WritableObservableComputed<String?> error = writableComputed(
     get: (watch) {
       final innerError = watch(_innerError);
       if (innerError != null) {

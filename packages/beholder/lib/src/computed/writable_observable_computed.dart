@@ -1,7 +1,7 @@
 part of computed;
 
-class ObservableWritableComputed<T> extends ObservableComputed<T> implements WritableObservable<T> {
-  ObservableWritableComputed(
+class WritableObservableComputed<T> extends ObservableComputed<T> implements WritableObservable<T> {
+  WritableObservableComputed(
       {required T Function(Watch watch) get, required void Function(T value) set, super.equals})
       : _set = set,
         super(get);

@@ -1,6 +1,5 @@
+import 'package:beholder/beholder.dart';
 import 'package:flutter/widgets.dart';
-
-import 'core.dart';
 
 class Observer extends StatefulWidget {
   const Observer({Key? key, required this.builder}) : super(key: key);

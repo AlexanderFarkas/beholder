@@ -10,16 +10,13 @@ abstract interface class FieldState<T> {
 
 class WritableFieldState<T> extends ViewModel implements FieldState<T> {
   WritableFieldState(T initialValue) {
-    value = state(initialValue);
-    value.listen(
-      (value) {
-        wasSet.value = true;
-        if (hasFocus.value) {
-          wasSetAfterFocus.value = true;
-        }
-      },
-      eager: true,
-    );
+    value = state(initialValue, onSet: (value) {
+      wasSet.value = true;
+      if (hasFocus.value) {
+        wasSetAfterFocus.value = true;
+      }
+    });
+
     hasFocus.listen(
       (isFocused) {
         wasSetAfterFocus.value = false;

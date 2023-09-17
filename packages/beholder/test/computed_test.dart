@@ -1,8 +1,5 @@
-import 'package:flutter_test/flutter_test.dart';
-import 'package:beholder/src/core.dart';
 import 'package:beholder/beholder.dart';
-
-import 'utils.dart';
+import 'package:test/test.dart';
 
 void main() {
   test("Computed tracks changes in all observables", () async {

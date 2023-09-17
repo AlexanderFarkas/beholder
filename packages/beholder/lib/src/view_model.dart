@@ -1,8 +1,8 @@
 import 'package:meta/meta.dart';
 import 'computed.dart';
+import 'core.dart';
 import 'future.dart';
 import 'typedefs.dart';
-import 'core.dart';
 
 abstract mixin class ViewModel implements Disposable {
   @protected
@@ -28,12 +28,12 @@ abstract mixin class ViewModel implements Disposable {
       autoDispose(ObservableComputed(compute, equals: equals));
 
   @protected
-  ObservableWritableComputed<T> writableComputed<T>({
+  WritableObservableComputed<T> writableComputed<T>({
     required T Function(Watch watch) get,
     required void Function(T value) set,
     Equals<T>? equals,
   }) =>
-      autoDispose(ObservableWritableComputed(
+      autoDispose(WritableObservableComputed(
         get: get,
         set: set,
         equals: equals,

@@ -3,7 +3,9 @@ part of core;
 typedef ValueChanged<T> = void Function(T value);
 typedef ValueSetter<T> = T Function(T value);
 
-class ObservableState<T> with DebugReprMixin, WritableObservableMixin<T> {
+class ObservableState<T>
+    with DebugReprMixin, WritableObservableMixin<T>
+    implements RootObservable<T> {
   ObservableState(
     T value, {
     Equals<T>? equals,
@@ -27,6 +29,10 @@ class ObservableState<T> with DebugReprMixin, WritableObservableMixin<T> {
       ObservableScope().invalidateState(this);
       for (final listener in _eagerListeners) {
         listener(value);
+      }
+
+      for (final plugin in _plugins) {
+        plugin.onValueChanged(value);
       }
     }
 
@@ -66,6 +72,10 @@ class ObservableState<T> with DebugReprMixin, WritableObservableMixin<T> {
     _eagerListeners.clear();
     _controller.dispose();
     _observers.clear();
+    for (final plugin in _plugins) {
+      plugin.onUnmounted(this);
+    }
+    _plugins.clear();
   }
 
   @override
@@ -82,6 +92,10 @@ class ObservableState<T> with DebugReprMixin, WritableObservableMixin<T> {
     }());
     observer.onAddedToState(this);
     _observers.add(observer);
+
+    for (final plugin in _plugins) {
+      plugin.onObserverAdded(observer);
+    }
   }
 
   @override
@@ -94,6 +108,10 @@ class ObservableState<T> with DebugReprMixin, WritableObservableMixin<T> {
     }());
     observer.observables.remove(this);
     _observers.remove(observer);
+
+    for (final plugin in _plugins) {
+      plugin.onObserverRemoved(observer);
+    }
   }
 
   @override
@@ -115,4 +133,18 @@ class ObservableState<T> with DebugReprMixin, WritableObservableMixin<T> {
   );
 
   bool _debugDisposed = false;
+
+  final _plugins = <StatePlugin<T>>[];
+
+  @override
+  void registerPlugin(StatePlugin<T> plugin) {
+    _plugins.add(plugin);
+    plugin.onMounted(this);
+  }
+
+  @override
+  void unregisterPlugin(StatePlugin<T> plugin) {
+    _plugins.remove(plugin);
+    plugin.onUnmounted(this);
+  }
 }

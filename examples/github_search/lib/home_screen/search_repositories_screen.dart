@@ -1,6 +1,6 @@
+import 'package:beholder_flutter/beholder_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:github_search/home_screen/search_repositories_screen_vm.dart';
-import 'package:beholder/beholder.dart';
 
 class SearchRepositoriesScreen extends StatefulWidget {
   const SearchRepositoriesScreen({Key? key}) : super(key: key);

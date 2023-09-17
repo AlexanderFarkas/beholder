@@ -1,5 +1,5 @@
+import 'package:beholder_flutter/beholder_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:beholder/beholder.dart';
 
 class AnotherVm extends ViewModel {
   late final counter = state(0);
@@ -80,12 +80,11 @@ class _HomeScreenState extends State<HomeScreen> {
             width: 40,
             child: ListView.builder(itemBuilder: (_, index) {
               return SizedBox(
-                  height: 40,
-                  child: Observer(
-                    builder: (context, watch) => Text(
-                      watch(vm.sum).toString(),
-                    ),
-                  ));
+                height: 40,
+                child: Observer(
+                  builder: (context, watch) => Text("${watch(vm.sum)}"),
+                ),
+              );
             }),
           ),
         ),
