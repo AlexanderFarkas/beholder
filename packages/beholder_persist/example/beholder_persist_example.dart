@@ -1,7 +1,7 @@
 import 'package:beholder/beholder.dart';
 import 'package:beholder_persist/beholder_persist.dart';
 
-class InMemoryStorage implements PersistentStorage {
+class InMemoryStorage extends PersistentStorage {
   final _storage = {};
 
   @override
@@ -16,7 +16,7 @@ class InMemoryStorage implements PersistentStorage {
 }
 
 class CounterViewModel extends ViewModel {
-  late final counter = state(0)..persistAs("counter");
+  late final counter = state(0)..persist("counter");
 
   void increment() => counter.value++;
 }

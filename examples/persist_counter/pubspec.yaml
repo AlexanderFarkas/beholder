@@ -37,6 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   beholder_flutter: any
   beholder_persist: any
+  beholder_persist_shared_preferences: any
   shared_preferences: ^2.2.1
 
 dev_dependencies:

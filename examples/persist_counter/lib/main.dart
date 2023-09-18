@@ -1,40 +1,12 @@
 import 'package:beholder_flutter/beholder_flutter.dart';
 import 'package:beholder_persist/beholder_persist.dart';
+import 'package:beholder_persist_shared_preferences/beholder_persist_shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CounterViewModel extends ViewModel {
-  late final counter = state(0)..persistAs("counter");
+  late final counter = state(0)..persist("counter");
   void increment() => counter.value++;
-}
-
-class SharedPreferencesStorage extends PersistentStorage {
-  final SharedPreferences _preferences;
-
-  SharedPreferencesStorage(this._preferences);
-
-  @override
-  TValue? read<TValue>(String key) {
-    return _preferences.get(key) as TValue;
-  }
-
-  @override
-  void write<TValue>(String key, TValue value) {
-    switch (value) {
-      case int():
-        _preferences.setInt(key, value);
-      case double():
-        _preferences.setDouble(key, value);
-      case String():
-        _preferences.setString(key, value);
-      case bool():
-        _preferences.setBool(key, value);
-      case List<String>():
-        _preferences.setStringList(key, value);
-      default:
-        throw Exception("Unsupported type: ${value.runtimeType}");
-    }
-  }
 }
 
 void main() async {

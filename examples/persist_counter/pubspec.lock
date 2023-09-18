@@ -30,6 +30,13 @@ packages:
       relative: true
     source: path
     version: "1.0.0"
+  beholder_persist_shared_preferences:
+    dependency: "direct main"
+    description:
+      path: "../../packages/beholder_persist_shared_preferences"
+      relative: true
+    source: path
+    version: "0.0.1"
   boolean_selector:
     dependency: transitive
     description:

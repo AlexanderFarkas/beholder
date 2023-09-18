@@ -1,5 +1,9 @@
 Simple state management for Flutter.
 
+This package is built to work with:
+- [beholder_form](https://pub.dev/packages/beholder_form)
+- [beholder_persist](https://pub.dev/packages/beholder_persist)
+
 # Getting Started
 1. Define ViewModel
     ```dart
