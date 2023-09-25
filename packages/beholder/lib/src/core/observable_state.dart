@@ -26,7 +26,7 @@ class ObservableState<T>
     _value = value;
     final willUpdate = !_equals(oldValue, value);
     if (willUpdate) {
-      ObservableScope().invalidateState(this);
+      invalidate();
       for (final listener in _eagerListeners) {
         listener(value);
       }
@@ -37,6 +37,10 @@ class ObservableState<T>
     }
 
     return willUpdate;
+  }
+
+  void invalidate() {
+    ObservableScope().invalidateState(this);
   }
 
   @override

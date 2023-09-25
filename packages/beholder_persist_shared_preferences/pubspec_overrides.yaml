@@ -1,8 +1,0 @@
-# melos_managed_dependency_overrides: beholder,beholder_flutter,beholder_persist
-dependency_overrides:
-  beholder:
-    path: ../beholder
-  beholder_flutter:
-    path: ../beholder_flutter
-  beholder_persist:
-    path: ../beholder_persist
