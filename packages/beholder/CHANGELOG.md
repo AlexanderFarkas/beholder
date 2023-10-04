@@ -1,3 +1,7 @@
+## 0.0.1+3
+
+ - **REFACTOR**: allow FutureOr<T> for Result.guard.
+
 ## 0.0.1+2
 
 - **DOCS**: fix symlinks.

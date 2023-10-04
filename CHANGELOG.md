@@ -15,6 +15,36 @@ Packages with breaking changes:
 
 Packages with other changes:
 
+ - [`beholder` - `v0.0.1+3`](#beholder---v0013)
+ - [`beholder_flutter` - `v0.0.1+3`](#beholder_flutter---v0013)
+ - [`beholder_form` - `v0.0.1+3`](#beholder_form---v0013)
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `beholder_flutter` - `v0.0.1+3`
+ - `beholder_form` - `v0.0.1+3`
+
+---
+
+#### `beholder` - `v0.0.1+3`
+
+ - **REFACTOR**: allow FutureOr<T> for Result.guard.
+
+
+## 2023-10-04
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
  - [`beholder` - `v0.0.1+2`](#beholder---v0012)
  - [`beholder_flutter` - `v0.0.1+2`](#beholder_flutter---v0012)
  - [`beholder_form` - `v0.0.1+2`](#beholder_form---v0012)
