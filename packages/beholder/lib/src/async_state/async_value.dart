@@ -72,7 +72,7 @@ class Loading<T> extends AsyncValue<T> {
 sealed class Result<T> extends AsyncValue<T> {
   const Result();
 
-  static Future<Result<T>> guard<T>(Future<T> Function() computation) async {
+  static Future<Result<T>> guard<T>(FutureOr<T> Function() computation) async {
     try {
       final result = await computation();
       return Success(result);
