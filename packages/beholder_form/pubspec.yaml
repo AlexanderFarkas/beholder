@@ -1,6 +1,6 @@
 name: beholder_form
 description: A new Flutter package project.
-version: 0.0.1+1
+version: 0.0.1+2
 repository: https://github.com/AlexanderFarkas/beholder/tree/main/packages/beholder_form
 
 environment:
@@ -11,7 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  beholder_flutter: ^0.0.1+1
+  beholder_flutter: ^0.0.1+2
 
 dev_dependencies:
   flutter_test:
