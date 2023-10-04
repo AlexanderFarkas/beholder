@@ -1,7 +1,5 @@
 library computed;
 
-import 'package:beholder/src/utils.dart';
-
 import 'core.dart';
 import 'typedefs.dart';
 

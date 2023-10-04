@@ -1,7 +1,7 @@
 name: beholder_flutter
-description: A new Flutter package project.
+description: State Management inspired by MobX for Flutter
 version: 0.0.1
-repository: https://github.com/AlexanderFarkas/warden.git
+repository: https://github.com/AlexanderFarkas/beholder/tree/main/packages/beholder_flutter
 
 environment:
   sdk: '>=3.0.0 <4.0.0'

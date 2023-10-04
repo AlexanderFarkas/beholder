@@ -1,3 +1,4 @@
+// ignore_for_file: hash_and_equals
 part of future;
 
 sealed class AsyncValue<T> {
