@@ -1,3 +1,7 @@
+## 0.0.1+6
+
+ - **REFACTOR**: refresh returns Result.
+
 ## 0.0.1+5
 
  - **REFACTOR**: rename Dispose -> Disposer.
