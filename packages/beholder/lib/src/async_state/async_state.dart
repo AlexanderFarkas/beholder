@@ -43,7 +43,7 @@ class ObservableAsyncState<T>
     }
   }
 
-  Future<AsyncValue<T>> refresh(Future<T> Function() computation) {
+  Future<Result<T>> refresh(Future<T> Function() computation) {
     _cancelThrottle();
     _cancelDebounce();
     inner.value = Loading.fromPrevious(inner.value);
@@ -58,7 +58,7 @@ class ObservableAsyncState<T>
     return inner.setValue(value);
   }
 
-  Future<AsyncValue<T>> _process(Future<T> Function() execute) async {
+  Future<Result<T>> _process(Future<T> Function() execute) async {
     Future<T>? future;
     try {
       future = execute();
