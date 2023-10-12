@@ -5,9 +5,9 @@ import 'package:meta/meta.dart';
 import 'core.dart';
 import 'typedefs.dart';
 
-mixin ProxyObservableMixin<T> implements Observable<T> {
+mixin ProxyObservableStateMixin<T> implements Observable<T> {
   @visibleForTesting
-  abstract final WritableObservable<T> inner;
+  abstract final ObservableState<T> inner;
 
   @override
   void addObserver(ObserverMixin observer) => inner.addObserver(observer);

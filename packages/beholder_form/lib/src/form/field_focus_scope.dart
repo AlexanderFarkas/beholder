@@ -10,9 +10,7 @@ class FieldFocusScope extends StatelessWidget {
   Widget build(BuildContext context) {
     return Focus(
       canRequestFocus: false,
-      onFocusChange: (hasFocus) {
-        field._fieldState.hasFocus.value = hasFocus;
-      },
+      onFocusChange: (hasFocus) => field._fieldState.hasFocus.value = hasFocus,
       child: child,
     );
   }

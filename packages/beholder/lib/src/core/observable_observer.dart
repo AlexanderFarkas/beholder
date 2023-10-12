@@ -1,7 +1,7 @@
 part of core;
 
 abstract class ObservableObserver<T>
-    with ObserverMixin, ProxyObservableMixin<T>, DebugReprMixin
+    with ObserverMixin, ProxyObservableStateMixin<T>, DebugReprMixin
     implements Observable<T> {
   ObservableObserver() {
     final stateDelegate = createStateDelegate();

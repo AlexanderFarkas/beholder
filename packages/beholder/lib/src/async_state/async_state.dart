@@ -1,19 +1,17 @@
 part of future;
 
 class ObservableAsyncState<T>
-    with ProxyObservableMixin<AsyncValue<T>>, WritableObservableMixin<AsyncValue<T>> {
+    with ProxyObservableStateMixin<AsyncValue<T>>, WritableObservableMixin<AsyncValue<T>> {
   ObservableAsyncState({
     AsyncValue<T>? value,
     Duration? debounceTime,
     Duration? throttleTime,
     Equals<T>? equals,
-    ValueChanged<AsyncValue<T>>? onSet,
   })  : _debounceTime = debounceTime ?? const Duration(milliseconds: 0),
         _throttleTime = throttleTime ?? const Duration(milliseconds: 0) {
     inner = ObservableState<AsyncValue<T>>(
       value ?? const Loading(),
       equals: (a1, a2) => a1._equals(a2, equals: equals ?? Observable.defaultEquals),
-      onSet: onSet,
     );
   }
 

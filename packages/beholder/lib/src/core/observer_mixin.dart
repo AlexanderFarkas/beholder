@@ -53,3 +53,27 @@ class ListenObserver with ObserverMixin, DebugReprMixin {
     };
   }
 }
+
+class ValueChangedObserver<T> with ObserverMixin, DebugReprMixin {
+  ValueChangedObserver(this.listener);
+  final void Function(T previous, T next) listener;
+
+  late final ObservableState<T> _observableState;
+  late T _previousValue;
+
+  @override
+  bool Function() performRebuild() {
+    return () {
+      listener(_previousValue, _observableState._value);
+      _previousValue = _observableState.value;
+      return true;
+    };
+  }
+
+  @override
+  void onAddedToState(ObservableState observable) {
+    _observableState = observable as ObservableState<T>;
+    _previousValue = observable.value;
+    super.onAddedToState(observable);
+  }
+}

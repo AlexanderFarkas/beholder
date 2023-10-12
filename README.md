@@ -57,10 +57,10 @@ class PostListVm extends ViewModel {
     refresh();
   }
   
-  late final page = state(
-    1, 
-    onSet: (page) => posts.scheduleRefresh(() => Api.fetchPosts(page: page)),
-  );
+  late final page = state(1)
+    ..listenSync(
+      (_, page) => posts.scheduleRefresh(() => Api.fetchPosts(page: page))
+    );
   
   late final posts = asyncState(
     initialValue: const Loading(), 

@@ -6,19 +6,20 @@ class SearchRepositoriesScreenVm extends ViewModel {
 
   late final searchString = state(
     '',
-    onSet: (value) {
-      if (value.isEmpty) {
-        items.value = const Success([]);
-      } else {
-        items.scheduleRefresh(() {
-          if (value == "error") {
-            throw "Unexpected error";
-          }
-          return githubApi.searchRepositories(value);
-        });
-      }
-    },
-  );
+  )..listenSync(
+      (_, value) {
+        if (value.isEmpty) {
+          items.value = const Success([]);
+        } else {
+          items.scheduleRefresh(() {
+            if (value == "error") {
+              throw "Unexpected error";
+            }
+            return githubApi.searchRepositories(value);
+          });
+        }
+      },
+    );
 
   Future<void> refresh() {
     return items.refresh(() => githubApi.searchRepositories(searchString.value));

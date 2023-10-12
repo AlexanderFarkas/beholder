@@ -1,21 +1,16 @@
 part of core;
 
-typedef ValueChanged<T> = void Function(T value);
+typedef ValueChanged<T> = void Function(T previous, T next);
 typedef ValueSetter<T> = T Function(T value);
 
-class ObservableState<T>
+final class ObservableState<T>
     with DebugReprMixin, WritableObservableMixin<T>
     implements RootObservable<T> {
   ObservableState(
     T value, {
     Equals<T>? equals,
-    ValueChanged<T>? onSet,
   })  : _value = value,
-        _equals = equals ?? Observable.defaultEquals {
-    if (onSet != null) {
-      _eagerListeners.add(onSet);
-    }
-  }
+        _equals = equals ?? Observable.defaultEquals;
 
   @override
   T get value => _value;
@@ -28,7 +23,7 @@ class ObservableState<T>
     if (willUpdate) {
       invalidate();
       for (final listener in _eagerListeners) {
-        listener(value);
+        listener(oldValue, value);
       }
 
       for (final plugin in _plugins) {
@@ -43,19 +38,27 @@ class ObservableState<T>
     ObservableScope().invalidateState(this);
   }
 
+  /// Adds observer, which will be called after.
   @override
-  Dispose listen(ValueChanged<T> onChanged, {bool eager = false}) {
+  Dispose listen(ValueChanged<T> onChanged) {
     assert(!_debugDisposed, "$this is already disposed");
 
-    if (eager) {
-      final isNew = _eagerListeners.add(onChanged);
-      assert(isNew, "Listener already added");
-      return () => _eagerListeners.remove(onChanged);
-    } else {
-      final observer = ListenObserver(() => onChanged(value));
-      addObserver(observer);
-      return () => removeObserver(observer);
-    }
+    final observer = ValueChangedObserver(onChanged);
+    addObserver(observer);
+    return () => removeObserver(observer);
+  }
+
+  /// [onChanged] is called before *any* other observer is notified.
+  /// This is useful if you want to update other [ObservableState]s in the same [ObservableScope] phase.
+  ///
+  /// Use it only if you know what you are doing.
+  /// Safer, but less performant, alternative is to use [listen].
+  Dispose listenSync(ValueChanged<T> onChanged) {
+    assert(!_debugDisposed, "$this is already disposed");
+
+    final isNew = _eagerListeners.add(onChanged);
+    assert(isNew, "Listener already added");
+    return () => _eagerListeners.remove(onChanged);
   }
 
   final Equals<T> _equals;
@@ -129,7 +132,7 @@ class ObservableState<T>
       controller = StreamController<T>.broadcast(
         sync: true,
         onCancel: () => disposeListen?.call(),
-        onListen: () => disposeListen = listen((value) => controller.add(value)),
+        onListen: () => disposeListen = listen((_, value) => controller.add(value)),
       );
       return controller;
     },

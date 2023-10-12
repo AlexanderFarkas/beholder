@@ -4,11 +4,15 @@ import 'package:test/test.dart';
 import 'utils.dart';
 
 void main() {
+  setUp(() {
+    ObservableScope.reset();
+  });
+
   test("Standard", () async {
     final asyncState = ObservableAsyncState<String>(value: const Loading());
     asyncState.scheduleRefresh(() async => "value");
     expect(asyncState.value, equals(const Loading<String>()));
-    await ObservableScope.waitForUpdate();
+    await ObservableScope.pump();
     expect(asyncState.value, equals(const Success("value")));
   });
 
@@ -16,7 +20,7 @@ void main() {
     final asyncState = ObservableAsyncState<String>(value: const Success("another"));
     asyncState.scheduleRefresh(() async => "value");
     expect(asyncState.value, equals(const Loading(previousResult: Success("another"))));
-    await ObservableScope.waitForUpdate();
+    await ObservableScope.pump();
     expect(asyncState.value, equals(const Success("value")));
   });
 
@@ -24,7 +28,7 @@ void main() {
     final asyncState = ObservableAsyncState<String>(value: const Success("another"));
     asyncState.scheduleRefresh(() async => "value");
     expect(asyncState.value, equals(const Loading(previousResult: Success("another"))));
-    await ObservableScope.waitForUpdate();
+    await ObservableScope.pump();
     expect(asyncState.value, equals(const Success("value")));
   });
 
@@ -33,7 +37,7 @@ void main() {
     asyncState.scheduleRefresh(() async => "value");
     asyncState.value = const Success("another value");
     expect(asyncState.value, equals(const Success("another value")));
-    await ObservableScope.waitForUpdate();
+    await ObservableScope.pump();
     expect(asyncState.value, equals(const Success("another value")));
   });
 
@@ -45,7 +49,7 @@ void main() {
     asyncState.scheduleRefresh(() async => "value2");
     asyncState.scheduleRefresh(() async => "value3");
     expect(asyncState.value, equals(const Loading<String>()));
-    await ObservableScope.waitForUpdate();
+    await ObservableScope.pump();
     expect(asyncState.value, equals(const Success("value3")));
   });
 
@@ -59,10 +63,10 @@ void main() {
     asyncState.scheduleRefresh(() async => "value2");
     asyncState.scheduleRefresh(() async => "value3");
     expect(asyncState.value, equals(const Loading<String>()));
-    await ObservableScope.waitForUpdate();
+    await ObservableScope.pump();
     expect(asyncState.value, equals(const Loading<String>()));
     await Future.delayed(duration);
-    await ObservableScope.waitForUpdate();
+    await ObservableScope.pump();
     expect(asyncState.value, equals(const Success("value3")));
   });
 
@@ -76,11 +80,11 @@ void main() {
     asyncState.scheduleRefresh(() async => "value2");
     asyncState.scheduleRefresh(() async => "value3");
     expect(asyncState.value, equals(const Loading<String>()));
-    await ObservableScope.waitForUpdate();
+    await ObservableScope.pump();
     expect(asyncState.value, equals(const Success("value1")));
     await Future.delayed(duration);
     asyncState.scheduleRefresh(() async => "value4");
-    await ObservableScope.waitForUpdate();
+    await ObservableScope.pump();
     expect(asyncState.value, equals(const Success("value4")));
   });
 
@@ -90,17 +94,17 @@ void main() {
     final trimmed = createComputed(
       (watch) => watch(asyncState).mapValue((value) => value.trim()),
     );
-    trimmed.computed.listen((value) {});
+    trimmed.computed.listen((_, value) {});
 
     final value = "value";
     asyncState.value = Success(value);
-    await ObservableScope.waitForUpdate();
+    await ObservableScope.pump();
     asyncState.value = Success(value);
-    await ObservableScope.waitForUpdate();
+    await ObservableScope.pump();
     asyncState.value = Success(value);
-    await ObservableScope.waitForUpdate();
+    await ObservableScope.pump();
     asyncState.value = Success(value);
-    await ObservableScope.waitForUpdate();
+    await ObservableScope.pump();
     expect(trimmed.rebuildCounter.value, equals(2));
   });
 
@@ -113,17 +117,17 @@ void main() {
     final trimmed = createComputed(
       (watch) => watch(asyncState).mapValue((value) => value.trim()),
     );
-    trimmed.computed.listen((value) {});
+    trimmed.computed.listen((_, value) {});
 
     final value = "value";
     asyncState.value = Success(value);
-    await ObservableScope.waitForUpdate();
+    await ObservableScope.pump();
     asyncState.value = Success(value);
-    await ObservableScope.waitForUpdate();
+    await ObservableScope.pump();
     asyncState.value = Success(value);
-    await ObservableScope.waitForUpdate();
+    await ObservableScope.pump();
     asyncState.value = Success(value);
-    await ObservableScope.waitForUpdate();
+    await ObservableScope.pump();
     expect(trimmed.rebuildCounter.value, equals(5));
   });
 
@@ -132,7 +136,7 @@ void main() {
     asyncState.scheduleRefresh(() async => "");
     asyncState.scheduleRefresh(() => throw "error");
     expect(asyncState.value, equals(const Loading<String>()));
-    await ObservableScope.waitForUpdate();
+    await ObservableScope.pump();
     expect((asyncState.value as Failure).error, equals(const Failure<String>("error").error));
   });
 }

@@ -4,10 +4,15 @@ import 'package:test/test.dart';
 import 'utils.dart';
 
 void main() {
+  setUp(() {
+    ObservableScope.reset();
+  });
+
   test("Rebuild count doesn't increase after sequential calls to value", () async {
     final counter = ObservableState(0);
     final doubled = createComputed((watch) => watch(counter) * 2);
     final tripled = createComputed((watch) => watch(counter) * 3);
+
     expect([doubled.rebuildCounter.value, tripled.rebuildCounter.value], [1, 1]);
     counter.value++;
     expect(doubled.computed.value, 2);
@@ -27,7 +32,7 @@ void main() {
     final tripled = createComputed((watch) => watch(counter) * 3);
     expect([doubled.rebuildCounter.value, tripled.rebuildCounter.value], [1, 1]);
     counter.value++;
-    await ObservableScope.waitForUpdate();
+    await ObservableScope.pump();
     expect(doubled.computed.value, 2);
     expect([doubled.rebuildCounter.value, tripled.rebuildCounter.value], [2, 1]);
     expect(tripled.computed.value, 3);
@@ -43,7 +48,7 @@ void main() {
 
     expect(doubled.rebuildCounter.value, equals(1));
     counter.value++;
-    await ObservableScope.waitForUpdate();
+    await ObservableScope.pump();
     expect(doubled.rebuildCounter.value, equals(1));
   });
 
@@ -52,12 +57,12 @@ void main() {
     final counter2 = ObservableState(0);
 
     final sum = createComputed((watch) => (watch(counter1), watch(counter2)));
-    sum.computed.listen((value) {});
+    sum.computed.listen((_, value) {});
 
     expect(sum.rebuildCounter.value, equals(1));
     counter1.value++;
     counter2.value++;
-    await ObservableScope.waitForUpdate();
+    await ObservableScope.pump();
     expect(sum.rebuildCounter.value, equals(2));
   });
 
@@ -67,11 +72,11 @@ void main() {
 
     expect(sum.rebuildCounter.value, equals(1));
     counter.value++;
-    sum.computed.listen((value) {});
+    sum.computed.listen((_, value) {});
     expect(sum.rebuildCounter.value, equals(1));
-    await ObservableScope.waitForUpdate();
+    await ObservableScope.pump();
     counter.value++;
-    await ObservableScope.waitForUpdate();
+    await ObservableScope.pump();
     expect(sum.rebuildCounter.value, equals(2));
   });
 }

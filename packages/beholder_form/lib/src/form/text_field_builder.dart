@@ -26,7 +26,7 @@ class _FieldObserverState extends State<FieldObserver> {
     final controller = this.controller = widget.controller ?? TextEditingController();
     _setControllerValue(widget.field.value);
     controller.addListener(_controllerListener);
-    removeFieldListener = widget.field.listen(_setControllerValue);
+    removeFieldListener = widget.field.listen((_, value) => _setControllerValue(value));
   }
 
   @override

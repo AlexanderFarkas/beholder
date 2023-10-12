@@ -7,17 +7,14 @@ abstract interface class ObservableField<T> implements Observable<T> {
 }
 
 class WritableObservableField<T> extends ViewModel
-    with ProxyObservableMixin<T>, WritableObservableMixin<T>
+    with ProxyObservableStateMixin<T>, WritableObservableMixin<T>
     implements ObservableField<T> {
   WritableObservableField(
     T value, {
     required ComputeError<T> computeError,
   }) : _computeError = computeError {
     _fieldState = WritableFieldState(value);
-    _fieldState.value.listen(
-      (value) => this._innerError.value = null,
-      eager: true,
-    );
+    _fieldState.value.listenSync((_, value) => this._innerError.value = null);
     disposers.add(_fieldState.dispose);
   }
 

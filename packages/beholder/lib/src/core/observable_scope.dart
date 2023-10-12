@@ -11,6 +11,7 @@ class ObservableScope {
     return _current!;
   }
 
+  @visibleForTesting
   static void reset() {
     _current = ObservableScope._();
   }
@@ -49,7 +50,7 @@ class ObservableScope {
   Set<ObserverMixin> _consumerObservers = {};
 
   @visibleForTesting
-  static waitForUpdate() async {
+  static pump() async {
     await Future(() {});
   }
 
@@ -58,7 +59,7 @@ class ObservableScope {
     if (_isScheduled) return;
     _isScheduled = true;
 
-    Future(_updateObservers);
+    Future.microtask(_updateObservers);
   }
 
   void _updateObservers() {

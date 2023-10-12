@@ -12,12 +12,10 @@ abstract mixin class ViewModel implements Disposable {
   ObservableState<T> state<T>(
     T value, {
     Equals<T>? equals,
-    ValueChanged<T>? onSet,
   }) =>
       autoDispose(ObservableState<T>(
         value,
         equals: equals,
-        onSet: onSet,
       ));
 
   @protected

@@ -4,27 +4,27 @@ abstract interface class FieldState<T> {
   Observable<T> get value;
   Observable<bool> get hasFocus;
   Observable<bool> get wasEverUnfocused;
-  Observable<bool> get wasSetAfterFocus;
-  Observable<bool> get wasSet;
+  Observable<bool> get wasChangedAfterFocus;
+  Observable<bool> get wasChanged;
 }
 
 class WritableFieldState<T> extends ViewModel implements FieldState<T> {
   WritableFieldState(T initialValue) {
-    value = state(initialValue, onSet: (value) {
-      wasSet.value = true;
-      if (hasFocus.value) {
-        wasSetAfterFocus.value = true;
-      }
-    });
+    value = state(initialValue)
+      ..listenSync((_, value) {
+        wasChanged.value = true;
+        if (hasFocus.value) {
+          wasChangedAfterFocus.value = true;
+        }
+      });
 
-    hasFocus.listen(
-      (isFocused) {
-        wasSetAfterFocus.value = false;
+    hasFocus.listenSync(
+      (_, isFocused) {
+        wasChangedAfterFocus.value = false;
         if (!isFocused) {
           wasEverUnfocused.value = true;
         }
       },
-      eager: true,
     );
   }
 
@@ -36,7 +36,7 @@ class WritableFieldState<T> extends ViewModel implements FieldState<T> {
   @override
   late final ObservableState<bool> wasEverUnfocused = state(false);
   @override
-  late final ObservableState<bool> wasSetAfterFocus = state(false);
+  late final ObservableState<bool> wasChangedAfterFocus = state(false);
   @override
-  late final ObservableState<bool> wasSet = state(false);
+  late final ObservableState<bool> wasChanged = state(false);
 }

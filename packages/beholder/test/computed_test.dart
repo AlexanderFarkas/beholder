@@ -2,6 +2,10 @@ import 'package:beholder/beholder.dart';
 import 'package:test/test.dart';
 
 void main() {
+  setUp(() {
+    ObservableScope.reset();
+  });
+
   test("Computed tracks changes in all observables", () async {
     final (counter1, counter2, counter3) = (
       ObservableState(1),
@@ -19,7 +23,7 @@ void main() {
     counter1.value = 2;
     counter2.value = 4;
     counter3.value = 8;
-    await ObservableScope.waitForUpdate();
+    await ObservableScope.pump();
     expect(arr.value, equals([2, 4, 8]));
   });
 }
