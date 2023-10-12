@@ -1,3 +1,7 @@
+## 0.0.1+5
+
+ - **REFACTOR**: rename Dispose -> Disposer.
+
 ## 0.0.1+4
 
  - **REFACTOR**: remove onSet.

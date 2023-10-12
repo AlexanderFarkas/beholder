@@ -15,6 +15,39 @@ Packages with breaking changes:
 
 Packages with other changes:
 
+ - [`beholder` - `v0.0.1+5`](#beholder---v0015)
+ - [`beholder_form` - `v0.0.1+5`](#beholder_form---v0015)
+ - [`beholder_flutter` - `v0.0.1+5`](#beholder_flutter---v0015)
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `beholder_flutter` - `v0.0.1+5`
+
+---
+
+#### `beholder` - `v0.0.1+5`
+
+ - **REFACTOR**: rename Dispose -> Disposer.
+
+#### `beholder_form` - `v0.0.1+5`
+
+ - **REFACTOR**: rename Dispose -> Disposer.
+
+
+## 2023-10-12
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
  - [`beholder` - `v0.0.1+4`](#beholder---v0014)
  - [`beholder_form` - `v0.0.1+4`](#beholder_form---v0014)
  - [`beholder_flutter` - `v0.0.1+4`](#beholder_flutter---v0014)
