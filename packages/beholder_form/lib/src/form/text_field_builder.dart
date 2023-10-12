@@ -19,7 +19,8 @@ class FieldObserver extends StatefulWidget {
 
 class _FieldObserverState extends State<FieldObserver> {
   TextEditingController? controller;
-  Dispose? removeFieldListener;
+  Disposer? removeFieldListener;
+
   @override
   void initState() {
     super.initState();

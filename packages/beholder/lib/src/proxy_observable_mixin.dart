@@ -16,7 +16,7 @@ mixin ProxyObservableStateMixin<T> implements Observable<T> {
   Stream<T> asStream() => inner.asStream();
 
   @override
-  Dispose listen(ValueChanged<T> onChanged) => inner.listen(onChanged);
+  Disposer listen(ValueChanged<T> onChanged) => inner.listen(onChanged);
 
   @override
   UnmodifiableSetView<ObserverMixin> get observers => inner.observers;

@@ -40,7 +40,7 @@ final class ObservableState<T>
 
   /// Adds observer, which will be called after.
   @override
-  Dispose listen(ValueChanged<T> onChanged) {
+  Disposer listen(ValueChanged<T> onChanged) {
     assert(!_debugDisposed, "$this is already disposed");
 
     final observer = ValueChangedObserver(onChanged);
@@ -53,7 +53,7 @@ final class ObservableState<T>
   ///
   /// Use it only if you know what you are doing.
   /// Safer, but less performant, alternative is to use [listen].
-  Dispose listenSync(ValueChanged<T> onChanged) {
+  Disposer listenSync(ValueChanged<T> onChanged) {
     assert(!_debugDisposed, "$this is already disposed");
 
     final isNew = _eagerListeners.add(onChanged);
@@ -127,7 +127,7 @@ final class ObservableState<T>
   final _observers = <ObserverMixin>{};
   late final Lazy<StreamController<T>> _controller = Lazy(
     () {
-      Dispose? disposeListen;
+      Disposer? disposeListen;
       late StreamController<T> controller;
       controller = StreamController<T>.broadcast(
         sync: true,

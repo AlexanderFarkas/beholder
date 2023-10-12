@@ -16,7 +16,7 @@ abstract interface class Observable<T> implements Disposable {
 
   T get value;
   Stream<T> asStream();
-  Dispose listen(ValueChanged<T> onChanged);
+  Disposer listen(ValueChanged<T> onChanged);
   void addObserver(ObserverMixin observer);
   void removeObserver(ObserverMixin observer);
   UnmodifiableSetView<ObserverMixin> get observers;

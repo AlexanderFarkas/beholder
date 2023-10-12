@@ -6,7 +6,7 @@ import 'typedefs.dart';
 
 abstract mixin class ViewModel implements Disposable {
   @protected
-  final disposers = <Dispose>{};
+  final disposers = <Disposer>{};
 
   @protected
   ObservableState<T> state<T>(
