@@ -1,3 +1,7 @@
+## 0.0.1+4
+
+ - **REFACTOR**: remove onSet.
+
 ## 0.0.1+3
 
  - Update a dependency to the latest release.
