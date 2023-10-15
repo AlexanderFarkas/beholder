@@ -64,11 +64,11 @@ class ObservableAsyncState<T>
     final completer = Completer<Result<T>>();
     _currentFuture = completer.future;
 
-    final token = CancellationToken(() => _currentFuture == completer.future);
+    final token = CancellationToken(isCancelled: () => _currentFuture != completer.future);
     final value = await Result.guard(() => execute(token));
     completer.complete(value);
 
-    if (token.isCancelled) {
+    if (!token.isCancelled) {
       inner.value = value;
     }
     return value;
@@ -104,5 +104,5 @@ class CancellationToken {
   bool get isCancelled => _isCancelled();
   bool get isActive => !isCancelled;
 
-  CancellationToken(this._isCancelled);
+  CancellationToken({required bool Function() isCancelled}) : _isCancelled = isCancelled;
 }
