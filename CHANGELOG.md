@@ -15,6 +15,36 @@ Packages with breaking changes:
 
 Packages with other changes:
 
+ - [`beholder` - `v0.0.1+8`](#beholder---v0018)
+ - [`beholder_flutter` - `v0.0.1+8`](#beholder_flutter---v0018)
+ - [`beholder_form` - `v0.0.1+8`](#beholder_form---v0018)
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `beholder_flutter` - `v0.0.1+8`
+ - `beholder_form` - `v0.0.1+8`
+
+---
+
+#### `beholder` - `v0.0.1+8`
+
+ - **FIX**: cancellation token wrong behavior.
+
+
+## 2023-10-15
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
  - [`beholder` - `v0.0.1+7`](#beholder---v0017)
  - [`beholder_form` - `v0.0.1+7`](#beholder_form---v0017)
  - [`beholder_flutter` - `v0.0.1+7`](#beholder_flutter---v0017)

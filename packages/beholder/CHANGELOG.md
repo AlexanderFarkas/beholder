@@ -1,3 +1,7 @@
+## 0.0.1+8
+
+ - **FIX**: cancellation token wrong behavior.
+
 ## 0.0.1+7
 
  - **REFACTOR**: add `CancellationToken` to `asyncState`.
