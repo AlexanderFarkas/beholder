@@ -1,3 +1,7 @@
+## 0.0.1+7
+
+ - **REFACTOR**: add `CancellationToken` to `asyncState`.
+
 ## 0.0.1+6
 
  - **REFACTOR**: refresh returns Result.

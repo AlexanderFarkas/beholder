@@ -3,6 +3,39 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2023-10-15
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`beholder` - `v0.0.1+7`](#beholder---v0017)
+ - [`beholder_form` - `v0.0.1+7`](#beholder_form---v0017)
+ - [`beholder_flutter` - `v0.0.1+7`](#beholder_flutter---v0017)
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `beholder_flutter` - `v0.0.1+7`
+
+---
+
+#### `beholder` - `v0.0.1+7`
+
+ - **REFACTOR**: add `CancellationToken` to `asyncState`.
+
+#### `beholder_form` - `v0.0.1+7`
+
+ - **REFACTOR**: add `CancellationToken` to `asyncState`.
+
+
 ## 2023-10-12
 
 ### Changes
