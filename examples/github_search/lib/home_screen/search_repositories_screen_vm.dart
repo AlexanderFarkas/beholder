@@ -11,7 +11,7 @@ class SearchRepositoriesScreenVm extends ViewModel {
         if (value.isEmpty) {
           items.value = const Success([]);
         } else {
-          items.scheduleRefresh(() {
+          items.scheduleRefresh((_) {
             if (value == "error") {
               throw "Unexpected error";
             }
@@ -22,7 +22,7 @@ class SearchRepositoriesScreenVm extends ViewModel {
     );
 
   Future<void> refresh() {
-    return items.refresh(() => githubApi.searchRepositories(searchString.value));
+    return items.refresh((_) => githubApi.searchRepositories(searchString.value));
   }
 
   late final items = asyncState(

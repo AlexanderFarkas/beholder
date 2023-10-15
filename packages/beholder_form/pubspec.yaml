@@ -1,5 +1,5 @@
 name: beholder_form
-description: A new Flutter package project.
+description: Opinionated Reactive Forms for beholder_flutter.
 version: 0.0.1+6
 repository: https://github.com/AlexanderFarkas/beholder/tree/main/packages/beholder_form
 

@@ -1,5 +1,7 @@
 part of future;
 
+typedef CancellableComputation<T> = Future<T> Function(CancellationToken token);
+
 class ObservableAsyncState<T>
     with ProxyObservableStateMixin<AsyncValue<T>>, WritableObservableMixin<AsyncValue<T>> {
   ObservableAsyncState({
@@ -18,7 +20,7 @@ class ObservableAsyncState<T>
   @override
   late final ObservableState<AsyncValue<T>> inner;
 
-  void scheduleRefresh(Future<T> Function() computation) async {
+  void scheduleRefresh(CancellableComputation<T> computation) async {
     final throttleTimer = _throttleTimer;
     if (throttleTimer != null && throttleTimer.isActive) {
       return;
@@ -43,7 +45,7 @@ class ObservableAsyncState<T>
     }
   }
 
-  Future<Result<T>> refresh(Future<T> Function() computation) {
+  Future<Result<T>> refresh(CancellableComputation<T> computation) {
     _cancelThrottle();
     _cancelDebounce();
     inner.value = Loading.fromPrevious(inner.value);
@@ -58,16 +60,15 @@ class ObservableAsyncState<T>
     return inner.setValue(value);
   }
 
-  Future<Result<T>> _process(Future<T> Function() execute) async {
-    Future<T>? future;
-    try {
-      future = execute();
-    } catch (e, s) {
-      future ??= Future.error(e, s);
-    }
-    _currentFuture = future;
-    final value = await Result.guard(() => future!);
-    if (_currentFuture == future) {
+  Future<Result<T>> _process(CancellableComputation<T> execute) async {
+    final completer = Completer<Result<T>>();
+    _currentFuture = completer.future;
+
+    final token = CancellationToken(() => _currentFuture == completer.future);
+    final value = await Result.guard(() => execute(token));
+    completer.complete(value);
+
+    if (token.isCancelled) {
       inner.value = value;
     }
     return value;
@@ -96,4 +97,12 @@ class ObservableAsyncState<T>
   Future? _currentFuture;
   Timer? _debounceTimer;
   Timer? _throttleTimer;
+}
+
+class CancellationToken {
+  final bool Function() _isCancelled;
+  bool get isCancelled => _isCancelled();
+  bool get isActive => !isCancelled;
+
+  CancellationToken(this._isCancelled);
 }
