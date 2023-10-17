@@ -1,9 +1,11 @@
 import 'package:beholder/beholder.dart';
 import 'package:flutter/widgets.dart';
 
+typedef ObserverBuilder = Widget Function(BuildContext context, Watch watch);
+
 class Observer extends StatefulWidget {
   const Observer({Key? key, required this.builder}) : super(key: key);
-  final Widget Function(BuildContext context, Watch watch) builder;
+  final ObserverBuilder builder;
 
   @override
   State<Observer> createState() => _ObserverState();

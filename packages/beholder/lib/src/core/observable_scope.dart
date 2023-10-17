@@ -51,7 +51,7 @@ class ObservableScope {
 
   @visibleForTesting
   static pump() async {
-    await Future(() {});
+    await Future.microtask(() {});
   }
 
   bool _isScheduled = false;
