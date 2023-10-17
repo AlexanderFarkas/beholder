@@ -1,3 +1,7 @@
+## 0.0.1+9
+
+ - **REFACTOR**: add 'ObserverBuilder' typedef.
+
 ## 0.0.1+8
 
  - **FIX**: cancellation token wrong behavior.
