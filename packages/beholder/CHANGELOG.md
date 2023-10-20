@@ -1,3 +1,7 @@
+## 0.0.2
+
+ - **FEAT**: autoDispose plugin.
+
 ## 0.0.1+9
 
  - **REFACTOR**: add 'ObserverBuilder' typedef.
