@@ -310,7 +310,7 @@ void main() {
 
   test("listen", () async {
     final obs = ObservableState(1);
-    int? previousValue = null;
+    int? previousValue;
     int value = obs.value;
     obs.listen((previous, newValue) {
       previousValue = previous;
