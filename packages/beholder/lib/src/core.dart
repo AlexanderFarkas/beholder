@@ -3,6 +3,7 @@ library core;
 import 'dart:async';
 import 'dart:collection';
 
+import 'package:beholder/src/plugins.dart';
 import 'package:meta/meta.dart';
 import 'package:beholder/src/proxy_observable_mixin.dart';
 

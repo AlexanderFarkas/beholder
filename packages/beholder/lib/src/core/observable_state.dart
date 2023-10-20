@@ -4,8 +4,7 @@ typedef ValueChanged<T> = void Function(T previous, T next);
 typedef ValueSetter<T> = T Function(T value);
 
 final class ObservableState<T>
-    with DebugReprMixin, WritableObservableMixin<T>
-    implements RootObservable<T> {
+    with DebugReprMixin, WritableObservableMixin<T> implements Extendable<T> {
   ObservableState(
     T value, {
     Equals<T>? equals,
@@ -18,16 +17,17 @@ final class ObservableState<T>
   @override
   bool setValue(T value) {
     final oldValue = _value;
-    _value = value;
     final willUpdate = !_equals(oldValue, value);
     if (willUpdate) {
+      _value = value;
+
       invalidate();
       for (final listener in _eagerListeners) {
         listener(oldValue, value);
       }
 
       for (final plugin in _plugins) {
-        plugin.onValueChanged(value);
+        plugin.onValueChanged(oldValue, value);
       }
     }
 
@@ -80,8 +80,8 @@ final class ObservableState<T>
     _controller.dispose();
     _observers.clear();
     for (final plugin in _plugins) {
-      plugin.onUnmounted(this);
-    }
+      plugin.onDisposed();
+    } 
     _plugins.clear();
   }
 
@@ -132,7 +132,8 @@ final class ObservableState<T>
       controller = StreamController<T>.broadcast(
         sync: true,
         onCancel: () => disposeListen?.call(),
-        onListen: () => disposeListen = listen((_, value) => controller.add(value)),
+        onListen: () =>
+            disposeListen = listen((_, value) => controller.add(value)),
       );
       return controller;
     },
@@ -144,14 +145,8 @@ final class ObservableState<T>
   final _plugins = <StatePlugin<T>>[];
 
   @override
-  void registerPlugin(StatePlugin<T> plugin) {
+  void addPlugin(StatePlugin<T> plugin) {
     _plugins.add(plugin);
-    plugin.onMounted(this);
-  }
-
-  @override
-  void unregisterPlugin(StatePlugin<T> plugin) {
-    _plugins.remove(plugin);
-    plugin.onUnmounted(this);
+    plugin.attach(this);
   }
 }

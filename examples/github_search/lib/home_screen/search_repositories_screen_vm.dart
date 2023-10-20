@@ -1,32 +1,39 @@
 import 'package:github_search/github_api.dart';
 import 'package:beholder/beholder.dart';
+import 'package:github_search/models/github_repository.dart';
+import 'package:rxdart/rxdart.dart';
 
 class SearchRepositoriesScreenVm extends ViewModel {
   final githubApi = GithubApi();
 
   late final searchString = state(
     '',
-  )..listenSync(
-      (_, value) {
-        if (value.isEmpty) {
-          items.value = const Success([]);
-        } else {
-          items.scheduleRefresh((_) {
-            if (value == "error") {
-              throw "Unexpected error";
-            }
-            return githubApi.searchRepositories(value);
-          });
-        }
-      },
-    );
+  )..asStream()
+      .debounceTime(const Duration(milliseconds: 500))
+      .listen((_) => refresh());
 
-  Future<void> refresh() {
-    return items.refresh((_) => githubApi.searchRepositories(searchString.value));
+  Future<void> refresh() async {
+    final search = searchString.value;
+    if (search.isEmpty) {
+      items.value = const Success([]);
+      return;
+    }
+
+    items.value = Loading.fromPrevious(items.value);
+    final result = await Result.guard(() {
+      if (search == "error") {
+        throw "Unexpected error";
+      }
+
+      return githubApi.searchRepositories(search);
+    });
+
+    if (search == searchString.value) {
+      items.value = result;
+    }
   }
 
-  late final items = asyncState(
-    value: const Success([]),
-    debounceTime: const Duration(milliseconds: 500),
+  late final items = state<AsyncValue<List<GithubRepository>>>(
+    const Success([]),
   );
 }

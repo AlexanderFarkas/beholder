@@ -15,14 +15,14 @@ packages:
       path: "../../packages/beholder"
       relative: true
     source: path
-    version: "0.0.1+8"
+    version: "0.0.1+9"
   beholder_flutter:
     dependency: "direct main"
     description:
       path: "../../packages/beholder_flutter"
       relative: true
     source: path
-    version: "0.0.1+8"
+    version: "0.0.1+9"
   boolean_selector:
     dependency: transitive
     description:
