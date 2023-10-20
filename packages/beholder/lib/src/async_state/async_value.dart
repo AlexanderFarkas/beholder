@@ -12,6 +12,16 @@ sealed class AsyncValue<T> {
 
   AsyncValue<R> whenValue<R>(R Function(T value) cb) => mapValue(cb);
 
+  AsyncValue<R> mapValue<R>(R Function(T value) cb) {
+    return switch (this) {
+      final Success<T> value => Success(cb(value.value)),
+      final Failure<T> value => Failure(value.error, value.stackTrace),
+      Loading<T>() => Loading<R>(),
+    };
+  }
+}
+
+extension AsyncValueX<T> on AsyncValue<T> {
   R maybeWhen<R>({
     R Function(T value)? data,
     R Function(Object error, StackTrace? stackTrace)? error,
@@ -48,14 +58,6 @@ sealed class AsyncValue<T> {
       Loading<T>() => loading(),
       final Success<T> value => data(value.value),
       final Failure<T> value => error(value.error, value.stackTrace),
-    };
-  }
-
-  AsyncValue<R> mapValue<R>(R Function(T value) cb) {
-    return switch (this) {
-      final Success<T> value => Success(cb(value.value)),
-      final Failure<T> value => Failure(value.error, value.stackTrace),
-      Loading<T>() => Loading<R>(),
     };
   }
 }
@@ -111,6 +113,26 @@ sealed class Result<T> extends AsyncValue<T> {
     return mapValue(cb);
   }
 
+  R map<R>({
+    required R Function(Success<T> value) data,
+    required R Function(Failure<T> value) error,
+  }) {
+    return switch (this) {
+      final Success<T> value => data(value),
+      final Failure<T> value => error(value),
+    };
+  }
+
+  R when<R>({
+    required R Function(T value) data,
+    required R Function(Object error, StackTrace? stackTrace) error,
+  }) {
+    return switch (this) {
+      final Success<T> value => data(value.value),
+      final Failure<T> value => error(value.error, value.stackTrace),
+    };
+  }
+
   static Future<Result<T>> guard<T>(FutureOr<T> Function() computation) async {
     try {
       final result = await computation();
@@ -164,6 +186,5 @@ class Failure<T> extends Result<T> {
   int get hashCode => Object.hash(runtimeType, error, stackTrace);
 
   @override
-  String toString() =>
-      'Failure<$T>(error: $error, stackTrace: $stackTrace)';
+  String toString() => 'Failure<$T>(error: $error, stackTrace: $stackTrace)';
 }
