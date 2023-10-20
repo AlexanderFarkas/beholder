@@ -15,6 +15,38 @@ Packages with breaking changes:
 
 Packages with other changes:
 
+ - [`beholder` - `v0.0.2+1`](#beholder---v0021)
+ - [`beholder_flutter` - `v0.0.1+11`](#beholder_flutter---v00111)
+ - [`beholder_provider` - `v0.0.2+1`](#beholder_provider---v0021)
+ - [`beholder_form` - `v0.0.1+11`](#beholder_form---v00111)
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `beholder_flutter` - `v0.0.1+11`
+ - `beholder_provider` - `v0.0.2+1`
+ - `beholder_form` - `v0.0.1+11`
+
+---
+
+#### `beholder` - `v0.0.2+1`
+
+ - **REFACTOR**: AsyncValue extensions.
+
+
+## 2023-10-20
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
  - [`beholder` - `v0.0.2`](#beholder---v002)
  - [`beholder_provider` - `v0.0.2`](#beholder_provider---v002)
  - [`beholder_flutter` - `v0.0.1+10`](#beholder_flutter---v00110)

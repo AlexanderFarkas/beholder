@@ -1,3 +1,7 @@
+## 0.0.2+1
+
+ - **REFACTOR**: AsyncValue extensions.
+
 ## 0.0.2
 
  - **FEAT**: autoDispose plugin.
