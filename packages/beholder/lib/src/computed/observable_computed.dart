@@ -9,7 +9,6 @@ class ObservableComputed<T> extends ObservableObserver<T> {
 
   @override
   Rebuild prepare() {
-    print(_compute.hashCode);
     final value = trackObservables(_compute);
     return () => inner.setValue(value);
   }
