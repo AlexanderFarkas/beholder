@@ -14,7 +14,7 @@ class Observer extends StatefulWidget {
 class _ObserverState extends State<Observer> with ObserverMixin {
   @override
   Widget build(BuildContext context) {
-    return observe((watch) => widget.builder(context, watch));
+    return trackObservables((watch) => widget.builder(context, watch));
   }
 
   @override
@@ -24,7 +24,7 @@ class _ObserverState extends State<Observer> with ObserverMixin {
   }
 
   @override
-  bool Function() performRebuild() {
+  Rebuild prepare() {
     return () {
       setState(() {});
       return true;

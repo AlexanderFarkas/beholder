@@ -4,7 +4,8 @@ typedef ValueChanged<T> = void Function(T previous, T next);
 typedef ValueSetter<T> = T Function(T value);
 
 final class ObservableState<T>
-    with DebugReprMixin, WritableObservableMixin<T> implements Extendable<T> {
+    with DebugReprMixin, WritableObservableMixin<T>
+    implements Extendable<T> {
   ObservableState(
     T value, {
     Equals<T>? equals,
@@ -35,7 +36,7 @@ final class ObservableState<T>
   }
 
   void invalidate() {
-    ObservableScope().invalidateState(this);
+    ObservableContext().invalidateState(this);
   }
 
   /// Adds observer, which will be called after.
@@ -49,7 +50,7 @@ final class ObservableState<T>
   }
 
   /// [onChanged] is called before *any* other observer is notified.
-  /// This is useful if you want to update other [ObservableState]s in the same [ObservableScope] phase.
+  /// This is useful if you want to update other [ObservableState]s in the same [ObservableContext] phase.
   ///
   /// Use it only if you know what you are doing.
   /// Safer, but less performant, alternative is to use [listen].
@@ -81,7 +82,7 @@ final class ObservableState<T>
     _observers.clear();
     for (final plugin in _plugins) {
       plugin.onDisposed();
-    } 
+    }
     _plugins.clear();
   }
 
@@ -113,7 +114,7 @@ final class ObservableState<T>
       }
       return true;
     }());
-    observer.observables.remove(this);
+    observer.onRemovedFromState(this);
     _observers.remove(observer);
 
     for (final plugin in _plugins) {

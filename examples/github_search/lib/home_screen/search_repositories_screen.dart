@@ -6,7 +6,8 @@ class SearchRepositoriesScreen extends StatefulWidget {
   const SearchRepositoriesScreen({Key? key}) : super(key: key);
 
   @override
-  State<SearchRepositoriesScreen> createState() => _SearchRepositoriesScreenState();
+  State<SearchRepositoriesScreen> createState() =>
+      _SearchRepositoriesScreenState();
 }
 
 class _SearchRepositoriesScreenState extends State<SearchRepositoriesScreen> {
@@ -22,7 +23,9 @@ class _SearchRepositoriesScreenState extends State<SearchRepositoriesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Github Search'),
+        title: Observer(builder: (context, watch) {
+          return Text(watch(vm.str));
+        }),
       ),
       body: Center(
         child: Column(
@@ -40,7 +43,7 @@ class _SearchRepositoriesScreenState extends State<SearchRepositoriesScreen> {
               child: Observer(
                 builder: (context, watch) => switch (watch(vm.items)) {
                   Loading() => const Center(child: CircularProgressIndicator()),
-                  Success(value: var items) => ListView.builder(
+                  Data(value: var items) => ListView.builder(
                       itemCount: items.length,
                       itemBuilder: (_, index) {
                         final repository = items[index];
@@ -53,7 +56,8 @@ class _SearchRepositoriesScreenState extends State<SearchRepositoriesScreen> {
                     ),
                   Failure(:var error) => RefreshIndicator(
                       onRefresh: vm.refresh,
-                      child: ListView(children: [Center(child: Text("$error"))]),
+                      child:
+                          ListView(children: [Center(child: Text("$error"))]),
                     ),
                 },
               ),

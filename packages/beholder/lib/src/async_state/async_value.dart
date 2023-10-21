@@ -4,17 +4,18 @@ part of future;
 sealed class AsyncValue<T> {
   const AsyncValue();
 
-  T get value => (this as Success<T>).value;
+  T get value => (this as Data<T>).value;
   T? get valueOrNull => switch (this) {
-        Success(:var value) => value,
+        Data(:var value) => value,
         _ => null,
       };
 
+  @Deprecated("Use mapValue instead")
   AsyncValue<R> whenValue<R>(R Function(T value) cb) => mapValue(cb);
 
   AsyncValue<R> mapValue<R>(R Function(T value) cb) {
     return switch (this) {
-      final Success<T> value => Success(cb(value.value)),
+      final Data<T> value => Data(cb(value.value)),
       final Failure<T> value => Failure(value.error, value.stackTrace),
       Loading<T>() => Loading<R>(),
     };
@@ -29,7 +30,7 @@ extension AsyncValueX<T> on AsyncValue<T> {
     required R Function() orElse,
   }) {
     return switch (this) {
-      final Success<T> value when data != null => data(value.value),
+      final Data<T> value when data != null => data(value.value),
       final Failure<T> value when error != null =>
         error(value.error, value.stackTrace),
       Loading<T>() when loading != null => loading(),
@@ -38,13 +39,13 @@ extension AsyncValueX<T> on AsyncValue<T> {
   }
 
   R map<R>({
-    required R Function(Success<T> value) data,
+    required R Function(Data<T> value) data,
     required R Function(Failure<T> value) error,
     required R Function(Loading<T> value) loading,
   }) {
     return switch (this) {
       final Loading<T> value => loading(value),
-      final Success<T> value => data(value),
+      final Data<T> value => data(value),
       final Failure<T> value => error(value),
     };
   }
@@ -56,7 +57,7 @@ extension AsyncValueX<T> on AsyncValue<T> {
   }) {
     return switch (this) {
       Loading<T>() => loading(),
-      final Success<T> value => data(value.value),
+      final Data<T> value => data(value.value),
       final Failure<T> value => error(value.error, value.stackTrace),
     };
   }
@@ -114,11 +115,11 @@ sealed class Result<T> extends AsyncValue<T> {
   }
 
   R map<R>({
-    required R Function(Success<T> value) data,
+    required R Function(Data<T> value) data,
     required R Function(Failure<T> value) error,
   }) {
     return switch (this) {
-      final Success<T> value => data(value),
+      final Data<T> value => data(value),
       final Failure<T> value => error(value),
     };
   }
@@ -128,7 +129,7 @@ sealed class Result<T> extends AsyncValue<T> {
     required R Function(Object error, StackTrace? stackTrace) error,
   }) {
     return switch (this) {
-      final Success<T> value => data(value.value),
+      final Data<T> value => data(value.value),
       final Failure<T> value => error(value.error, value.stackTrace),
     };
   }
@@ -136,15 +137,15 @@ sealed class Result<T> extends AsyncValue<T> {
   static Future<Result<T>> guard<T>(FutureOr<T> Function() computation) async {
     try {
       final result = await computation();
-      return Success(result);
+      return Data(result);
     } catch (error, stackTrace) {
       return Failure(error, stackTrace);
     }
   }
 }
 
-class Success<T> extends Result<T> {
-  const Success(this.value);
+class Data<T> extends Result<T> {
+  const Data(this.value);
 
   @override
   final T value;
@@ -155,7 +156,7 @@ class Success<T> extends Result<T> {
   @override
   operator ==(Object? other) {
     return identical(this, other) ||
-        (other is Success<T> &&
+        (other is Data<T> &&
             runtimeType == other.runtimeType &&
             value == other.value);
   }
@@ -164,7 +165,7 @@ class Success<T> extends Result<T> {
   int get hashCode => Object.hash(runtimeType, value);
 
   @override
-  String toString() => "Success<$T>(value: $value)";
+  String toString() => "Data<$T>(value: $value)";
 }
 
 class Failure<T> extends Result<T> {
@@ -187,4 +188,9 @@ class Failure<T> extends Result<T> {
 
   @override
   String toString() => 'Failure<$T>(error: $error, stackTrace: $stackTrace)';
+}
+
+extension AsyncValueObservableStateX<T> on ObservableState<AsyncValue<T>> {
+  T get data => value.value;
+  T? get dataOrNull => value.valueOrNull;
 }

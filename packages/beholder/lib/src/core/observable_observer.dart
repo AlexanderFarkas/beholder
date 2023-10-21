@@ -1,5 +1,9 @@
 part of core;
 
+/// Every [ObservableObserver] has an inner [ObservableState].
+/// The inner state is used to track the dependencies of the observer.
+///
+/// Observers are notified when the inner state changes.
 abstract class ObservableObserver<T>
     with ObserverMixin, ProxyObservableStateMixin<T>, DebugReprMixin
     implements Observable<T> {
@@ -19,7 +23,7 @@ abstract class ObservableObserver<T>
 
   @override
   T get value {
-    ObservableScope().updateObserver(this);
+    ObservableContext().updateObserver(this);
     return inner.value;
   }
 

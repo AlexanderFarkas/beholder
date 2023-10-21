@@ -14,5 +14,5 @@ part 'core/observable_state.dart';
 part 'core/observable_observer.dart';
 part 'core/interfaces.dart';
 part 'core/observer_mixin.dart';
-part 'core/observable_scope.dart';
+part 'core/observable_context.dart';
 part 'core/state_plugin.dart';

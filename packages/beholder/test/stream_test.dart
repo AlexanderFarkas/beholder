@@ -5,7 +5,7 @@ import 'utils.dart';
 
 void main() {
   setUp(() {
-    ObservableScope.reset();
+    ObservableContext.reset();
   });
 
   test("Computed doesn't rebuild if its stream is not listened", () async {
@@ -13,18 +13,18 @@ void main() {
     final doubled = createComputed((watch) => watch(counter) * 2);
     final stream = doubled.computed.asStream();
     counter.value++;
-    await ObservableScope.pump();
+    await ObservableContext.pump();
     expect(doubled.rebuildCounter.value, equals(1));
 
     final subscription = stream.listen((event) {});
-    await ObservableScope.pump();
+    await ObservableContext.pump();
     counter.value++;
-    await ObservableScope.pump();
+    await ObservableContext.pump();
     expect(doubled.rebuildCounter.value, equals(2));
 
     subscription.cancel();
     counter.value++;
-    await ObservableScope.pump();
+    await ObservableContext.pump();
     expect(doubled.rebuildCounter.value, equals(2));
   });
 }

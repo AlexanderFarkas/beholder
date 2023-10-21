@@ -3,7 +3,7 @@ import 'package:test/test.dart';
 
 void main() {
   setUp(() {
-    ObservableScope.reset();
+    ObservableContext.reset();
   });
 
   test("Computed tracks changes in all observables", () async {
@@ -23,7 +23,7 @@ void main() {
     counter1.value = 2;
     counter2.value = 4;
     counter3.value = 8;
-    await ObservableScope.pump();
+    await ObservableContext.pump();
     expect(arr.value, equals([2, 4, 8]));
   });
 }

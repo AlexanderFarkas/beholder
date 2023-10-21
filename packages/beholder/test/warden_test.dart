@@ -5,7 +5,7 @@ import 'utils.dart';
 
 void main() {
   setUp(() {
-    ObservableScope.reset();
+    ObservableContext.reset();
   });
 
   test('observable', () async {
@@ -17,12 +17,12 @@ void main() {
 
     counter.value = 1;
     expect(counter.value, 1);
-    await ObservableScope.pump();
+    await ObservableContext.pump();
     expect(timesObserverIsCalled, 1);
 
     counter.update((previous) => previous + 1);
     expect(counter.value, 2);
-    await ObservableScope.pump();
+    await ObservableContext.pump();
     expect(timesObserverIsCalled, 2);
   });
 
@@ -30,7 +30,8 @@ void main() {
     Observable.debugEnabled = true;
     final counter = ObservableState(0);
     final counter2 = ObservableState(100);
-    final computed = ObservableComputed((watch) => watch(counter) + watch(counter2));
+    final computed =
+        ObservableComputed((watch) => watch(counter) + watch(counter2));
 
     var timesObserverIsCalled = 0;
     computed.addObserver(ListenObserver(() {
@@ -39,18 +40,18 @@ void main() {
 
     counter.value = 1;
     expect(counter.value, 1);
-    await ObservableScope.pump();
+    await ObservableContext.pump();
     expect(timesObserverIsCalled, 1);
 
     counter.update((previous) => previous + 1);
     expect(counter.value, 2);
-    await ObservableScope.pump();
+    await ObservableContext.pump();
     expect(timesObserverIsCalled, 2);
 
     counter.value = 1;
     counter2.value = 200;
     expect(computed.value, 201);
-    await ObservableScope.pump();
+    await ObservableContext.pump();
     expect(timesObserverIsCalled, 3);
   });
 
@@ -72,10 +73,10 @@ void main() {
     }));
 
     counter.value = 4;
-    await ObservableScope.pump();
+    await ObservableContext.pump();
     expect(timesObserverIsCalled, 1);
     counter.value = 12;
-    await ObservableScope.pump();
+    await ObservableContext.pump();
     expect(timesObserverIsCalled, 2);
   });
 
@@ -87,17 +88,18 @@ void main() {
     }));
 
     counter.value = 2;
-    await ObservableScope.pump();
+    await ObservableContext.pump();
     expect(timesObserverIsCalled, 1);
 
     counter.value = 2;
-    await ObservableScope.pump();
+    await ObservableContext.pump();
     expect(timesObserverIsCalled, 1);
   });
 
   test("computed respects equals", () async {
     final counter = ObservableState(0, equals: (a, b) => a == b);
-    final computed = ObservableComputed((watch) => watch(counter), equals: (a, b) => a == b);
+    final computed =
+        ObservableComputed((watch) => watch(counter), equals: (a, b) => a == b);
 
     var timesObserverIsCalled = 0;
     computed.addObserver(ListenObserver(() {
@@ -105,11 +107,11 @@ void main() {
     }));
 
     counter.value = 2;
-    await ObservableScope.pump();
+    await ObservableContext.pump();
     expect(timesObserverIsCalled, 1);
 
     counter.value = 2;
-    await ObservableScope.pump();
+    await ObservableContext.pump();
     expect(timesObserverIsCalled, 1);
   });
 
@@ -124,11 +126,11 @@ void main() {
     }));
 
     counter.value = 2;
-    await ObservableScope.pump();
+    await ObservableContext.pump();
     expect(timesObserverIsCalled, 2);
 
     counter.value = 3;
-    await ObservableScope.pump();
+    await ObservableContext.pump();
     expect(timesObserverIsCalled, 4);
   });
 
@@ -151,24 +153,64 @@ void main() {
       return counterValue == 0 ? 0 : (doubled * tripled / counterValue);
     });
 
-    await ObservableScope.pump();
-    expect([doubledCounter.value, tripledCounter.value, counterMultipliedBy6.value], [0, 0, 0]);
-    expect([rebuildCounter2.value, rebuildCounter3.value, rebuildCounter6.value], [1, 1, 1]);
+    await ObservableContext.pump();
+    expect([
+      doubledCounter.value,
+      tripledCounter.value,
+      counterMultipliedBy6.value
+    ], [
+      0,
+      0,
+      0
+    ]);
+    expect(
+        [rebuildCounter2.value, rebuildCounter3.value, rebuildCounter6.value],
+        [1, 1, 1]);
 
     counter.value = 1;
-    await ObservableScope.pump();
-    expect([doubledCounter.value, tripledCounter.value, counterMultipliedBy6.value], [2, 3, 6]);
-    expect([rebuildCounter2.value, rebuildCounter3.value, rebuildCounter6.value], [2, 2, 2]);
+    await ObservableContext.pump();
+    expect([
+      doubledCounter.value,
+      tripledCounter.value,
+      counterMultipliedBy6.value
+    ], [
+      2,
+      3,
+      6
+    ]);
+    expect(
+        [rebuildCounter2.value, rebuildCounter3.value, rebuildCounter6.value],
+        [2, 2, 2]);
 
     counter.value = 10;
-    await ObservableScope.pump();
-    expect([doubledCounter.value, tripledCounter.value, counterMultipliedBy6.value], [20, 30, 60]);
-    expect([rebuildCounter2.value, rebuildCounter3.value, rebuildCounter6.value], [3, 3, 3]);
+    await ObservableContext.pump();
+    expect([
+      doubledCounter.value,
+      tripledCounter.value,
+      counterMultipliedBy6.value
+    ], [
+      20,
+      30,
+      60
+    ]);
+    expect(
+        [rebuildCounter2.value, rebuildCounter3.value, rebuildCounter6.value],
+        [3, 3, 3]);
 
     counter2.value = 200;
-    await ObservableScope.pump();
-    expect([doubledCounter.value, tripledCounter.value, counterMultipliedBy6.value], [20, 30, 60]);
-    expect([rebuildCounter2.value, rebuildCounter3.value, rebuildCounter6.value], [3, 3, 4]);
+    await ObservableContext.pump();
+    expect([
+      doubledCounter.value,
+      tripledCounter.value,
+      counterMultipliedBy6.value
+    ], [
+      20,
+      30,
+      60
+    ]);
+    expect(
+        [rebuildCounter2.value, rebuildCounter3.value, rebuildCounter6.value],
+        [3, 3, 4]);
   });
 
   test("Scoped update", () async {
@@ -180,7 +222,7 @@ void main() {
 
     counter2.value = 200;
     counter.value = 20;
-    await ObservableScope.pump();
+    await ObservableContext.pump();
     expect(computed.value, 4000);
     expect(rebuildCounter.value, 2);
 
@@ -189,7 +231,7 @@ void main() {
 
     counter2.value = 300;
     counter.value = 30;
-    await ObservableScope.pump();
+    await ObservableContext.pump();
     expect(computed2.value, 9000);
     expect(rebuildCounter2.value, 2);
   });
@@ -206,9 +248,10 @@ void main() {
   group("namegroup", () {
     test("name", () {
       final username = ObservableState("");
-      final usernameError =
-          ObservableComputed((watch) => watch(username).length < 8 ? "Min 8" : null);
-      final hasError = ObservableComputed((watch) => watch(usernameError) != null && false);
+      final usernameError = ObservableComputed(
+          (watch) => watch(username).length < 8 ? "Min 8" : null);
+      final hasError =
+          ObservableComputed((watch) => watch(usernameError) != null && false);
 
       final errorIfHasError = ObservableComputed((watch) {
         watch(hasError);
@@ -240,24 +283,24 @@ void main() {
 
     expect(errorInConsumer, "Min 8");
     value.value = List.generate(8, (index) => "a").join();
-    await ObservableScope.pump();
+    await ObservableContext.pump();
     expect(errorInConsumer, null);
     internalError.value = "Internal error";
-    await ObservableScope.pump();
+    await ObservableContext.pump();
     expect(errorInConsumer, "Internal error");
     value.value = List.generate(7, (index) => "a").join();
-    await ObservableScope.pump();
+    await ObservableContext.pump();
     expect(errorInConsumer, "Min 8");
     value.value = List.generate(8, (index) => "a").join();
-    await ObservableScope.pump();
+    await ObservableContext.pump();
     expect(errorInConsumer, null);
 
     value.value = List.generate(7, (index) => "a").join();
-    await ObservableScope.pump();
+    await ObservableContext.pump();
 
     internalError.value = "Internal error";
     value.value = List.generate(8, (index) => "a").join();
-    await ObservableScope.pump();
+    await ObservableContext.pump();
     expect(errorInConsumer, null);
   });
 
@@ -281,7 +324,7 @@ void main() {
 
     internalError.value = "Internal error";
     value.value = List.generate(7, (index) => "a").join();
-    await ObservableScope.pump();
+    await ObservableContext.pump();
     expect(errorInConsumer, "Min 8");
   });
 
@@ -297,13 +340,13 @@ void main() {
       doubledCounterInListener = value;
     });
     counter.value = 2;
-    await ObservableScope.pump();
-    await ObservableScope.pump();
+    await ObservableContext.pump();
+    await ObservableContext.pump();
     expect(doubledCounterInListener, equals(4));
     expect(doubledCounter.value, equals(4));
     counter.value = 0;
-    await ObservableScope.pump();
-    await ObservableScope.pump();
+    await ObservableContext.pump();
+    await ObservableContext.pump();
     expect(doubledCounterInListener, equals(0));
     expect(doubledCounter.value, equals(0));
   });
@@ -318,12 +361,12 @@ void main() {
     });
 
     obs.value = 2;
-    await ObservableScope.pump();
+    await ObservableContext.pump();
     expect(previousValue, 1);
     expect(value, 2);
 
     obs.value = 3;
-    await ObservableScope.pump();
+    await ObservableContext.pump();
     expect(previousValue, 2);
     expect(value, 3);
   });
@@ -339,12 +382,12 @@ void main() {
       });
 
     obs.value = 2;
-    await ObservableScope.pump();
+    await ObservableContext.pump();
     expect(previousValue, 1);
     expect(value, 2);
 
     obs.value = 3;
-    await ObservableScope.pump();
+    await ObservableContext.pump();
     expect(previousValue, 2);
     expect(value, 3);
   });

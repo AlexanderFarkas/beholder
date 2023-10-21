@@ -1,5 +1,5 @@
+import 'package:beholder_flutter/beholder_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:beholder/beholder.dart';
 
 import 'home_screen/search_repositories_screen.dart';
 
@@ -13,9 +13,11 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData.dark(useMaterial3: true),
-      home: const SearchRepositoriesScreen(),
+    return Beholder(
+      child: MaterialApp(
+        theme: ThemeData.dark(useMaterial3: true),
+        home: const SearchRepositoriesScreen(),
+      ),
     );
   }
 }

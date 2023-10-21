@@ -23,7 +23,7 @@ extension AsyncValueAutoDisposePluginX<T extends Disposable?>
   void autoDispose([DisposeValue<AsyncValue<T>>? disposer]) {
     addPlugin(AutoDisposePlugin(disposer ??
         (value) {
-          if (value is Success<T>) {
+          if (value is Data<T>) {
             value.value?.dispose();
           }
         }));

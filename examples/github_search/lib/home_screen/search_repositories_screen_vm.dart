@@ -15,7 +15,7 @@ class SearchRepositoriesScreenVm extends ViewModel {
   Future<void> refresh() async {
     final search = searchString.value;
     if (search.isEmpty) {
-      items.value = const Success([]);
+      items.value = const Data([]);
       return;
     }
 
@@ -34,6 +34,12 @@ class SearchRepositoriesScreenVm extends ViewModel {
   }
 
   late final items = state<AsyncValue<List<GithubRepository>>>(
-    const Success([]),
+    const Data([]),
   );
+
+  late final str = computed((watch) {
+    watch(items);
+    print("dasdasddasdadadasdad");
+    return "d";
+  });
 }

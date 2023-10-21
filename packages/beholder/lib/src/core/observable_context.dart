@@ -5,15 +5,17 @@ enum ScopePhase {
   notify,
 }
 
-class ObservableScope {
-  factory ObservableScope() {
-    _current ??= ObservableScope._();
+typedef ReassembleListener = void Function();
+
+class ObservableContext {
+  factory ObservableContext() {
+    _current ??= ObservableContext._();
     return _current!;
   }
 
   @visibleForTesting
   static void reset() {
-    _current = ObservableScope._();
+    _current = ObservableContext._();
   }
 
   void invalidateState(ObservableState observable) {
@@ -41,11 +43,24 @@ class ObservableScope {
     }
   }
 
+  void updateObserver(ObserverMixin observer) {
+    final clearCacheFor = <ObserverMixin>{};
+    _updateObserver(
+      observer,
+      onVisited: (o) => clearCacheFor.add(o),
+      observableStates: _observableStates,
+      updateObserverCache: _updateObserverCache,
+    );
+    for (final clear in clearCacheFor) {
+      _updateObserverCache.remove(clear);
+    }
+  }
+
   final _invalidatedObservers = <ObserverMixin>{};
   var _observableStates = <ObservableState>{};
 
-  static ObservableScope? _current;
-  ObservableScope._();
+  static ObservableContext? _current;
+  ObservableContext._();
 
   Set<ObserverMixin> _consumerObservers = {};
 
@@ -79,19 +94,6 @@ class ObservableScope {
         updateObserverCache: updateObserverCache,
       );
       _invalidatedObservers.remove(observer);
-    }
-  }
-
-  void updateObserver(ObserverMixin observer) {
-    final clearCacheFor = <ObserverMixin>{};
-    _updateObserver(
-      observer,
-      onVisited: (o) => clearCacheFor.add(o),
-      observableStates: _observableStates,
-      updateObserverCache: _updateObserverCache,
-    );
-    for (final clear in clearCacheFor) {
-      _updateObserverCache.remove(clear);
     }
   }
 
@@ -134,7 +136,7 @@ class ObservableScope {
 
     final bool isRebuilt;
     if (isAnyUpdated != false) {
-      final (isRebuiltFn, isNewObservableAdded) = observer.rebuild();
+      final (applyRebuild, isNewObservableAdded) = observer._prepare();
       if (isNewObservableAdded) {
         return _updateObserver(
           observer,
@@ -143,7 +145,7 @@ class ObservableScope {
           updateObserverCache: updateObserverCache,
         );
       }
-      isRebuilt = isRebuiltFn();
+      isRebuilt = applyRebuild();
     } else {
       isRebuilt = false;
     }

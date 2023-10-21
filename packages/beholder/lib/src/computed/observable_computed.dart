@@ -4,11 +4,13 @@ class ObservableComputed<T> extends ObservableObserver<T> {
   ObservableComputed(this._compute, {Equals<T>? equals});
 
   @override
-  ObservableState<T> createStateDelegate() => ObservableState(observe(_compute));
+  ObservableState<T> createStateDelegate() =>
+      ObservableState(trackObservables(_compute));
 
   @override
-  bool Function() performRebuild() {
-    final value = observe(_compute);
+  Rebuild prepare() {
+    print(_compute.hashCode);
+    final value = trackObservables(_compute);
     return () => inner.setValue(value);
   }
 

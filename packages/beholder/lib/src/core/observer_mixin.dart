@@ -1,29 +1,12 @@
 part of core;
 
 typedef Watch = T Function<T>(Observable<T> observable);
-
+typedef IsApplied = bool;
+typedef Rebuild = IsApplied Function();
 mixin ObserverMixin {
   final observables = <ObservableState>{};
-  bool _isNewObservableAddedDuringRebuild = false;
 
-  @protected
-  bool Function() performRebuild();
-
-  @internal
-  (bool Function() isRebuilt, bool isNewObservableAdded) rebuild() {
-    _isNewObservableAddedDuringRebuild = false;
-    final isRebuiltFn = performRebuild();
-    final result = (isRebuiltFn, _isNewObservableAddedDuringRebuild);
-    _isNewObservableAddedDuringRebuild = false;
-    return result;
-  }
-
-  T _observe<T>(Observable<T> observable) {
-    observable.addObserver(this);
-    return observable.value;
-  }
-
-  T observe<T>(T Function(Watch watch) callback) {
+  T trackObservables<T>(T Function(Watch watch) callback) {
     return callback(_observe);
   }
 
@@ -34,10 +17,32 @@ mixin ObserverMixin {
     }
   }
 
+  void onRemovedFromState(ObservableState observable) {
+    observables.remove(observable);
+  }
+
   void stopObserving() {
     for (final observable in {...observables}) {
       observable.removeObserver(this);
     }
+  }
+
+  @protected
+  Rebuild prepare();
+
+  bool _isNewObservableAddedDuringRebuild = false;
+
+  (Rebuild rebuild, bool isNewObservableAdded) _prepare() {
+    _isNewObservableAddedDuringRebuild = false;
+    final rebuild = prepare();
+    final result = (rebuild, _isNewObservableAddedDuringRebuild);
+    _isNewObservableAddedDuringRebuild = false;
+    return result;
+  }
+
+  T _observe<T>(Observable<T> observable) {
+    observable.addObserver(this);
+    return observable.value;
   }
 }
 
@@ -46,7 +51,7 @@ class ListenObserver with ObserverMixin, DebugReprMixin {
   final void Function() listener;
 
   @override
-  bool Function() performRebuild() {
+  Rebuild prepare() {
     return () {
       listener();
       return true;
@@ -62,7 +67,7 @@ class ValueChangedObserver<T> with ObserverMixin, DebugReprMixin {
   late T _previousValue;
 
   @override
-  bool Function() performRebuild() {
+  Rebuild prepare() {
     return () {
       listener(_previousValue, _observableState._value);
       _previousValue = _observableState.value;
