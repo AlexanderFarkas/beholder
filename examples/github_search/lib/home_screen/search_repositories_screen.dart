@@ -23,9 +23,7 @@ class _SearchRepositoriesScreenState extends State<SearchRepositoriesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Observer(builder: (context, watch) {
-          return Text(watch(vm.str));
-        }),
+        title: const Text("Github Search"),
       ),
       body: Center(
         child: Column(

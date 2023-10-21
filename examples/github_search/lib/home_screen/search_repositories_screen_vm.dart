@@ -6,11 +6,10 @@ import 'package:rxdart/rxdart.dart';
 class SearchRepositoriesScreenVm extends ViewModel {
   final githubApi = GithubApi();
 
-  late final searchString = state(
-    '',
-  )..asStream()
-      .debounceTime(const Duration(milliseconds: 500))
-      .listen((_) => refresh());
+  late final searchString = state('')
+    ..asStream()
+        .debounceTime(const Duration(milliseconds: 500))
+        .listen((_) => refresh());
 
   Future<void> refresh() async {
     final search = searchString.value;
@@ -36,10 +35,4 @@ class SearchRepositoriesScreenVm extends ViewModel {
   late final items = state<AsyncValue<List<GithubRepository>>>(
     const Data([]),
   );
-
-  late final str = computed((watch) {
-    watch(items);
-    print("dasdasddasdadadasdad");
-    return "d";
-  });
 }

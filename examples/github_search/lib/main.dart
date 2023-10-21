@@ -13,11 +13,9 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Beholder(
-      child: MaterialApp(
-        theme: ThemeData.dark(useMaterial3: true),
-        home: const SearchRepositoriesScreen(),
-      ),
+    return MaterialApp(
+      theme: ThemeData.dark(useMaterial3: true),
+      home: const SearchRepositoriesScreen(),
     );
   }
 }
