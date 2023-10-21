@@ -1,3 +1,7 @@
+## 0.0.3+2
+
+ - **FIX**: superfluous print.
+
 ## 0.0.3+1
 
  - **REFACTOR**: inner code organization.
