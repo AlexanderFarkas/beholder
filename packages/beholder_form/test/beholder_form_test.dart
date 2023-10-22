@@ -29,7 +29,6 @@ void main() {
     expect(field.displayError.value, equals("forced"));
   });
 
-
   test('Basic Text', () {
     final field = ObservableTextField(
       "",
@@ -62,6 +61,31 @@ void main() {
     expect(field.displayError.value, equals(null));
   });
 
+  test("Internal error", () {
+    final field = ObservableField(
+      "",
+      validate: (value) => value.length > 1 ? null : "error",
+    );
+
+    field.error.value = "forced";
+    expect(field.error.value, equals("forced"));
+
+    field.value = "H";
+    expect(field.error.value, equals("error"));
+  });
+
+  test("Internal error 2", () {
+    final field = ObservableField(
+      "",
+      validate: (value) => value.length > 1 ? null : "error",
+    );
+
+    field.error.value = "forced";
+    expect(field.error.value, equals("forced"));
+
+    field.value = "Hello";
+    expect(field.error.value, equals(null));
+  });
 
   testWidgets("Focus", (tester) async {
     final focusNode = FocusNode();
