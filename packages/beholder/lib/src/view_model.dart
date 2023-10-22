@@ -12,17 +12,14 @@ abstract mixin class ViewModel implements Disposable {
     T value, {
     Equals<T>? equals,
   }) =>
-      _autoDispose(ObservableState<T>(
-        value,
-        equals: equals,
-      ));
+      disposable(RootObservableState<T>(value, equals: equals));
 
   @protected
   ObservableComputed<T> computed<T>(
     T Function(Watch watch) compute, {
     Equals<T>? equals,
   }) =>
-      _autoDispose(ObservableComputed(compute, equals: equals));
+      disposable(ObservableComputed(compute, equals: equals));
 
   @protected
   WritableObservableComputed<T> writableComputed<T>({
@@ -30,27 +27,13 @@ abstract mixin class ViewModel implements Disposable {
     required void Function(T value) set,
     Equals<T>? equals,
   }) =>
-      _autoDispose(WritableObservableComputed(
+      disposable(WritableObservableComputed(
         get: get,
         set: set,
         equals: equals,
       ));
 
-  // @protected
-  // ObservableAsyncState<T> asyncState<T>({
-  //   AsyncValue<T>? value,
-  //   Duration? debounceTime,
-  //   Duration? throttleTime,
-  //   Equals<T>? equals,
-  // }) =>
-  //     autoDispose(ObservableAsyncState<T>(
-  //       value: value,
-  //       debounceTime: debounceTime,
-  //       throttleTime: throttleTime,
-  //       equals: equals,
-  //     ));
-
-  T _autoDispose<T extends Disposable>(T disposable) {
+  T disposable<T extends Disposable>(T disposable) {
     disposers.add(disposable.dispose);
     return disposable;
   }

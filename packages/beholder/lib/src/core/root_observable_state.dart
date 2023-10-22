@@ -1,12 +1,15 @@
 part of core;
 
-typedef ValueChanged<T> = void Function(T previous, T next);
+typedef ValueChanged<T> = void Function(T previous, T current);
 typedef ValueSetter<T> = T Function(T value);
 
-final class ObservableState<T>
-    with DebugReprMixin, WritableObservableMixin<T>
-    implements Extendable<T> {
-  ObservableState(
+/// Core class in `beholder`.
+/// Every change is initiated by [RootObservableState]
+/// Usually, you don't need to use it directly
+final class RootObservableState<T>
+    with DebugReprMixin
+    implements ObservableState<T> {
+  RootObservableState(
     T value, {
     Equals<T>? equals,
   })  : _value = value,
@@ -30,16 +33,24 @@ final class ObservableState<T>
       for (final plugin in _plugins) {
         plugin.onValueChanged(oldValue, value);
       }
+    } else {
+      for (final plugin in _plugins) {
+        plugin.onValueRejected(value);
+      }
     }
 
     return willUpdate;
+  }
+
+  @override
+  set value(T value) {
+    setValue(value);
   }
 
   void invalidate() {
     ObservableContext().invalidateState(this);
   }
 
-  /// Adds observer, which will be called after.
   @override
   Disposer listen(ValueChanged<T> onChanged) {
     assert(!_debugDisposed, "$this is already disposed");
@@ -49,11 +60,7 @@ final class ObservableState<T>
     return () => removeObserver(observer);
   }
 
-  /// [onChanged] is called before *any* other observer is notified.
-  /// This is useful if you want to update other [ObservableState]s in the same [ObservableContext] phase.
-  ///
-  /// Use it only if you know what you are doing.
-  /// Safer, but less performant, alternative is to use [listen].
+  @override
   Disposer listenSync(ValueChanged<T> onChanged) {
     assert(!_debugDisposed, "$this is already disposed");
 

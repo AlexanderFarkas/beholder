@@ -10,7 +10,7 @@ void main() {
 
   test("Rebuild count doesn't increase after sequential calls to value",
       () async {
-    final counter = ObservableState(0);
+    final counter = RootObservableState(0);
     final doubled = createComputed((watch) => watch(counter) * 2);
     final tripled = createComputed((watch) => watch(counter) * 3);
 
@@ -32,7 +32,7 @@ void main() {
   test(
       "Rebuild count doesn't increase after sequential calls to value, even after scheduled update",
       () async {
-    final counter = ObservableState(0);
+    final counter = RootObservableState(0);
     final doubled = createComputed((watch) => watch(counter) * 2);
     final tripled = createComputed((watch) => watch(counter) * 3);
     expect(
@@ -52,7 +52,7 @@ void main() {
   });
 
   test("Computed is not rebuilt if it doesn't have listeners", () async {
-    final counter = ObservableState(0);
+    final counter = RootObservableState(0);
     final doubled = createComputed((watch) => watch(counter) * 2);
 
     expect(doubled.rebuildCounter.value, equals(1));
@@ -64,8 +64,8 @@ void main() {
   test(
       "Listener is only rebuilt once, even if several observables have rebuilt",
       () async {
-    final counter1 = ObservableState(0);
-    final counter2 = ObservableState(0);
+    final counter1 = RootObservableState(0);
+    final counter2 = RootObservableState(0);
 
     final sum = createComputed((watch) => (watch(counter1), watch(counter2)));
     sum.computed.listen((_, value) {});
@@ -79,7 +79,7 @@ void main() {
 
   test("Listener is rebuilt, even if added after observables updated",
       () async {
-    final counter = ObservableState(0);
+    final counter = RootObservableState(0);
     final sum = createComputed((watch) => watch(counter));
 
     expect(sum.rebuildCounter.value, equals(1));

@@ -2,10 +2,10 @@ part of future;
 
 typedef CancellableComputation<T> = Future<T> Function(CancellationToken token);
 
+@Deprecated("Will be removed in future versions")
 class ObservableAsyncState<T>
-    with
-        ProxyObservableStateMixin<AsyncValue<T>>,
-        WritableObservableMixin<AsyncValue<T>> {
+    with ObservableProxyMixin<AsyncValue<T>>
+    implements WritableObservable<AsyncValue<T>> {
   ObservableAsyncState({
     AsyncValue<T>? value,
     Duration? debounceTime,
@@ -13,14 +13,14 @@ class ObservableAsyncState<T>
     Equals<AsyncValue<T>>? equals,
   })  : _debounceTime = debounceTime ?? const Duration(milliseconds: 0),
         _throttleTime = throttleTime ?? const Duration(milliseconds: 0) {
-    inner = ObservableState<AsyncValue<T>>(
+    inner = RootObservableState<AsyncValue<T>>(
       value ?? const Loading(),
       equals: equals,
     );
   }
 
   @override
-  late final ObservableState<AsyncValue<T>> inner;
+  late final RootObservableState<AsyncValue<T>> inner;
 
   void scheduleRefresh(CancellableComputation<T> computation) async {
     final throttleTimer = _throttleTimer;
@@ -54,12 +54,16 @@ class ObservableAsyncState<T>
     return _process(computation);
   }
 
-  @override
   bool setValue(AsyncValue<T> value) {
     _cancelThrottle();
     _cancelDebounce();
     _currentFuture = null;
     return inner.setValue(value);
+  }
+
+  @override
+  set value(AsyncValue<T> value) {
+    setValue(value);
   }
 
   Future<Result<T>> _process(CancellableComputation<T> execute) async {

@@ -1,46 +1,59 @@
 part of form;
 
 mixin FormMixin on ViewModel {
-  WritableObservableField<T> field<T>({
-    required T value,
+  ObservableField<T> field<T>(
+    T value, {
+    required Validate<T> validate,
     ComputeError<T>? computeError,
-    String? Function(T value)? validate,
+    ComputeDisplayError<T>? displayError,
   }) {
-    final field = WritableObservableField(
+    final field = ObservableField(
       value,
-      computeError: (watch, state) {
-        final String? error;
-        if (computeError != null) {
-          error = computeError(watch, state);
-        } else if (validate != null) {
-          error = validate(watch(state.value));
-        } else {
-          error = null;
-        }
-
-        return errorInterceptor(
-          watch,
-          state,
-          error,
-        );
-      },
+      validate: validate,
+      computeError: computeError,
+      displayError: (watch, state) => interceptDisplayError(
+        watch,
+        state,
+        displayError ?? defaultDisplayError,
+      ),
     );
-    fields.value = UnmodifiableSetView({...fields.value, field});
-    disposers.add(field.dispose);
+    _trackField(field);
     return field;
   }
 
-  late final fields = state<UnmodifiableSetView<WritableObservableField>>(UnmodifiableSetView({}));
-  late final isValid = computed((watch) {
-    final fields = watch(this.fields);
-    for (final field in fields) {
-      if (watch(field.error) != null) return false;
-    }
-    return true;
-  });
+  ObservableTextField textField(
+    String value, {
+    Validate<String>? validate,
+    ComputeError<String>? computeError,
+    ComputeDisplayError<String>? displayError,
+  }) {
+    final field = ObservableTextField(
+      value,
+      validate: validate,
+      computeError: computeError,
+      displayError: (watch, state) => interceptDisplayError(
+        watch,
+        state,
+        displayError ?? defaultDisplayError,
+      ),
+    );
+    _trackField(field);
+    return field;
+  }
+
+  void _trackField<T>(ObservableField<T> field) {
+    fields.add(field);
+    disposers.add(field.dispose);
+  }
+
+  final fields = <ObservableField>{};
 
   @protected
-  String? errorInterceptor<T>(Watch watch, FieldState<T> state, String? error) {
-    return error;
+  String? interceptDisplayError<T>(
+    Watch watch,
+    FieldState<T> state,
+    ComputeDisplayError<T> inner,
+  ) {
+    return inner(watch, state);
   }
 }

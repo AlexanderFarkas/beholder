@@ -9,7 +9,7 @@ void main() {
   });
 
   test("Computed doesn't rebuild if its stream is not listened", () async {
-    final counter = ObservableState(0);
+    final counter = RootObservableState(0);
     final doubled = createComputed((watch) => watch(counter) * 2);
     final stream = doubled.computed.asStream();
     counter.value++;

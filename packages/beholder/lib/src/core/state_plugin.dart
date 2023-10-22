@@ -1,17 +1,18 @@
 part of core;
 
 abstract class StatePlugin<T> {
-  late final ObservableState<T> state;
+  late final RootObservableState<T> state;
 
   @nonVirtual
-  void attach(ObservableState<T> state) {
+  void attach(RootObservableState<T> state) {
     this.state = state;
     onAttached();
   }
 
   void onAttached() {}
   void onDisposed() {}
-  void onValueChanged(T previous, T value) {}
+  void onValueRejected(T value) {}
+  void onValueChanged(T previous, T current) {}
   void onObserverAdded(ObserverMixin observer) {}
   void onObserverRemoved(ObserverMixin observer) {}
 }

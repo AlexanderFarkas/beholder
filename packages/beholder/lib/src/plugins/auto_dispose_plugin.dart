@@ -13,7 +13,7 @@ class AutoDisposePlugin<T> extends StatePlugin<T> {
   }
 
   @override
-  void onValueChanged(T previous, T value) {
+  void onValueChanged(T previous, T current) {
     dispose(previous);
   }
 }

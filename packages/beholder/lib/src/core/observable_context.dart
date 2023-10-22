@@ -1,12 +1,5 @@
 part of core;
 
-enum ScopePhase {
-  markNeedsUpdate,
-  notify,
-}
-
-typedef ReassembleListener = void Function();
-
 class ObservableContext {
   factory ObservableContext() {
     _current ??= ObservableContext._();
@@ -18,13 +11,13 @@ class ObservableContext {
     _current = ObservableContext._();
   }
 
-  void invalidateState(ObservableState observable) {
+  void invalidateState(RootObservableState state) {
     bool shouldSchedule = false;
     void visitObserver(ObserverMixin observer) {
       _invalidatedObservers.add(observer);
 
       if (observer is ObservableObserver) {
-        _observableStates.add(observer.inner);
+        _states.add(observer.inner);
         for (final observer in observer.observers) {
           visitObserver(observer);
         }
@@ -34,7 +27,7 @@ class ObservableContext {
       }
     }
 
-    for (final observer in observable.observers) {
+    for (final observer in state.observers) {
       visitObserver(observer);
     }
 
@@ -48,7 +41,7 @@ class ObservableContext {
     _updateObserver(
       observer,
       onVisited: (o) => clearCacheFor.add(o),
-      observableStates: _observableStates,
+      states: _states,
       updateObserverCache: _updateObserverCache,
     );
     for (final clear in clearCacheFor) {
@@ -57,7 +50,7 @@ class ObservableContext {
   }
 
   final _invalidatedObservers = <ObserverMixin>{};
-  var _observableStates = <ObservableState>{};
+  var _states = <RootObservableState>{};
 
   static ObservableContext? _current;
   ObservableContext._();
@@ -79,10 +72,10 @@ class ObservableContext {
 
   void _updateObservers() {
     final observers = _consumerObservers;
-    final observableStates = _observableStates;
+    final states = _states;
     final updateObserverCache = _updateObserverCache;
     _consumerObservers = {};
-    _observableStates = {};
+    _states = {};
     _updateObserverCache = {};
 
     _isScheduled = false;
@@ -90,7 +83,7 @@ class ObservableContext {
     for (final observer in observers) {
       _updateObserver(
         observer,
-        observableStates: observableStates,
+        states: states,
         updateObserverCache: updateObserverCache,
       );
       _invalidatedObservers.remove(observer);
@@ -101,7 +94,7 @@ class ObservableContext {
   bool? _updateObserver(
     ObserverMixin observer, {
     void Function(ObserverMixin observer)? onVisited,
-    required Set<ObservableState> observableStates,
+    required Set<RootObservableState> states,
     required Map<ObserverMixin, bool?> updateObserverCache,
   }) {
     if (updateObserverCache.containsKey(observer)) {
@@ -112,7 +105,7 @@ class ObservableContext {
 
     bool? isAnyUpdated;
     for (final observable in observer.observables) {
-      if (!observableStates.contains(observable)) {
+      if (!states.contains(observable)) {
         continue;
       }
 
@@ -121,7 +114,7 @@ class ObservableContext {
         final isRebuilt = _updateObserver(
           observer,
           onVisited: onVisited,
-          observableStates: observableStates,
+          states: states,
           updateObserverCache: updateObserverCache,
         );
         if (isRebuilt == true) {
@@ -141,7 +134,7 @@ class ObservableContext {
         return _updateObserver(
           observer,
           onVisited: onVisited,
-          observableStates: observableStates,
+          states: states,
           updateObserverCache: updateObserverCache,
         );
       }

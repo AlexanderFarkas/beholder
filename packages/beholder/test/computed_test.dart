@@ -8,9 +8,9 @@ void main() {
 
   test("Computed tracks changes in all observables", () async {
     final (counter1, counter2, counter3) = (
-      ObservableState(1),
-      ObservableState(2),
-      ObservableState(3),
+      RootObservableState(1),
+      RootObservableState(2),
+      RootObservableState(3),
     );
 
     final arr = ObservableComputed((watch) => [

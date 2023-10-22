@@ -9,7 +9,7 @@ void main() {
   });
 
   test('observable', () async {
-    final counter = ObservableState(0);
+    final counter = RootObservableState(0);
     var timesObserverIsCalled = 0;
     counter.addObserver(ListenObserver(() {
       timesObserverIsCalled++;
@@ -28,8 +28,8 @@ void main() {
 
   test('computed', () async {
     Observable.debugEnabled = true;
-    final counter = ObservableState(0);
-    final counter2 = ObservableState(100);
+    final counter = RootObservableState(0);
+    final counter2 = RootObservableState(100);
     final computed =
         ObservableComputed((watch) => watch(counter) + watch(counter2));
 
@@ -56,7 +56,7 @@ void main() {
   });
 
   test("deeply nested computed called once", () async {
-    final counter = ObservableState(0);
+    final counter = RootObservableState(0);
     late ObservableComputed previousComputed;
     for (int i = 0; i < 100; i++) {
       if (i == 0) {
@@ -81,7 +81,7 @@ void main() {
   });
 
   test("observable respects equals", () async {
-    final counter = ObservableState(0, equals: (a, b) => a == b);
+    final counter = RootObservableState(0, equals: (a, b) => a == b);
     var timesObserverIsCalled = 0;
     counter.addObserver(ListenObserver(() {
       timesObserverIsCalled++;
@@ -97,7 +97,7 @@ void main() {
   });
 
   test("computed respects equals", () async {
-    final counter = ObservableState(0, equals: (a, b) => a == b);
+    final counter = RootObservableState(0, equals: (a, b) => a == b);
     final computed =
         ObservableComputed((watch) => watch(counter), equals: (a, b) => a == b);
 
@@ -116,7 +116,7 @@ void main() {
   });
 
   test("several observers", () async {
-    final counter = ObservableState(0);
+    final counter = RootObservableState(0);
     var timesObserverIsCalled = 0;
     counter.addObserver(ListenObserver(() {
       timesObserverIsCalled++;
@@ -136,8 +136,8 @@ void main() {
 
   test("deeply nested observables", () async {
     Observable.debugEnabled = true;
-    final counter = ObservableState(0);
-    final counter2 = ObservableState(100);
+    final counter = RootObservableState(0);
+    final counter2 = RootObservableState(100);
     final (rebuildCounter: rebuildCounter2, computed: doubledCounter) =
         createComputed((watch) => watch(counter) * 2);
     final (rebuildCounter: rebuildCounter3, computed: tripledCounter) =
@@ -214,8 +214,8 @@ void main() {
   });
 
   test("Scoped update", () async {
-    final counter = ObservableState(10);
-    final counter2 = ObservableState(100);
+    final counter = RootObservableState(10);
+    final counter2 = RootObservableState(100);
 
     final (:rebuildCounter, :computed) =
         createComputed((watch) => watch(counter) * watch(counter2));
@@ -237,7 +237,7 @@ void main() {
   });
 
   test("Listeners are not updated after dispose", () {
-    final counter = ObservableState(10);
+    final counter = RootObservableState(10);
     final computed = ObservableComputed((watch) => watch(counter) * 10);
 
     counter.dispose();
@@ -247,7 +247,7 @@ void main() {
 
   group("namegroup", () {
     test("name", () {
-      final username = ObservableState("");
+      final username = RootObservableState("");
       final usernameError = ObservableComputed(
           (watch) => watch(username).length < 8 ? "Min 8" : null);
       final hasError =
@@ -266,8 +266,8 @@ void main() {
 
   test("description", () async {
     Observable.debugEnabled = true;
-    final internalError = ObservableState<String?>(null);
-    final value = ObservableState("");
+    final internalError = RootObservableState<String?>(null);
+    final value = RootObservableState("");
     value.listenSync((_, value) => internalError.value = null);
     final error = ObservableComputed((watch) {
       if (watch(internalError) case var internalError?) {
@@ -306,8 +306,8 @@ void main() {
 
   test("dsds", () async {
     Observable.debugEnabled = true;
-    final internalError = ObservableState<String?>("internal");
-    final value = ObservableState("");
+    final internalError = RootObservableState<String?>("internal");
+    final value = RootObservableState("");
     value.listenSync((_, value) => internalError.value = null);
     final error = ObservableComputed((watch) {
       if (watch(internalError) case var internalError?) {
@@ -329,8 +329,8 @@ void main() {
   });
 
   test("dsd", () async {
-    final doubledCounter = ObservableState(0);
-    final counter = ObservableState(0)
+    final doubledCounter = RootObservableState(0);
+    final counter = RootObservableState(0)
       ..listen((_, value) {
         doubledCounter.value = value * 2;
       });
@@ -352,7 +352,7 @@ void main() {
   });
 
   test("listen", () async {
-    final obs = ObservableState(1);
+    final obs = RootObservableState(1);
     int? previousValue;
     int value = obs.value;
     obs.listen((previous, newValue) {
@@ -375,7 +375,7 @@ void main() {
     late int previousValue;
     late int value;
 
-    final obs = ObservableState(1)
+    final obs = RootObservableState(1)
       ..listenSync((prev, next) {
         previousValue = prev;
         value = next;

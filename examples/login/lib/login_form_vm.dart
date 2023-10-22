@@ -2,20 +2,22 @@ import 'package:beholder/beholder.dart';
 import 'package:beholder_form/beholder_form.dart';
 
 class LoginFormVm extends ViewModel with FormMixin {
-  late final username = field(
-    value: '',
-    validate: (value) => value.length > 8 ? null : 'Username must be at least 8 characters long',
+  late final username = textField(
+    '',
+    validate: (value) =>
+        value.length > 8 ? null : 'Username must be at least 8 characters long',
   );
 
-  late final password = field(
-    value: '',
-    validate: (value) => value.length > 8 ? null : 'Password must be at least 8 characters long',
+  late final password = textField(
+    '',
+    validate: (value) =>
+        value.length > 8 ? null : 'Password must be at least 8 characters long',
   );
 
-  late final repeatPassword = field(
-    value: '',
-    computeError: (watch, state) {
-      if (watch(password) != watch(state.value)) {
+  late final repeatPassword = textField(
+    '',
+    computeError: (watch, value) {
+      if (watch(password) != value) {
         return 'Passwords do not match';
       }
       return null;
@@ -25,7 +27,7 @@ class LoginFormVm extends ViewModel with FormMixin {
   late final wasEverSubmitted = state(false);
   void submit() async {
     wasEverSubmitted.value = true;
-    if (isValid.value) {
+    if (isValid) {
       username.error.value = "Username is already taken";
       print("Success");
     } else {
@@ -33,10 +35,20 @@ class LoginFormVm extends ViewModel with FormMixin {
     }
   }
 
+  late final isSubmittable = computed((watch) {
+    return fields.every((e) => watch(e.displayError) == null);
+  });
+
+  bool get isValid => fields.every((element) => element.error.value == null);
+
   @override
-  String? errorInterceptor<T>(Watch watch, FieldState<T> state, String? error) {
+  String? interceptDisplayError<T>(
+    Watch watch,
+    FieldState<T> state,
+    ComputeDisplayError<T> inner,
+  ) {
     if (watch(wasEverSubmitted) || watch(state.wasEverUnfocused)) {
-      return error;
+      return inner(watch, state);
     }
 
     return null;

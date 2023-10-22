@@ -1,5 +1,4 @@
 import 'package:beholder_flutter/beholder_flutter.dart';
-import 'package:beholder_form/beholder_form.dart';
 import 'package:flutter/material.dart';
 import 'package:login/login_form_vm.dart';
 
@@ -52,45 +51,41 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Column(
-                children: [
-                  FieldObserver(
-                    field: vm.username,
-                    builder: (context, watch, controller) => TextField(
-                      controller: controller,
+              Observer(
+                builder: (context, watch) => Column(
+                  children: [
+                    TextField(
+                      controller: vm.username.controller,
+                      focusNode: vm.username.focusNode,
                       decoration: InputDecoration(
                         label: const Text("Username"),
-                        errorText: watch(vm.username.error),
+                        errorText: watch(vm.username.displayError),
                       ),
                     ),
-                  ),
-                  FieldObserver(
-                    field: vm.password,
-                    builder: (context, watch, controller) => TextField(
-                      controller: controller,
+                    TextField(
+                      controller: vm.password.controller,
+                      focusNode: vm.password.focusNode,
                       decoration: InputDecoration(
                         label: const Text("Password"),
-                        errorText: watch(vm.password.error),
+                        errorText: watch(vm.password.displayError),
                       ),
                     ),
-                  ),
-                  FieldObserver(
-                    field: vm.repeatPassword,
-                    builder: (context, watch, controller) => TextField(
-                      controller: controller,
+                    TextField(
+                      controller: vm.repeatPassword.controller,
+                      focusNode: vm.repeatPassword.focusNode,
                       decoration: InputDecoration(
                         label: const Text("Repeat password"),
-                        errorText: watch(vm.repeatPassword.error),
+                        errorText: watch(vm.repeatPassword.displayError),
                       ),
                     ),
-                  ),
-                  Observer(
-                    builder: (context, watch) => TextButton(
-                      onPressed: watch(vm.isValid) ? vm.submit : null,
-                      child: const Text("Submit"),
-                    ),
-                  )
-                ],
+                    Observer(
+                      builder: (context, watch) => TextButton(
+                        onPressed: watch(vm.isSubmittable) ? vm.submit : null,
+                        child: const Text("Submit"),
+                      ),
+                    )
+                  ],
+                ),
               ),
             ],
           ),
