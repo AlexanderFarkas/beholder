@@ -11,6 +11,27 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 Packages with breaking changes:
 
+ - [`beholder_form` - `v0.2.0`](#beholder_form---v020)
+
+Packages with other changes:
+
+ - There are no other changes in this release.
+
+---
+
+#### `beholder_form` - `v0.2.0`
+
+ - **BREAKING** **DOCS**: tests.
+
+
+## 2023-10-23
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
  - [`beholder` - `v0.1.0`](#beholder---v010)
  - [`beholder_flutter` - `v0.1.0`](#beholder_flutter---v010)
  - [`beholder_form` - `v0.1.0`](#beholder_form---v010)

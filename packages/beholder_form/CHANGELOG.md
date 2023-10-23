@@ -1,3 +1,9 @@
+## 0.2.0
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **DOCS**: tests.
+
 ## 0.1.0
 
 > Note: This release has breaking changes.
