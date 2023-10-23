@@ -4,14 +4,16 @@ import 'package:beholder_form/beholder_form.dart';
 class LoginFormVm extends ViewModel with FormMixin {
   late final username = textField(
     '',
-    validate: (value) =>
-        value.length > 8 ? null : 'Username must be at least 8 characters long',
+    validate: (value) => value.length > 8 //
+        ? null
+        : 'Username must be at least 8 characters long',
   );
 
   late final password = textField(
     '',
-    validate: (value) =>
-        value.length > 8 ? null : 'Password must be at least 8 characters long',
+    validate: (value) => value.length > 8 //
+        ? null
+        : 'Password must be at least 8 characters long',
   );
 
   late final repeatPassword = textField(
