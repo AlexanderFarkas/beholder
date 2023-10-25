@@ -15,6 +15,27 @@ Packages with breaking changes:
 
 Packages with other changes:
 
+ - [`beholder_provider` - `v0.0.3`](#beholder_provider---v003)
+
+---
+
+#### `beholder_provider` - `v0.0.3`
+
+ - **FEAT**: add `child`.
+
+
+## 2023-10-25
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
  - [`beholder` - `v0.1.1`](#beholder---v011)
  - [`beholder_flutter` - `v0.1.0+2`](#beholder_flutter---v0102)
  - [`beholder_provider` - `v0.0.2+7`](#beholder_provider---v0027)

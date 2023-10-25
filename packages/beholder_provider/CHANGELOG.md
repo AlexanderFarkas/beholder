@@ -1,3 +1,7 @@
+## 0.0.3
+
+ - **FEAT**: add `child`.
+
 ## 0.0.2+7
 
  - Update a dependency to the latest release.
