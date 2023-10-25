@@ -6,9 +6,7 @@ typedef ValueSetter<T> = T Function(T value);
 /// Core class in `beholder`.
 /// Every change is initiated by [RootObservableState]
 /// Usually, you don't need to use it directly
-final class RootObservableState<T>
-    with DebugReprMixin
-    implements ObservableState<T> {
+final class RootObservableState<T> with DebugReprMixin implements ObservableState<T> {
   RootObservableState(
     T value, {
     Equals<T>? equals,
@@ -53,7 +51,7 @@ final class RootObservableState<T>
 
   @override
   Disposer listen(ValueChanged<T> onChanged) {
-    assert(!_debugDisposed, "$this is already disposed");
+    assert(!_isDisposed, "$this is already disposed");
 
     final observer = ValueChangedObserver(onChanged);
     addObserver(observer);
@@ -62,7 +60,7 @@ final class RootObservableState<T>
 
   @override
   Disposer listenSync(ValueChanged<T> onChanged) {
-    assert(!_debugDisposed, "$this is already disposed");
+    assert(!_isDisposed, "$this is already disposed");
 
     final isNew = _eagerListeners.add(onChanged);
     assert(isNew, "Listener already added");
@@ -80,7 +78,7 @@ final class RootObservableState<T>
   @override
   void dispose() {
     assert(() {
-      _debugDisposed = true;
+      _isDisposed = true;
       debugLog("$this disposed");
       return true;
     }());
@@ -98,7 +96,7 @@ final class RootObservableState<T>
 
   @override
   void addObserver(ObserverMixin observer) {
-    assert(!_debugDisposed, "$this is already disposed");
+    assert(!_isDisposed, "$this is already disposed");
     assert(() {
       if (!_observers.contains(observer)) {
         debugLog("$observer starts observing $this");
@@ -140,15 +138,15 @@ final class RootObservableState<T>
       controller = StreamController<T>.broadcast(
         sync: true,
         onCancel: () => disposeListen?.call(),
-        onListen: () =>
-            disposeListen = listen((_, value) => controller.add(value)),
+        onListen: () => disposeListen = listen((_, value) => controller.add(value)),
       );
       return controller;
     },
     dispose: (controller) => controller.close(),
   );
 
-  bool _debugDisposed = false;
+  bool _isDisposed = false;
+  bool get isDisposed => _isDisposed;
 
   final _plugins = <StatePlugin<T>>[];
 

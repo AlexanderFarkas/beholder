@@ -27,6 +27,8 @@ abstract class ObservableObserver<T>
     return inner.value;
   }
 
+  bool get isDisposed => inner.isDisposed;
+
   @override
   @mustCallSuper
   void dispose() {

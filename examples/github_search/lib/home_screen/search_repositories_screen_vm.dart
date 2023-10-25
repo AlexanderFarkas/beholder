@@ -7,9 +7,7 @@ class SearchRepositoriesScreenVm extends ViewModel {
   final githubApi = GithubApi();
 
   late final searchString = state('')
-    ..asStream()
-        .debounceTime(const Duration(milliseconds: 500))
-        .listen((_) => refresh());
+    ..asStream().debounceTime(const Duration(milliseconds: 500)).listen((_) => refresh());
 
   Future<void> refresh() async {
     final search = searchString.value;

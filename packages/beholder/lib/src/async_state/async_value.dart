@@ -1,8 +1,6 @@
 // ignore_for_file: hash_and_equals
 part of future;
 
-import '../core.dart';
-
 sealed class AsyncValue<T> {
   const AsyncValue();
 
@@ -33,8 +31,7 @@ extension AsyncValueX<T> on AsyncValue<T> {
   }) {
     return switch (this) {
       final Data<T> value when data != null => data(value.value),
-      final Failure<T> value when error != null =>
-        error(value.error, value.stackTrace),
+      final Failure<T> value when error != null => error(value.error, value.stackTrace),
       Loading<T>() when loading != null => loading(),
       _ => orElse(),
     };
@@ -158,9 +155,7 @@ class Data<T> extends Result<T> {
   @override
   operator ==(Object? other) {
     return identical(this, other) ||
-        (other is Data<T> &&
-            runtimeType == other.runtimeType &&
-            value == other.value);
+        (other is Data<T> && runtimeType == other.runtimeType && value == other.value);
   }
 
   @override

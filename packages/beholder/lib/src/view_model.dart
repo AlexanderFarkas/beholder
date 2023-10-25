@@ -21,6 +21,11 @@ abstract mixin class ViewModel implements Disposable {
   }) =>
       disposable(ObservableComputed(compute, equals: equals));
 
+  ComputedFactory<T, TParam> computedFactory<T, TParam>(
+    T Function(Watch watch, TParam param) compute,
+  ) =>
+      disposable(ComputedFactory(compute));
+
   @protected
   WritableObservableComputed<T> writableComputed<T>({
     required T Function(Watch watch) get,

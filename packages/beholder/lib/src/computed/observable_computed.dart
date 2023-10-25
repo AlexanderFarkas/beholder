@@ -1,11 +1,10 @@
 part of computed;
 
-class ObservableComputed<T> extends ObservableObserver<T> {
+class ObservableComputed<T> extends ObservableObserver<T> implements Extendable<T> {
   ObservableComputed(this._compute, {Equals<T>? equals});
 
   @override
-  RootObservableState<T> createStateDelegate() =>
-      RootObservableState(trackObservables(_compute));
+  RootObservableState<T> createStateDelegate() => RootObservableState(trackObservables(_compute));
 
   @override
   Rebuild prepare() {
@@ -14,4 +13,9 @@ class ObservableComputed<T> extends ObservableObserver<T> {
   }
 
   final T Function(Watch watch) _compute;
+
+  @override
+  void addPlugin(StatePlugin<T> plugin) {
+    inner.addPlugin(plugin);
+  }
 }
