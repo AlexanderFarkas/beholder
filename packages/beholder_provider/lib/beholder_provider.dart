@@ -12,8 +12,7 @@ class ViewModelProvider<T extends ViewModel> extends InheritedProvider<T> {
     super.lazy,
     ObserverBuilder? builder,
     Widget? child,
-  })  : assert(builder != null || child != null, "Either builder or child must be provided"),
-        assert(builder == null || child == null, "Either builder or child must be provided"),
+  })  : assert(builder == null || child == null, "Either builder or child must be provided"),
         super(
           dispose: (context, viewModel) {
             if (dispose != null) {
@@ -31,7 +30,6 @@ class ViewModelProvider<T extends ViewModel> extends InheritedProvider<T> {
     super.updateShouldNotify,
     ObserverBuilder? builder,
     Widget? child,
-  })  : assert(builder != null || child != null, "Either builder or child must be provided"),
-        assert(builder == null || child == null, "Either builder or child must be provided"),
+  })  : assert(builder == null || child == null, "Either builder or child must be provided"),
         super.value(child: builder != null ? Observer(builder: builder) : child);
 }
