@@ -14,7 +14,7 @@ class Observer extends StatefulWidget {
 class _ObserverState extends State<Observer> with ObserverMixin {
   @override
   Widget build(BuildContext context) {
-    return Focus(child: trackObservables((watch) => widget.builder(context, watch)));
+    return trackObservables((watch) => widget.builder(context, watch));
   }
 
   @override
