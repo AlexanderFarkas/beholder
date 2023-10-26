@@ -15,6 +15,36 @@ Packages with breaking changes:
 
 Packages with other changes:
 
+ - [`beholder_flutter` - `v0.1.0+3`](#beholder_flutter---v0103)
+ - [`beholder_provider` - `v0.0.3+2`](#beholder_provider---v0032)
+ - [`beholder_form` - `v0.2.0+3`](#beholder_form---v0203)
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `beholder_provider` - `v0.0.3+2`
+ - `beholder_form` - `v0.2.0+3`
+
+---
+
+#### `beholder_flutter` - `v0.1.0+3`
+
+ - **FIX**: wrong widget.
+
+
+## 2023-10-26
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
  - [`beholder_provider` - `v0.0.3+1`](#beholder_provider---v0031)
 
 ---
