@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2023-10-26
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`beholder_provider` - `v0.0.3+1`](#beholder_provider---v0031)
+
+---
+
+#### `beholder_provider` - `v0.0.3+1`
+
+ - **FIX**: wrong asserting.
+
+
 ## 2023-10-25
 
 ### Changes

@@ -1,6 +1,6 @@
 name: beholder_provider
 description: "Provider for Beholder View Models"
-version: 0.0.3
+version: 0.0.3+1
 repository: https://github.com/AlexanderFarkas/beholder/tree/main/packages/beholder_provider
 
 environment:

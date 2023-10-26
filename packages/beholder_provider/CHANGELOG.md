@@ -1,3 +1,7 @@
+## 0.0.3+1
+
+ - **FIX**: wrong asserting.
+
 ## 0.0.3
 
  - **FEAT**: add `child`.
