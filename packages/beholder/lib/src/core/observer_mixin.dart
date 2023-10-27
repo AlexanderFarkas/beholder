@@ -35,9 +35,14 @@ mixin ObserverMixin {
 
   (Rebuild rebuild, bool isNewObservableAdded) _prepare() {
     _isNewObservableAddedDuringRebuild = false;
-    final rebuild = prepare();
-    final result = (rebuild, _isNewObservableAddedDuringRebuild);
-    _isNewObservableAddedDuringRebuild = false;
+
+    final (Rebuild rebuild, bool isNewObservableAdded) result;
+    try {
+      final rebuild = prepare();
+      result = (rebuild, _isNewObservableAddedDuringRebuild);
+    } finally {
+      _isNewObservableAddedDuringRebuild = false;
+    }
     return result;
   }
 

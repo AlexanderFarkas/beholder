@@ -53,6 +53,7 @@ class ObservableContext {
   var _states = <RootObservableState>{};
 
   static ObservableContext? _current;
+
   ObservableContext._();
 
   Set<ObserverMixin> _consumerObservers = {};
@@ -63,6 +64,7 @@ class ObservableContext {
   }
 
   bool _isScheduled = false;
+
   void _scheduleUpdateConsumers() {
     if (_isScheduled) return;
     _isScheduled = true;
@@ -91,6 +93,7 @@ class ObservableContext {
   }
 
   var _updateObserverCache = <ObserverMixin, bool?>{};
+
   bool? _updateObserver(
     ObserverMixin observer, {
     void Function(ObserverMixin observer)? onVisited,
@@ -127,18 +130,26 @@ class ObservableContext {
       }
     }
 
-    final bool isRebuilt;
+    late final bool isRebuilt;
     if (isAnyUpdated != false) {
-      final (applyRebuild, isNewObservableAdded) = observer._prepare();
-      if (isNewObservableAdded) {
-        return _updateObserver(
-          observer,
-          onVisited: onVisited,
-          states: states,
-          updateObserverCache: updateObserverCache,
+      try {
+        final (applyRebuild, isNewObservableAdded) = observer._prepare();
+        if (isNewObservableAdded) {
+          return _updateObserver(
+            observer,
+            onVisited: onVisited,
+            states: states,
+            updateObserverCache: updateObserverCache,
+          );
+        }
+
+        isRebuilt = applyRebuild();
+      } catch (e) {
+        developer.log(
+          "$observer failed to rebuild and kept its previous state.\nIf it's expected, ignore this error.\nError: $e",
         );
+        isRebuilt = false;
       }
-      isRebuilt = applyRebuild();
     } else {
       isRebuilt = false;
     }

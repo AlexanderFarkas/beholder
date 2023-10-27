@@ -2,6 +2,7 @@ library core;
 
 import 'dart:async';
 import 'dart:collection';
+import 'dart:developer' as developer;
 
 import 'package:beholder/src/plugins.dart';
 import 'package:meta/meta.dart';
