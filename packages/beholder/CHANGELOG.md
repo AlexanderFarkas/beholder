@@ -1,3 +1,7 @@
+## 0.1.1+1
+
+ - **FIX**: handle throws in `prepare` and `build`.
+
 ## 0.1.1
 
  - **FEAT**: computed factory.
