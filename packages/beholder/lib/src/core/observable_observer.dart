@@ -7,19 +7,24 @@ part of core;
 abstract class ObservableObserver<T>
     with ObserverMixin, ObservableProxyMixin<T>, DebugReprMixin
     implements Observable<T> {
-  ObservableObserver() {
-    final stateDelegate = createStateDelegate();
-    assert(stateDelegate.delegatedByObserver == null);
-    stateDelegate.delegatedByObserver = this;
-    this.inner = stateDelegate;
-  }
-
   @protected
   RootObservableState<T> createStateDelegate();
 
   @override
   @protected
-  late final RootObservableState<T> inner;
+  RootObservableState<T> get inner {
+    _inner ??= _createInner();
+    return _inner!;
+  }
+
+  RootObservableState<T> _createInner() {
+    final stateDelegate = createStateDelegate();
+    assert(stateDelegate.delegatedByObserver == null);
+    stateDelegate.delegatedByObserver = this;
+    return stateDelegate;
+  }
+
+  RootObservableState<T>? _inner;
 
   @override
   T get value {

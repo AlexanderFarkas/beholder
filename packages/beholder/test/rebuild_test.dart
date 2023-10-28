@@ -8,25 +8,20 @@ void main() {
     ObservableContext.reset();
   });
 
-  test("Rebuild count doesn't increase after sequential calls to value",
-      () async {
+  test("Rebuild count doesn't increase after sequential calls to value", () async {
     final counter = RootObservableState(0);
     final doubled = createComputed((watch) => watch(counter) * 2);
     final tripled = createComputed((watch) => watch(counter) * 3);
 
-    expect(
-        [doubled.rebuildCounter.value, tripled.rebuildCounter.value], [1, 1]);
+    expect([doubled.rebuildCounter.value, tripled.rebuildCounter.value], [0, 0]);
     counter.value++;
     expect(doubled.computed.value, 2);
-    expect(
-        [doubled.rebuildCounter.value, tripled.rebuildCounter.value], [2, 1]);
+    expect([doubled.rebuildCounter.value, tripled.rebuildCounter.value], [1, 0]);
     expect(tripled.computed.value, 3);
-    expect(
-        [doubled.rebuildCounter.value, tripled.rebuildCounter.value], [2, 2]);
+    expect([doubled.rebuildCounter.value, tripled.rebuildCounter.value], [1, 1]);
     expect(doubled.computed.value, 2);
     expect(tripled.computed.value, 3);
-    expect(
-        [doubled.rebuildCounter.value, tripled.rebuildCounter.value], [2, 2]);
+    expect([doubled.rebuildCounter.value, tripled.rebuildCounter.value], [1, 1]);
   });
 
   test(
@@ -35,35 +30,28 @@ void main() {
     final counter = RootObservableState(0);
     final doubled = createComputed((watch) => watch(counter) * 2);
     final tripled = createComputed((watch) => watch(counter) * 3);
-    expect(
-        [doubled.rebuildCounter.value, tripled.rebuildCounter.value], [1, 1]);
+    expect([doubled.rebuildCounter.value, tripled.rebuildCounter.value], [0, 0]);
     counter.value++;
     await ObservableContext.pump();
     expect(doubled.computed.value, 2);
-    expect(
-        [doubled.rebuildCounter.value, tripled.rebuildCounter.value], [2, 1]);
+    expect([doubled.rebuildCounter.value, tripled.rebuildCounter.value], [1, 0]);
     expect(tripled.computed.value, 3);
-    expect(
-        [doubled.rebuildCounter.value, tripled.rebuildCounter.value], [2, 2]);
+    expect([doubled.rebuildCounter.value, tripled.rebuildCounter.value], [1, 1]);
     expect(doubled.computed.value, 2);
     expect(tripled.computed.value, 3);
-    expect(
-        [doubled.rebuildCounter.value, tripled.rebuildCounter.value], [2, 2]);
+    expect([doubled.rebuildCounter.value, tripled.rebuildCounter.value], [1, 1]);
   });
 
   test("Computed is not rebuilt if it doesn't have listeners", () async {
     final counter = RootObservableState(0);
     final doubled = createComputed((watch) => watch(counter) * 2);
 
-    expect(doubled.rebuildCounter.value, equals(1));
     counter.value++;
     await ObservableContext.pump();
-    expect(doubled.rebuildCounter.value, equals(1));
+    expect(doubled.rebuildCounter.value, equals(0));
   });
 
-  test(
-      "Listener is only rebuilt once, even if several observables have rebuilt",
-      () async {
+  test("Listener is only rebuilt once, even if several observables have rebuilt", () async {
     final counter1 = RootObservableState(0);
     final counter2 = RootObservableState(0);
 
@@ -77,12 +65,10 @@ void main() {
     expect(sum.rebuildCounter.value, equals(2));
   });
 
-  test("Listener is rebuilt, even if added after observables updated",
-      () async {
+  test("Listener is rebuilt, even if added after observables updated", () async {
     final counter = RootObservableState(0);
     final sum = createComputed((watch) => watch(counter));
 
-    expect(sum.rebuildCounter.value, equals(1));
     counter.value++;
     sum.computed.listen((_, value) {});
     expect(sum.rebuildCounter.value, equals(1));

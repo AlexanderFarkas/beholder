@@ -30,8 +30,7 @@ void main() {
     Observable.debugEnabled = true;
     final counter = RootObservableState(0);
     final counter2 = RootObservableState(100);
-    final computed =
-        ObservableComputed((watch) => watch(counter) + watch(counter2));
+    final computed = ObservableComputed((watch) => watch(counter) + watch(counter2));
 
     var timesObserverIsCalled = 0;
     computed.addObserver(ListenObserver(() {
@@ -98,8 +97,7 @@ void main() {
 
   test("computed respects equals", () async {
     final counter = RootObservableState(0, equals: (a, b) => a == b);
-    final computed =
-        ObservableComputed((watch) => watch(counter), equals: (a, b) => a == b);
+    final computed = ObservableComputed((watch) => watch(counter), equals: (a, b) => a == b);
 
     var timesObserverIsCalled = 0;
     computed.addObserver(ListenObserver(() {
@@ -154,63 +152,23 @@ void main() {
     });
 
     await ObservableContext.pump();
-    expect([
-      doubledCounter.value,
-      tripledCounter.value,
-      counterMultipliedBy6.value
-    ], [
-      0,
-      0,
-      0
-    ]);
-    expect(
-        [rebuildCounter2.value, rebuildCounter3.value, rebuildCounter6.value],
-        [1, 1, 1]);
+    expect([doubledCounter.value, tripledCounter.value, counterMultipliedBy6.value], [0, 0, 0]);
+    expect([rebuildCounter2.value, rebuildCounter3.value, rebuildCounter6.value], [1, 1, 1]);
 
     counter.value = 1;
     await ObservableContext.pump();
-    expect([
-      doubledCounter.value,
-      tripledCounter.value,
-      counterMultipliedBy6.value
-    ], [
-      2,
-      3,
-      6
-    ]);
-    expect(
-        [rebuildCounter2.value, rebuildCounter3.value, rebuildCounter6.value],
-        [2, 2, 2]);
+    expect([doubledCounter.value, tripledCounter.value, counterMultipliedBy6.value], [2, 3, 6]);
+    expect([rebuildCounter2.value, rebuildCounter3.value, rebuildCounter6.value], [2, 2, 2]);
 
     counter.value = 10;
     await ObservableContext.pump();
-    expect([
-      doubledCounter.value,
-      tripledCounter.value,
-      counterMultipliedBy6.value
-    ], [
-      20,
-      30,
-      60
-    ]);
-    expect(
-        [rebuildCounter2.value, rebuildCounter3.value, rebuildCounter6.value],
-        [3, 3, 3]);
+    expect([doubledCounter.value, tripledCounter.value, counterMultipliedBy6.value], [20, 30, 60]);
+    expect([rebuildCounter2.value, rebuildCounter3.value, rebuildCounter6.value], [3, 3, 3]);
 
     counter2.value = 200;
     await ObservableContext.pump();
-    expect([
-      doubledCounter.value,
-      tripledCounter.value,
-      counterMultipliedBy6.value
-    ], [
-      20,
-      30,
-      60
-    ]);
-    expect(
-        [rebuildCounter2.value, rebuildCounter3.value, rebuildCounter6.value],
-        [3, 3, 4]);
+    expect([doubledCounter.value, tripledCounter.value, counterMultipliedBy6.value], [20, 30, 60]);
+    expect([rebuildCounter2.value, rebuildCounter3.value, rebuildCounter6.value], [3, 3, 4]);
   });
 
   test("Scoped update", () async {
@@ -224,7 +182,7 @@ void main() {
     counter.value = 20;
     await ObservableContext.pump();
     expect(computed.value, 4000);
-    expect(rebuildCounter.value, 2);
+    expect(rebuildCounter.value, 1);
 
     final (rebuildCounter: rebuildCounter2, computed: computed2) =
         createComputed((watch) => watch(counter) * watch(counter2));
@@ -233,12 +191,13 @@ void main() {
     counter.value = 30;
     await ObservableContext.pump();
     expect(computed2.value, 9000);
-    expect(rebuildCounter2.value, 2);
+    expect(rebuildCounter2.value, 1);
   });
 
   test("Listeners are not updated after dispose", () {
     final counter = RootObservableState(10);
     final computed = ObservableComputed((watch) => watch(counter) * 10);
+    computed.value;
 
     counter.dispose();
     counter.value = 20;
@@ -248,10 +207,9 @@ void main() {
   group("namegroup", () {
     test("name", () {
       final username = RootObservableState("");
-      final usernameError = ObservableComputed(
-          (watch) => watch(username).length < 8 ? "Min 8" : null);
-      final hasError =
-          ObservableComputed((watch) => watch(usernameError) != null && false);
+      final usernameError =
+          ObservableComputed((watch) => watch(username).length < 8 ? "Min 8" : null);
+      final hasError = ObservableComputed((watch) => watch(usernameError) != null && false);
 
       final errorIfHasError = ObservableComputed((watch) {
         watch(hasError);
