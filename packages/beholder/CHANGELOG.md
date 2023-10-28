@@ -1,3 +1,9 @@
+## 0.2.0
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **FEAT**: make computed lazy.
+
 ## 0.1.1+1
 
  - **FIX**: handle throws in `prepare` and `build`.

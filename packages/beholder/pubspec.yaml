@@ -1,6 +1,6 @@
 name: beholder
 description: State Management inspired by MobX
-version: 0.1.1+1
+version: 0.2.0
 repository: https://github.com/AlexanderFarkas/beholder/tree/main/packages/beholder
 
 environment:
