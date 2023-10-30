@@ -3,6 +3,40 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2023-10-30
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - [`beholder` - `v0.3.0`](#beholder---v030)
+ - [`beholder_flutter` - `v0.2.0`](#beholder_flutter---v020)
+
+Packages with other changes:
+
+ - [`beholder_provider` - `v0.0.3+5`](#beholder_provider---v0035)
+ - [`beholder_form` - `v0.2.0+6`](#beholder_form---v0206)
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `beholder_provider` - `v0.0.3+5`
+ - `beholder_form` - `v0.2.0+6`
+
+---
+
+#### `beholder` - `v0.3.0`
+
+ - **BREAKING** **FEAT**: internal refactoring.
+
+#### `beholder_flutter` - `v0.2.0`
+
+ - **BREAKING** **FEAT**: internal refactoring.
+
+
 ## 2023-10-28
 
 ### Changes

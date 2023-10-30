@@ -1,3 +1,9 @@
+## 0.3.0
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **FEAT**: internal refactoring.
+
 ## 0.2.0
 
 > Note: This release has breaking changes.
