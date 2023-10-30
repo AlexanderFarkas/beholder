@@ -1,3 +1,7 @@
+## 0.3.0+2
+
+ - **FIX**: computed superfluous rebuilds.
+
 ## 0.3.0+1
 
  - **FIX**: computed superfluous rebuilds.

@@ -1,3 +1,7 @@
+## 0.2.0+2
+
+ - **FIX**: computed superfluous rebuilds.
+
 ## 0.2.0+1
 
  - Update a dependency to the latest release.

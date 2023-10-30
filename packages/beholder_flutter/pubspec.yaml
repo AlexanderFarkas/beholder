@@ -1,6 +1,6 @@
 name: beholder_flutter
 description: State Management inspired by MobX for Flutter
-version: 0.2.0+1
+version: 0.2.0+2
 repository: https://github.com/AlexanderFarkas/beholder/tree/main/packages/beholder_flutter
 
 environment:
@@ -11,7 +11,7 @@ dependencies:
   meta: ^1.9.1
   flutter:
     sdk: flutter
-  beholder: ^0.3.0+1
+  beholder: ^0.3.0+2
 
 dev_dependencies:
   flutter_test:
