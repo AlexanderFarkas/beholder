@@ -44,21 +44,23 @@ class ObservableContext {
       final old = _uow;
       isScheduled = false;
       _uow = _UpdateUnitOfWork(old.computedRebuildCache);
-      _uow.computedRebuildCache.addAll(old.computedRebuildCache);
       old._execute();
     });
   }
 
-  var _uow = _UpdateUnitOfWork({});
+  var _uow = _UpdateUnitOfWork(null);
 }
 
 class _UpdateUnitOfWork {
-  _UpdateUnitOfWork(this.computedRebuildCache);
-  final Map<ObservableComputed, bool> computedRebuildCache;
+  _UpdateUnitOfWork(this.previousRebuildCache);
+
+  Map<ObservableComputed, bool>? previousRebuildCache;
+  final Map<ObservableComputed, bool> computedRebuildCache = {};
   final invalidatedRoots = <RootObservableState>{};
 
   void invalidateState(RootObservableState state) {
     invalidatedRoots.add(state);
+    previousRebuildCache = null;
     computedRebuildCache.clear();
   }
 
@@ -98,8 +100,13 @@ class _UpdateUnitOfWork {
       }
 
       if (isAnyRebuilt) {
-        final (rebuild, _) = leaf._prepare();
-        rebuild();
+        while (true) {
+          final (rebuild, isNewObservableAdded) = leaf._prepare();
+          if (!isNewObservableAdded) {
+            rebuild();
+            break;
+          }
+        }
       }
     }
   }
@@ -111,6 +118,8 @@ class _UpdateUnitOfWork {
         bool isAnyRebuilt = false;
         final observer = computed.delegatedBy;
         if (computedRebuildCache[observer] case final cached?) {
+          return cached;
+        } else if (previousRebuildCache?[observer] case final cached?) {
           return cached;
         }
 

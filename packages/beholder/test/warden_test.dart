@@ -27,7 +27,6 @@ void main() {
   });
 
   test('computed', () async {
-    Observable.debugEnabled = true;
     final counter = RootObservableState(0);
     final counter2 = RootObservableState(100);
     final computed = ObservableComputed((watch) => watch(counter) + watch(counter2));
@@ -133,7 +132,6 @@ void main() {
   });
 
   test("deeply nested observables", () async {
-    Observable.debugEnabled = true;
     final counter = RootObservableState(0);
     final counter2 = RootObservableState(100);
     final (rebuildCounter: rebuildCounter2, computed: doubledCounter) =
@@ -223,7 +221,6 @@ void main() {
   });
 
   test("description", () async {
-    Observable.debugEnabled = true;
     final internalError = RootObservableState<String?>(null);
     final value = RootObservableState("");
     value.listenSync((_, value) => internalError.value = null);
@@ -263,7 +260,6 @@ void main() {
   });
 
   test("dsds", () async {
-    Observable.debugEnabled = true;
     final internalError = RootObservableState<String?>("internal");
     final value = RootObservableState("");
     value.listenSync((_, value) => internalError.value = null);

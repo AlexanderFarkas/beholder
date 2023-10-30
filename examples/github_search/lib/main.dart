@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'home_screen/search_repositories_screen.dart';
 
 void main() {
-  Observable.debugEnabled = true;
   runApp(const App());
 }
 

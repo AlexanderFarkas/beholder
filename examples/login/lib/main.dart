@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:login/login_form_vm.dart';
 
 void main() {
-  Observable.debugEnabled = true;
   runApp(const App());
 }
 

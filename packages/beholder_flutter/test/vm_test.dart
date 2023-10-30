@@ -9,7 +9,6 @@ void main() {
 
   testWidgets("Test", (tester) async {
     final vm = TestVm();
-    Observable.debugEnabled = true;
     await tester.pumpWidget(MaterialApp(
       home: Observer(
         builder: (context, watch) => Column(

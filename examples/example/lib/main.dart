@@ -21,7 +21,6 @@ class WardenVm extends ViewModel {
 }
 
 void main() {
-  Observable.debugEnabled = true;
   runApp(const App());
 }
 
