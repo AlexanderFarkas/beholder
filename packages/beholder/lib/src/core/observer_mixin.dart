@@ -14,7 +14,7 @@ mixin ObserverMixin {
   void onAddedToState(BaseObservableState observable) {
     final isNew = observables.add(observable);
     if (isNew) {
-      _isNewObservableAddedDuringRebuild = true;
+      _isNewObservableAddedDuringPrepare = true;
     }
   }
 
@@ -31,17 +31,17 @@ mixin ObserverMixin {
   @protected
   Rebuild prepare();
 
-  bool _isNewObservableAddedDuringRebuild = false;
+  bool _isNewObservableAddedDuringPrepare = false;
 
   (Rebuild rebuild, bool isNewObservableAdded) _prepare() {
-    _isNewObservableAddedDuringRebuild = false;
+    _isNewObservableAddedDuringPrepare = false;
 
     final (Rebuild rebuild, bool isNewObservableAdded) result;
     try {
       final rebuild = prepare();
-      result = (rebuild, _isNewObservableAddedDuringRebuild);
+      result = (rebuild, _isNewObservableAddedDuringPrepare);
     } finally {
-      _isNewObservableAddedDuringRebuild = false;
+      _isNewObservableAddedDuringPrepare = false;
     }
     return result;
   }

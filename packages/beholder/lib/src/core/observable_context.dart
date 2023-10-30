@@ -43,16 +43,18 @@ class ObservableContext {
     Future.microtask(() {
       final old = _uow;
       isScheduled = false;
-      _uow = _UpdateUnitOfWork();
+      _uow = _UpdateUnitOfWork(old.computedRebuildCache);
+      _uow.computedRebuildCache.addAll(old.computedRebuildCache);
       old._execute();
     });
   }
 
-  var _uow = _UpdateUnitOfWork();
+  var _uow = _UpdateUnitOfWork({});
 }
 
 class _UpdateUnitOfWork {
-  final computedRebuildCache = <ObservableComputed, bool>{};
+  _UpdateUnitOfWork(this.computedRebuildCache);
+  final Map<ObservableComputed, bool> computedRebuildCache;
   final invalidatedRoots = <RootObservableState>{};
 
   void invalidateState(RootObservableState state) {

@@ -29,6 +29,58 @@ void main() {
     expect(arr.value, equals([2, 4, 8]));
   });
 
+  test("Consecutive", () async {
+    final obs = ObservableState(1);
+    final (computed: computed1, rebuildCounter: rebuildCounter1) =
+        createComputed((watch) => watch(obs) * 2);
+    final (computed: computed2, rebuildCounter: rebuildCounter2) =
+        createComputed((watch) => watch(computed1) * 2);
+    final (computed: computed3, rebuildCounter: rebuildCounter3) =
+        createComputed((watch) => watch(computed2) * 2);
+
+    computed3.listen((previous, current) {});
+    expect(
+      [rebuildCounter1.value, rebuildCounter2.value, rebuildCounter3.value],
+      equals([1, 1, 1]),
+    );
+    obs.value = 3;
+    await ObservableContext.pump();
+    expect(
+      [rebuildCounter1.value, rebuildCounter2.value, rebuildCounter3.value],
+      equals([2, 2, 2]),
+    );
+  });
+
+  test("_", () async {
+    final obs = ObservableState(1);
+    final (:computed, :rebuildCounter) = createComputed((watch) => watch(obs) * 2);
+
+    computed.value;
+    for (var i = 0; i < 5; i++) {
+      expect(rebuildCounter.value, equals(1));
+    }
+    obs.value = 3;
+    computed.value;
+    for (var i = 0; i < 5; i++) {
+      expect(rebuildCounter.value, equals(2));
+    }
+  });
+
+  test("_d", () async {
+    final obs = ObservableState(1);
+    final (:computed, :rebuildCounter) = createComputed((watch) => watch(obs) * 2);
+
+    computed.listen((previous, current) {});
+    for (var i = 0; i < 5; i++) {
+      expect(rebuildCounter.value, equals(1));
+    }
+    obs.value = 3;
+    await ObservableContext.pump();
+    for (var i = 0; i < 5; i++) {
+      expect(rebuildCounter.value, equals(2));
+    }
+  });
+
   test("Case 1", () async {
     final textField = RootObservableState("");
     final textFieldError =
