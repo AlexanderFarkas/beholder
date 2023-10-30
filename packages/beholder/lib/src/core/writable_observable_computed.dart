@@ -1,7 +1,6 @@
-part of computed;
+part of core;
 
-class WritableObservableComputed<T> extends ObservableComputed<T>
-    implements WritableObservable<T> {
+class WritableObservableComputed<T> extends ObservableComputed<T> implements WritableObservable<T> {
   WritableObservableComputed({
     required T Function(Watch watch) get,
     required void Function(T value) set,

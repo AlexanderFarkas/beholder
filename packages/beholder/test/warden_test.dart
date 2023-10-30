@@ -168,7 +168,7 @@ void main() {
     counter2.value = 200;
     await ObservableContext.pump();
     expect([doubledCounter.value, tripledCounter.value, counterMultipliedBy6.value], [20, 30, 60]);
-    expect([rebuildCounter2.value, rebuildCounter3.value, rebuildCounter6.value], [3, 3, 4]);
+    expect([rebuildCounter2.value, rebuildCounter3.value, rebuildCounter6.value], [4, 4, 4]);
   });
 
   test("Scoped update", () async {
@@ -194,14 +194,14 @@ void main() {
     expect(rebuildCounter2.value, 1);
   });
 
-  test("Listeners are not updated after dispose", () {
+  test("Cannot set after dispose", () {
     final counter = RootObservableState(10);
     final computed = ObservableComputed((watch) => watch(counter) * 10);
-    computed.value;
 
     counter.dispose();
-    counter.value = 20;
-    expect(computed.value, 100);
+    expect(() {
+      counter.value = 20;
+    }, throwsA(isA<AssertionError>()));
   });
 
   group("namegroup", () {

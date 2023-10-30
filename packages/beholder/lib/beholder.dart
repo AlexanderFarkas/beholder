@@ -1,7 +1,6 @@
 library beholder;
 
-export 'src/core.dart';
-export 'src/computed.dart';
+export 'src/core.dart' hide BaseObservableState;
 export 'src/future.dart';
 export 'src/view_model.dart';
 export 'src/proxy_observable_mixin.dart';

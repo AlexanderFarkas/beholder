@@ -1,6 +1,5 @@
 import 'package:beholder/beholder.dart';
-import 'package:test/expect.dart';
-import 'package:test/scaffolding.dart';
+import 'package:test/test.dart';
 
 void main() {
   test("Basic", () {

@@ -6,27 +6,24 @@ typedef ValueSetter<T> = T Function(T value);
 /// Core class in `beholder`.
 /// Every change is initiated by [RootObservableState]
 /// Usually, you don't need to use it directly
-final class RootObservableState<T> with DebugReprMixin implements ObservableState<T> {
-  RootObservableState(
-    T value, {
-    Equals<T>? equals,
-  })  : _value = value,
-        _equals = equals ?? Observable.defaultEquals;
+
+@internal
+sealed class BaseObservableState<T> with DebugReprMixin implements ObservableState<T> {
+  BaseObservableState(this._value, {Equals<T>? equals})
+      : _equals = equals ?? Observable.defaultEquals;
 
   @override
   T get value => _value;
 
   @override
   bool setValue(T value) {
+    assert(!_isDisposed, "Cannot set value once state is disposed");
     final oldValue = _value;
     final willUpdate = !_equals(oldValue, value);
     if (willUpdate) {
       _value = value;
 
-      invalidate();
-      for (final listener in _eagerListeners) {
-        listener(oldValue, value);
-      }
+      onValueSet(oldValue, value);
 
       for (final plugin in _plugins) {
         plugin.onValueChanged(oldValue, value);
@@ -45,9 +42,7 @@ final class RootObservableState<T> with DebugReprMixin implements ObservableStat
     setValue(value);
   }
 
-  void invalidate() {
-    ObservableContext().invalidateState(this);
-  }
+  void onValueSet(T from, T to);
 
   @override
   Disposer listen(ValueChanged<T> onChanged) {
@@ -70,10 +65,6 @@ final class RootObservableState<T> with DebugReprMixin implements ObservableStat
   final Equals<T> _equals;
 
   T _value;
-  final _eagerListeners = <ValueChanged<T>>{};
-
-  @internal
-  ObservableObserver? delegatedByObserver;
 
   @override
   void dispose() {
@@ -149,10 +140,26 @@ final class RootObservableState<T> with DebugReprMixin implements ObservableStat
   bool get isDisposed => _isDisposed;
 
   final _plugins = <StatePlugin<T>>[];
+  final _eagerListeners = <ValueChanged<T>>{};
 
   @override
   void addPlugin(StatePlugin<T> plugin) {
     _plugins.add(plugin);
     plugin.attach(this);
+  }
+}
+
+final class RootObservableState<T> extends BaseObservableState<T> {
+  RootObservableState(
+    super.value, {
+    super.equals,
+  });
+
+  @override
+  void onValueSet(T from, T to) {
+    ObservableContext().invalidateState(this);
+    for (final listener in _eagerListeners) {
+      listener(from, to);
+    }
   }
 }

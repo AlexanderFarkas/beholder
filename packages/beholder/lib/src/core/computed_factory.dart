@@ -1,4 +1,4 @@
-part of computed;
+part of core;
 
 class ComputedFactory<TValue, TParam> implements Disposable {
   ComputedFactory(this._compute);

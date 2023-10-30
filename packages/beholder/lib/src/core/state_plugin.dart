@@ -11,10 +11,10 @@ abstract class StatePlugin<T> {
     void Function(ObserverMixin observer)? onObserverRemoved,
   }) = _InlinePlugin<T>;
 
-  late final RootObservableState<T> state;
+  late final BaseObservableState<T> state;
 
   @nonVirtual
-  void attach(RootObservableState<T> state) {
+  void attach(BaseObservableState<T> state) {
     this.state = state;
     onAttached();
   }

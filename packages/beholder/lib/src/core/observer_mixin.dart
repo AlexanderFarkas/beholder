@@ -5,20 +5,20 @@ typedef IsApplied = bool;
 typedef Rebuild = IsApplied Function();
 
 mixin ObserverMixin {
-  final observables = <RootObservableState>{};
+  final observables = <BaseObservableState>{};
 
   T trackObservables<T>(T Function(Watch watch) callback) {
     return callback(_observe);
   }
 
-  void onAddedToState(RootObservableState observable) {
+  void onAddedToState(BaseObservableState observable) {
     final isNew = observables.add(observable);
     if (isNew) {
       _isNewObservableAddedDuringRebuild = true;
     }
   }
 
-  void onRemovedFromState(RootObservableState observable) {
+  void onRemovedFromState(BaseObservableState observable) {
     observables.remove(observable);
   }
 
@@ -69,7 +69,7 @@ class ValueChangedObserver<T> with ObserverMixin, DebugReprMixin {
   ValueChangedObserver(this.listener);
   final void Function(T previous, T next) listener;
 
-  late final RootObservableState<T> _observableState;
+  late final BaseObservableState<T> _observableState;
   late T _previousValue;
 
   @override
@@ -82,8 +82,8 @@ class ValueChangedObserver<T> with ObserverMixin, DebugReprMixin {
   }
 
   @override
-  void onAddedToState(RootObservableState observable) {
-    _observableState = observable as RootObservableState<T>;
+  void onAddedToState(BaseObservableState observable) {
+    _observableState = observable as BaseObservableState<T>;
     _previousValue = observable.value;
     super.onAddedToState(observable);
   }
