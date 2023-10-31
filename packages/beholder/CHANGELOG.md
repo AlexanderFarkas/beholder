@@ -1,3 +1,7 @@
+## 0.3.0+3
+
+ - **FIX**: catch any errors during prepare/rebuild.
+
 ## 0.3.0+2
 
  - **FIX**: computed superfluous rebuilds.
