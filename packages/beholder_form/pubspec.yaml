@@ -1,6 +1,6 @@
 name: beholder_form
 description: Opinionated Reactive Forms for beholder_flutter.
-version: 0.2.0+10
+version: 0.2.0+11
 repository: https://github.com/AlexanderFarkas/beholder/tree/main/packages/beholder_form
 
 environment:
@@ -11,7 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  beholder_flutter: ^0.2.0+4
+  beholder_flutter: ^0.2.0+5
 
 dev_dependencies:
   flutter_test:

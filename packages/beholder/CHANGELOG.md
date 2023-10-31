@@ -1,3 +1,7 @@
+## 0.3.1
+
+ - **FEAT**: add `Watchable`.
+
 ## 0.3.0+4
 
  - **FIX**: don't create inner state of computed, if it was disposed.

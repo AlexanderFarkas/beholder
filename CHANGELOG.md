@@ -15,6 +15,38 @@ Packages with breaking changes:
 
 Packages with other changes:
 
+ - [`beholder` - `v0.3.1`](#beholder---v031)
+ - [`beholder_flutter` - `v0.2.0+5`](#beholder_flutter---v0205)
+ - [`beholder_provider` - `v0.0.3+10`](#beholder_provider---v00310)
+ - [`beholder_form` - `v0.2.0+11`](#beholder_form---v02011)
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `beholder_flutter` - `v0.2.0+5`
+ - `beholder_provider` - `v0.0.3+10`
+ - `beholder_form` - `v0.2.0+11`
+
+---
+
+#### `beholder` - `v0.3.1`
+
+ - **FEAT**: add `Watchable`.
+
+
+## 2023-10-31
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
  - [`beholder` - `v0.3.0+4`](#beholder---v0304)
  - [`beholder_flutter` - `v0.2.0+4`](#beholder_flutter---v0204)
  - [`beholder_provider` - `v0.0.3+9`](#beholder_provider---v0039)
