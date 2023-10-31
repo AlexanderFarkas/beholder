@@ -4,11 +4,29 @@ abstract interface class Disposable {
   void dispose();
 }
 
-abstract interface class Observable<T> implements Disposable {
+sealed class Watchable<T> {
+  T get value;
+
+  factory Watchable(T Function(Watch watch) trackObservables) = _InlineWatchable<T>;
+}
+
+class _InlineWatchable<T> implements Watchable<T> {
+  final T Function(Watch watch) trackObservables;
+
+  _InlineWatchable(this.trackObservables);
+
+  @override
+  T get value {
+    return trackObservables(<T>(Watchable<T> observable) => observable.value);
+  }
+}
+
+abstract interface class Observable<T> implements Disposable, Watchable<T> {
   static bool debugEnabled = false;
   static bool Function(Object? previous, Object? current) defaultEquals =
       (previous, current) => previous == current;
 
+  @override
   T get value;
 
   /// Stream of [Observable]'s values.

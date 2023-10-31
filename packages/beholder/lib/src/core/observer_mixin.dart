@@ -1,6 +1,6 @@
 part of core;
 
-typedef Watch = T Function<T>(Observable<T> observable);
+typedef Watch = T Function<T>(Watchable<T> observable);
 typedef IsApplied = bool;
 typedef Rebuild = IsApplied Function();
 
@@ -46,9 +46,14 @@ mixin ObserverMixin {
     return result;
   }
 
-  T _observe<T>(Observable<T> observable) {
-    observable.addObserver(this);
-    return observable.value;
+  T _observe<T>(Watchable<T> watchable) {
+    switch (watchable) {
+      case final _InlineWatchable<T> inline:
+        return inline.trackObservables(_observe);
+      case final Observable<T> observable:
+        observable.addObserver(this);
+        return observable.value;
+    }
   }
 }
 
