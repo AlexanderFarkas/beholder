@@ -14,6 +14,7 @@ class ObservableComputed<T>
   @override
   @protected
   BaseObservableState<T> get inner {
+    assert(!_isDisposed, "Computed is already disposed");
     if (_inner == null) {
       final state = ComputedState(
         trackObservables(_compute),
@@ -43,19 +44,23 @@ class ObservableComputed<T>
     return inner.value;
   }
 
-  bool get isDisposed => inner.isDisposed;
-
   @override
   void addPlugin(StatePlugin<T> plugin) {
     inner.addPlugin(plugin);
   }
 
+  bool get isDisposed => _isDisposed;
+
   @override
   @mustCallSuper
   void dispose() {
-    inner.dispose();
+    _isDisposed = true;
+    // if it was never used, don't even create state
+    _inner?.dispose();
     stopObserving();
   }
+
+  bool _isDisposed = false;
 }
 
 final class ComputedState<T> extends BaseObservableState<T> {
