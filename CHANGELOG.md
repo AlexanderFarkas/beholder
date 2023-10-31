@@ -15,6 +15,38 @@ Packages with breaking changes:
 
 Packages with other changes:
 
+ - [`beholder` - `v0.3.0+4`](#beholder---v0304)
+ - [`beholder_flutter` - `v0.2.0+4`](#beholder_flutter---v0204)
+ - [`beholder_provider` - `v0.0.3+9`](#beholder_provider---v0039)
+ - [`beholder_form` - `v0.2.0+10`](#beholder_form---v02010)
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `beholder_flutter` - `v0.2.0+4`
+ - `beholder_provider` - `v0.0.3+9`
+ - `beholder_form` - `v0.2.0+10`
+
+---
+
+#### `beholder` - `v0.3.0+4`
+
+ - **FIX**: don't create inner state of computed, if it was disposed.
+
+
+## 2023-10-31
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
  - [`beholder` - `v0.3.0+3`](#beholder---v0303)
  - [`beholder_flutter` - `v0.2.0+3`](#beholder_flutter---v0203)
  - [`beholder_form` - `v0.2.0+9`](#beholder_form---v0209)

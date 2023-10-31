@@ -1,3 +1,7 @@
+## 0.3.0+4
+
+ - **FIX**: don't create inner state of computed, if it was disposed.
+
 ## 0.3.0+3
 
  - **FIX**: catch any errors during prepare/rebuild.
