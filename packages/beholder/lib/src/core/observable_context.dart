@@ -100,12 +100,16 @@ class _UpdateUnitOfWork {
       }
 
       if (isAnyRebuilt) {
-        while (true) {
-          final (rebuild, isNewObservableAdded) = leaf._prepare();
-          if (!isNewObservableAdded) {
-            rebuild();
-            break;
+        try {
+          while (true) {
+            final (rebuild, isNewObservableAdded) = leaf.prepareAndCountNewObservables();
+            if (!isNewObservableAdded) {
+              rebuild();
+              break;
+            }
           }
+        } catch (e, s) {
+          _debugLogErrorDuringRebuild(e, s, observer: leaf);
         }
       }
     }
@@ -130,12 +134,17 @@ class _UpdateUnitOfWork {
         }
 
         if (isAnyRebuilt) {
-          while (true) {
-            final (rebuild, isNewObservableAdded) = observer._prepare();
-            if (isNewObservableAdded) {
-              continue;
+          try {
+            while (true) {
+              final (rebuild, isNewObservableAdded) = observer.prepareAndCountNewObservables();
+              if (isNewObservableAdded) {
+                continue;
+              }
+              return computedRebuildCache[observer] = rebuild();
             }
-            return computedRebuildCache[observer] = rebuild();
+          } catch (e, s) {
+            _debugLogErrorDuringRebuild(e, s, observer: observer);
+            return computedRebuildCache[observer] = false;
           }
         } else {
           return computedRebuildCache[observer] = false;
@@ -144,4 +153,14 @@ class _UpdateUnitOfWork {
         return isNew(state);
     }
   }
+}
+
+void _debugLogErrorDuringRebuild(
+  Object error,
+  StackTrace stackTrace, {
+  required ObserverMixin observer,
+}) {
+  debugLog(
+    "$observer failed to rebuild and kept its previous state.\nIf it's expected, ignore this error.\nError: $error\n$stackTrace",
+  );
 }

@@ -33,7 +33,7 @@ mixin ObserverMixin {
 
   bool _isNewObservableAddedDuringPrepare = false;
 
-  (Rebuild rebuild, bool isNewObservableAdded) _prepare() {
+  (Rebuild rebuild, bool isNewObservableAdded) prepareAndCountNewObservables() {
     _isNewObservableAddedDuringPrepare = false;
 
     final (Rebuild rebuild, bool isNewObservableAdded) result;
