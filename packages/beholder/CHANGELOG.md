@@ -1,3 +1,7 @@
+## 0.3.1+1
+
+ - **FIX**: concurrent modification.
+
 ## 0.3.1
 
  - **FEAT**: add `Watchable`.
