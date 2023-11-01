@@ -17,18 +17,21 @@ class ComputedFactory<TValue, TParam> implements Disposable {
 
     computed.addPlugin(StatePlugin.inline(
       onObserverRemoved: (_) {
+        if (_isDisposed) return;
         if (computed.observers.isEmpty) {
           cache.remove(param);
           Future.microtask(() => computed.dispose());
         }
       },
       onDisposed: () {
+        if (_isDisposed) return;
         cache.remove(param);
       },
     ));
     cache[param] = computed;
 
     Future.microtask(() {
+      if (_isDisposed) return;
       if (!computed.isDisposed && computed.observers.isEmpty) {
         cache.remove(param);
         computed.dispose();
@@ -38,8 +41,11 @@ class ComputedFactory<TValue, TParam> implements Disposable {
     return computed;
   }
 
+  bool _isDisposed = false;
+
   @override
   void dispose() {
+    _isDisposed = true;
     for (final computed in cache.values) {
       computed.dispose();
     }
