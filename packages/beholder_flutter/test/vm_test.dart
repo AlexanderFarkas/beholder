@@ -52,9 +52,9 @@ class TestVm extends ViewModel {
   late final checked = state(false);
 
   late final isSubmittable = computed((watch) {
-    final tab = watch(this.tab);
-    final subjectDisplayError = watch(this.subjectDisplayError);
-    final messageDisplayError = watch(this.messageDisplayError);
+    watch(tab);
+    watch(subjectDisplayError);
+    watch(messageDisplayError);
     return watch(checked);
   });
 }
