@@ -1,3 +1,7 @@
+## 0.2.0+7
+
+ - **DOCS**: rewrite.
+
 ## 0.2.0+6
 
  - Update a dependency to the latest release.
