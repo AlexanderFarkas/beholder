@@ -177,20 +177,20 @@ class SearchScreenVm extends ViewModel {
 `AsyncValue` is a default type for handling async data in `asyncState`s.
 
 It has three subtypes:
+- `Data` - the future is completed successfully
 - `Loading` - the future is not completed yet
-- `Success` - the future is completed successfully
 - `Failure` - the future is completed with an error
 
 It's a sealed class, so you can use `switch` to handle all cases.
 
-`Loading` also has `previousResult` field, which is the last `Success`/`Failure` value. </br>
+`Loading` also has `previousResult` field, which is the last `Data`/`Failure` value. </br>
 It might be useful for showing old data while loading new one:
 ```dart
 Widget build(BuildContext context) {
   return Observer(
      builder: (context, watch) {
        final posts = watch(vm.posts);
-       if (posts case Loading(previousResult: Success(value: var posts))) {
+       if (posts case Loading(previousResult: Data(value: var posts))) {
          return Stack(
             children: [
                ListView.builder(
