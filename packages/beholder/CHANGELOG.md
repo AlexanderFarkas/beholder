@@ -1,3 +1,9 @@
+## 0.4.0
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **FEAT**: better error handling during computeds' rebuilds.
+
 ## 0.3.1+1
 
  - **FIX**: concurrent modification.

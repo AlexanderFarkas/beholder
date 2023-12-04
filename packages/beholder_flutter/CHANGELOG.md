@@ -1,3 +1,9 @@
+## 0.3.0
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **FEAT**: better error handling during computeds' rebuilds.
+
 ## 0.2.0+7
 
  - **DOCS**: rewrite.
