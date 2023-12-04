@@ -30,17 +30,33 @@ class ObservableComputed<T>
   }
 
   ComputedState<T>? _inner;
+  Failure? _failure;
 
   @override
   @visibleForOverriding
   Rebuild prepare() {
-    final value = trackObservables(_compute);
-    return () => inner.setValue(value);
+    try {
+      final value = trackObservables(_compute);
+      return () {
+        _failure = null;
+        return inner.setValue(value);
+      };
+    } catch (e, s) {
+      return () {
+        _failure = Failure(e, s);
+        return false;
+      };
+    }
   }
 
   @override
   T get value {
     ObservableContext().updateComputed(this);
+
+    if (_failure case final failure?) {
+      Error.throwWithStackTrace(failure.error, failure.stackTrace!);
+    }
+
     return inner.value;
   }
 

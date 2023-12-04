@@ -134,17 +134,12 @@ class _UpdateUnitOfWork {
         }
 
         if (isAnyRebuilt) {
-          try {
-            while (true) {
-              final (rebuild, isNewObservableAdded) = observer.prepareAndCountNewObservables();
-              if (isNewObservableAdded) {
-                continue;
-              }
-              return computedRebuildCache[observer] = rebuild();
+          while (true) {
+            final (rebuild, isNewObservableAdded) = observer.prepareAndCountNewObservables();
+            if (isNewObservableAdded) {
+              continue;
             }
-          } catch (e, s) {
-            _debugLogErrorDuringRebuild(e, s, observer: observer);
-            return computedRebuildCache[observer] = false;
+            return computedRebuildCache[observer] = rebuild();
           }
         } else {
           return computedRebuildCache[observer] = false;

@@ -1,5 +1,8 @@
 name: beholder
-description: State Management inspired by MobX
+description:
+  State Management inspired by MobX.
+  Yet another MVVM implementation.
+  Reinventing the wheel, but with a twist.
 version: 0.3.1+1
 repository: https://github.com/AlexanderFarkas/beholder/tree/main/packages/beholder
 

@@ -1,5 +1,8 @@
 name: beholder_flutter
-description: State Management inspired by MobX for Flutter
+description:
+  State Management inspired by MobX for Flutter. 
+  Yet another MVVM implementation.
+  Reinventing the wheel, but with a twist.
 version: 0.2.0+7
 repository: https://github.com/AlexanderFarkas/beholder/tree/main/packages/beholder_flutter
 
