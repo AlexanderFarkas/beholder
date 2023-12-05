@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2023-12-05
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`beholder_form` - `v0.2.1`](#beholder_form---v021)
+
+---
+
+#### `beholder_form` - `v0.2.1`
+
+ - **FEAT**: allow validate to be empty.
+
+
 ## 2023-12-04
 
 ### Changes

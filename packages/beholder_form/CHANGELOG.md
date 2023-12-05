@@ -1,3 +1,7 @@
+## 0.2.1
+
+ - **FEAT**: allow validate to be empty.
+
 ## 0.2.0+14
 
  - Update a dependency to the latest release.
