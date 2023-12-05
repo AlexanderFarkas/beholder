@@ -2,8 +2,7 @@ part of form;
 
 typedef FocusNodeFactory = FocusNode Function();
 typedef Validate<T> = String? Function(T value);
-typedef ComputeDisplayError<T> = String? Function(
-    Watch watch, FieldState<T> state);
+typedef ComputeDisplayError<T> = String? Function(Watch watch, FieldState<T> state);
 
 typedef ComputeError<T> = String? Function(Watch watch, T value);
 
@@ -28,11 +27,10 @@ class ObservableField<T> extends ViewModel
     ComputeError<T>? computeError,
     ComputeDisplayError<T>? displayError,
     FocusNodeFactory? focusNode,
-  })  : assert(validate != null || computeError != null),
-        assert(validate == null || computeError == null),
+  })  : assert(validate == null || computeError == null),
         focusNode = focusNode?.call() ?? FocusNode(),
         _displayError = displayError ?? defaultDisplayError,
-        _computeError = computeError ?? ((_, value) => validate!.call(value)),
+        _computeError = computeError ?? ((_, value) => validate?.call(value)),
         inner = ObservableState(value) {
     inner.listenSync((previous, next) {
       wasEverChanged.value = true;
