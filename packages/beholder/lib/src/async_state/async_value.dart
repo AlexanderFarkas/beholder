@@ -187,7 +187,7 @@ class Failure<T> extends Result<T> {
   String toString() => 'Failure<$T>(error: $error, stackTrace: $stackTrace)';
 }
 
-extension AsyncValueObservableStateX<T> on ObservableState<AsyncValue<T>> {
+extension AsyncValueObservableX<T> on Observable<AsyncValue<T>> {
   T get data => value.value;
   T? get dataOrNull => value.valueOrNull;
 }
