@@ -1,3 +1,7 @@
+## 0.4.1
+
+ - **FEAT**: generalize `data` and `dataOrNull` getters to all observables.
+
 ## 0.4.0
 
 > Note: This release has breaking changes.

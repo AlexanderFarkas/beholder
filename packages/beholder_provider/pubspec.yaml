@@ -1,6 +1,6 @@
 name: beholder_provider
 description: "Provider for Beholder View Models"
-version: 0.0.3+13
+version: 0.0.3+14
 repository: https://github.com/AlexanderFarkas/beholder/tree/main/packages/beholder_provider
 
 environment:
@@ -11,7 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
   provider: ^6.0.5
-  beholder_flutter: ^0.3.0
+  beholder_flutter: ^0.3.0+1
 
 dev_dependencies:
   flutter_test:
