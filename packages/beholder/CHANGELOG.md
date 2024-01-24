@@ -1,3 +1,7 @@
+## 0.4.1+1
+
+ - **FIX**: edgecase.
+
 ## 0.4.1
 
  - **FEAT**: generalize `data` and `dataOrNull` getters to all observables.
