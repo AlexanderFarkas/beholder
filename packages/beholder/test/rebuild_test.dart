@@ -77,4 +77,45 @@ void main() {
     await ObservableContext.pump();
     expect(sum.rebuildCounter.value, equals(2));
   });
+
+  test("Name 1", () async {
+    final counter = RootObservableState(0);
+    final other = RootObservableState(100);
+    final doubled = createComputed((watch) => watch(counter) * 2);
+
+    var listened = -1;
+    doubled.computed.listen((_, value) {
+      listened = value;
+    });
+
+    counter.value++;
+    expect(doubled.computed.value, equals(2));
+    other.value = 200;
+
+    await ObservableContext.pump();
+    expect(listened, equals(2));
+  });
+
+  test("Name 2", () async {
+    final counter = RootObservableState(0);
+    final other = RootObservableState(100);
+    final doubled = createComputed((watch) => watch(counter) * 2);
+
+    var listened = -1;
+    doubled.computed.listen((_, value) {
+      listened = value;
+    });
+
+    counter.value++;
+    expect(doubled.computed.value, equals(2));
+    other.value = 200;
+
+    await ObservableContext.pump();
+    counter.value++;
+    expect(doubled.computed.value, equals(4));
+    other.value = 300;
+
+    await ObservableContext.pump();
+    expect(listened, equals(4));
+  });
 }

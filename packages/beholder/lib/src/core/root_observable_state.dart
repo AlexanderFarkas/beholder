@@ -10,7 +10,7 @@ typedef ValueSetter<T> = T Function(T value);
 @internal
 sealed class BaseObservableState<T> with DebugReprMixin implements ObservableState<T> {
   BaseObservableState(this._value, {Equals<T>? equals})
-      : _equals = equals ?? Observable.defaultEquals;
+      : equals = equals ?? Observable.defaultEquals;
 
   @override
   T get value => _value;
@@ -19,7 +19,7 @@ sealed class BaseObservableState<T> with DebugReprMixin implements ObservableSta
   bool setValue(T value) {
     assert(!_isDisposed, "Cannot set value once state is disposed");
     final oldValue = _value;
-    final willUpdate = !_equals(oldValue, value);
+    final willUpdate = !equals(oldValue, value);
     if (willUpdate) {
       _value = value;
 
@@ -62,7 +62,8 @@ sealed class BaseObservableState<T> with DebugReprMixin implements ObservableSta
     return () => _eagerListeners.remove(onChanged);
   }
 
-  final Equals<T> _equals;
+  @internal
+  final Equals<T> equals;
 
   T _value;
 

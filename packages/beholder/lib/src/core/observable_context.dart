@@ -33,6 +33,7 @@ class ObservableContext {
     _uow.updateObservable(
       computed.inner,
       isNew: (RootObservableState state) => true,
+      isDirect: true,
     );
   }
 
@@ -57,6 +58,7 @@ class _UpdateUnitOfWork {
   Map<ObservableComputed, bool>? previousRebuildCache;
   final Map<ObservableComputed, bool> computedRebuildCache = {};
   final invalidatedRoots = <RootObservableState>{};
+  final directlyRebuiltComputedsValuesBeforeRebuild = <ObservableComputed, dynamic>{};
 
   void invalidateState(RootObservableState state) {
     invalidatedRoots.add(state);
@@ -115,12 +117,16 @@ class _UpdateUnitOfWork {
     }
   }
 
-  bool updateObservable(BaseObservableState state,
-      {required bool Function(RootObservableState state) isNew}) {
+  bool updateObservable(
+    BaseObservableState state, {
+    required bool Function(RootObservableState state) isNew,
+    isDirect = false,
+  }) {
     switch (state) {
       case final ComputedState computed:
         bool isAnyRebuilt = false;
         final observer = computed.delegatedBy;
+
         if (computedRebuildCache[observer] case final cached?) {
           return cached;
         } else if (previousRebuildCache?[observer] case final cached?) {
@@ -134,12 +140,24 @@ class _UpdateUnitOfWork {
         }
 
         if (isAnyRebuilt) {
+          final valueBeforeRebuild = computed.value;
           while (true) {
             final (rebuild, isNewObservableAdded) = observer.prepareAndCountNewObservables();
             if (isNewObservableAdded) {
               continue;
             }
-            return computedRebuildCache[observer] = rebuild();
+
+            final isRebuilt = rebuild();
+
+            final valueBeforeRebuilds = directlyRebuiltComputedsValuesBeforeRebuild[observer];
+            final result = computedRebuildCache[observer] = valueBeforeRebuilds != null
+                ? isRebuilt || computed.equals(valueBeforeRebuild, computed.value)
+                : isRebuilt;
+
+            if (isDirect) {
+              directlyRebuiltComputedsValuesBeforeRebuild[observer] = valueBeforeRebuild;
+            }
+            return result;
           }
         } else {
           return computedRebuildCache[observer] = false;
