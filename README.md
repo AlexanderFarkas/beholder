@@ -1,3 +1,4 @@
+NOTE: Package is supported. I just haven't found any bugs since the last commit.
 Simple state management for Flutter.
 
 This package is built to work with:
