@@ -3,7 +3,7 @@ part of form;
 mixin FormMixin on ViewModel {
   ObservableField<T> field<T>(
     T value, {
-    required Validate<T> validate,
+    Validate<T>? validate,
     ComputeError<T>? computeError,
     ComputeDisplayError<T>? displayError,
   }) {
