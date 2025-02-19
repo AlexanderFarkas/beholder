@@ -1,3 +1,7 @@
+## 0.2.1+3
+
+ - **FIX**: allow validate to be optional.
+
 ## 0.2.1+2
 
  - Update a dependency to the latest release.
