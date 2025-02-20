@@ -37,6 +37,7 @@ class LoginFormVm extends ViewModel with FormMixin {
     }
   }
 
+  late final fields = [username, password, repeatPassword];
   late final isSubmittable = computed((watch) {
     return fields.every((e) => watch(e.displayError) == null);
   });
@@ -46,7 +47,7 @@ class LoginFormVm extends ViewModel with FormMixin {
   @override
   String? interceptDisplayError<T>(
     Watch watch,
-    FieldState<T> state,
+    Field<T> state,
     ComputeDisplayError<T> inner,
   ) {
     if (watch(wasEverSubmitted) || watch(state.wasEverUnfocused)) {

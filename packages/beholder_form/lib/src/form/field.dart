@@ -2,15 +2,15 @@ part of form;
 
 typedef FocusNodeFactory = FocusNode Function();
 typedef Validate<T> = String? Function(T value);
-typedef ComputeDisplayError<T> = String? Function(Watch watch, FieldState<T> state);
+typedef ComputeDisplayError<T> = String? Function(Watch watch, Field<T> field);
 
 typedef ComputeError<T> = String? Function(Watch watch, T value);
 
-String? defaultDisplayError<T>(Watch watch, FieldState<T> state) {
-  return watch(state.error);
+String? defaultDisplayError<T>(Watch watch, Field<T> field) {
+  return watch(field.error);
 }
 
-abstract interface class FieldState<T> {
+abstract interface class Field<T> {
   Observable<String?> get error;
   Observable<bool> get wasEverUnfocused;
   Observable<bool> get wasEverChanged;
@@ -18,9 +18,7 @@ abstract interface class FieldState<T> {
   Observable<bool> get hasFocus;
 }
 
-class ObservableField<T> extends ViewModel
-    with ObservableStateProxyMixin<T>
-    implements FieldState<T> {
+class ObservableField<T> extends ViewModel with ObservableStateProxyMixin<T> implements Field<T> {
   ObservableField(
     T value, {
     Validate<T>? validate,

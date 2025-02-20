@@ -1,7 +1,6 @@
 import 'package:beholder_flutter/beholder_flutter.dart';
 import 'package:beholder_form/src/form.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -104,7 +103,7 @@ void main() {
       ),
     ));
 
-    field.testState(
+    field.test(
       wasEverChanged: false,
       wasEverUnfocused: false,
       hasFocus: false,
@@ -113,7 +112,7 @@ void main() {
 
     focusNode.requestFocus();
     await tester.pump();
-    field.testState(
+    field.test(
       wasEverChanged: false,
       wasEverUnfocused: false,
       hasFocus: true,
@@ -121,7 +120,7 @@ void main() {
     );
 
     field.value = "h";
-    field.testState(
+    field.test(
       wasEverChanged: true,
       wasEverUnfocused: false,
       hasFocus: true,
@@ -129,7 +128,7 @@ void main() {
     );
     focusNode.unfocus();
     await tester.pump();
-    field.testState(
+    field.test(
       wasEverChanged: true,
       wasEverUnfocused: true,
       hasFocus: false,
@@ -138,7 +137,7 @@ void main() {
 
     focusNode.requestFocus();
     await tester.pump();
-    field.testState(
+    field.test(
       wasEverChanged: true,
       wasEverUnfocused: true,
       hasFocus: true,
@@ -147,8 +146,8 @@ void main() {
   });
 }
 
-extension<T> on FieldState<T> {
-  void testState({
+extension<T> on Field<T> {
+  void test({
     required bool wasEverChanged,
     required bool wasEverUnfocused,
     required bool hasFocus,

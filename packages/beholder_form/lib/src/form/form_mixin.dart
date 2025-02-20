@@ -11,13 +11,13 @@ mixin FormMixin on ViewModel {
       value,
       validate: validate,
       computeError: computeError,
-      displayError: (watch, state) => interceptDisplayError(
+      displayError: (watch, field) => interceptDisplayError(
         watch,
-        state,
+        field,
         displayError ?? defaultDisplayError,
       ),
     );
-    _trackField(field);
+    trackField(field);
     return field;
   }
 
@@ -37,23 +37,20 @@ mixin FormMixin on ViewModel {
         displayError ?? defaultDisplayError,
       ),
     );
-    _trackField(field);
     return field;
   }
 
-  void _trackField<T>(ObservableField<T> field) {
-    fields.add(field);
+  @protected
+  void trackField<T>(ObservableField<T> field) {
     disposers.add(field.dispose);
   }
-
-  final fields = <ObservableField>{};
 
   @protected
   String? interceptDisplayError<T>(
     Watch watch,
-    FieldState<T> state,
+    Field<T> field,
     ComputeDisplayError<T> inner,
   ) {
-    return inner(watch, state);
+    return inner(watch, field);
   }
 }
