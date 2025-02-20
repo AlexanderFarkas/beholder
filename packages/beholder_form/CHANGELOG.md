@@ -1,3 +1,9 @@
+## 0.3.0
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **REFACTOR**: rename state to field, remove fields.
+
 ## 0.2.1+3
 
  - **FIX**: allow validate to be optional.

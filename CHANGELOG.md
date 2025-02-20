@@ -11,6 +11,27 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 Packages with breaking changes:
 
+ - [`beholder_form` - `v0.3.0`](#beholder_form---v030)
+
+Packages with other changes:
+
+ - There are no other changes in this release.
+
+---
+
+#### `beholder_form` - `v0.3.0`
+
+ - **BREAKING** **REFACTOR**: rename state to field, remove fields.
+
+
+## 2025-02-20
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
  - There are no breaking changes in this release.
 
 Packages with other changes:
