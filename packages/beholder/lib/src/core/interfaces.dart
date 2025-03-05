@@ -47,6 +47,10 @@ extension WritableObservableX<T> on WritableObservable<T> {
   void update(T Function(T current) updater) => value = updater(value);
 }
 
+extension BoolWritableObservableX on WritableObservable<bool> {
+  void toggle() => value = !value;
+}
+
 abstract interface class ObservableState<T> implements WritableObservable<T>, Extendable<T> {
   factory ObservableState(
     T value, {
