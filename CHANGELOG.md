@@ -3,6 +3,38 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2025-03-05
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`beholder` - `v0.4.2`](#beholder---v042)
+ - [`beholder_flutter` - `v0.3.0+4`](#beholder_flutter---v0304)
+ - [`beholder_provider` - `v0.0.3+17`](#beholder_provider---v00317)
+ - [`beholder_form` - `v0.3.0+1`](#beholder_form---v0301)
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `beholder_flutter` - `v0.3.0+4`
+ - `beholder_provider` - `v0.0.3+17`
+ - `beholder_form` - `v0.3.0+1`
+
+---
+
+#### `beholder` - `v0.4.2`
+
+ - **FEAT**: add toggle extension method.
+
+
 ## 2025-02-20
 
 ### Changes

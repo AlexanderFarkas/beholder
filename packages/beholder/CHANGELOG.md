@@ -1,3 +1,7 @@
+## 0.4.2
+
+ - **FEAT**: add toggle extension method.
+
 ## 0.4.1+1
 
  - **FIX**: edgecase.
