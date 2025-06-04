@@ -176,12 +176,12 @@ class SearchScreenVm extends ViewModel {
 # Utils
 
 ## `AsyncValue`
-`AsyncValue` is a default type for handling async data in `asyncState`s.
+`AsyncValue` is a utility type to repesent result of an asynchronous operation.
 
 It has three subtypes:
-- `Data` - the future is completed successfully
-- `Loading` - the future is not completed yet
-- `Failure` - the future is completed with an error
+- `Data` - operation is completed successfully
+- `Loading` - operation is not completed yet
+- `Failure` - operation is completed with an error
 
 It's a sealed class, so you can use `switch` to handle all cases.
 
@@ -232,3 +232,7 @@ class CounterViewModel extends ViewModel {
 
 ```
 *\*`late` fields are initialized *lazily* - when they are first accessed.*
+
+## Caveats
+
+Accessing `counterVm.counter` for the first time after `counterVm` was disposed will result in an error.
