@@ -94,7 +94,7 @@ class _MyWidgetState extends State<MyWidget> {
 
 ## `state`
 `state` is a core concept in `beholder`. 
-It tracks changes to its value and notifies every observer depending on it.
+It tracks changes to its value and notifies every observer listening.
 
 ### Updating value
 ```dart
